@@ -1,5 +1,19 @@
+
+/*
+ * Nom de classe : Color
+ *
+ * Description   : La classe Color qui permet de modifier les couleurs du texte dans le terminal.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 23/02/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
 enum Color {
-    //Color end string, color reset
+    //Reset les couleurs donc texte en blanc.
     RESET("\033[0m"),
 
     // Regular Colors. Normal color, no bold, background color etc.
@@ -12,7 +26,7 @@ enum Color {
     CYAN("\033[0;36m"),     // CYAN
     WHITE("\033[0;37m"),    // WHITE
 
-    // Bold
+    // BOLD
     BLACK_BOLD("\033[1;30m"),   // BLACK
     RED_BOLD("\033[1;31m"),     // RED
     GREEN_BOLD("\033[1;32m"),   // GREEN
@@ -22,7 +36,7 @@ enum Color {
     CYAN_BOLD("\033[1;36m"),    // CYAN
     WHITE_BOLD("\033[1;37m"),   // WHITE
 
-    // Underline
+    // Texte sousligné
     BLACK_UNDERLINED("\033[4;30m"),     // BLACK
     RED_UNDERLINED("\033[4;31m"),       // RED
     GREEN_UNDERLINED("\033[4;32m"),     // GREEN
@@ -42,7 +56,7 @@ enum Color {
     CYAN_BACKGROUND("\033[46m"),    // CYAN
     WHITE_BACKGROUND("\033[47m"),   // WHITE
 
-    // High Intensity
+    //  Haute Intensité
     BLACK_BRIGHT("\033[0;90m"),     // BLACK
     RED_BRIGHT("\033[0;91m"),       // RED
     GREEN_BRIGHT("\033[0;92m"),     // GREEN
@@ -52,7 +66,7 @@ enum Color {
     CYAN_BRIGHT("\033[0;96m"),      // CYAN
     WHITE_BRIGHT("\033[0;97m"),     // WHITE
 
-    // Bold High Intensity
+    // Bold + Haute Intensité
     BLACK_BOLD_BRIGHT("\033[1;90m"),    // BLACK
     RED_BOLD_BRIGHT("\033[1;91m"),      // RED
     GREEN_BOLD_BRIGHT("\033[1;92m"),    // GREEN
@@ -62,7 +76,7 @@ enum Color {
     CYAN_BOLD_BRIGHT("\033[1;96m"),     // CYAN
     WHITE_BOLD_BRIGHT("\033[1;97m"),    // WHITE
 
-    // High Intensity backgrounds
+    //  Haute Intensité + Couleur du Background
     BLACK_BACKGROUND_BRIGHT("\033[0;100m"),     // BLACK
     RED_BACKGROUND_BRIGHT("\033[0;101m"),       // RED
     GREEN_BACKGROUND_BRIGHT("\033[0;102m"),     // GREEN
