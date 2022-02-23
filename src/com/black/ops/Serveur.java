@@ -49,21 +49,9 @@ class Serveur
             while (true)
             {
                 Socket socketClient = this.socketServeur.accept();
-                String message = "";
-
                 System.out.println("Connexion avec : " + socketClient.getInetAddress());
-                // InputStream in = socketClient.getInputStream();
-                // OutputStream out = socketClient.getOutputStream();
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socketClient.getInputStream()));
-                PrintStream out = new PrintStream(socketClient.getOutputStream());
-                message = in.readLine();
-                out.println(message);
-
-                socketClient.close();
+                envoieMessage(afficheChoix(), socketClient);
             }
-
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -92,6 +80,7 @@ class Serveur
      */
     private void initPort()
     {
+        this.port = 1025;
         while (65535 < this.port || this.port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les 1024 premiers sont réservés pour des services standard
         {
             System.out.println("Donner le port de connexion (1025 à 65535) : ");
@@ -113,5 +102,39 @@ class Serveur
             this.maxClients = Integer.parseInt(sn.next());
         }
         this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / this.maxClients;
+    }
+
+    /**
+     * méthode qui envoie le message en parametre au client en parametre
+     */
+    private void envoieMessage(String message, Socket socketClient)
+    {
+        try
+        {
+
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+            PrintWriter pw = new PrintWriter(wr, true);
+            pw.println(message);
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * affiche les differents choix donner aux clients
+     */
+    private String afficheChoix()
+    {
+        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
+                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
+                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
+                Colors.green + "4 / Consulter les parties les plus courtes." + Colors.reset + "\n" +
+                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
+                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties" + Colors.reset;
+//        System.out.println(Colors.green + "" + Colors.reset);
+//        System.out.println(Colors.cyan + "" + Colors.reset);
     }
 }

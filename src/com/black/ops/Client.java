@@ -15,9 +15,11 @@
 package com.black.ops;
 
 
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -38,11 +40,10 @@ class Client
     public void run()
     {
         initClient();
-        while (true){
-
-        }
-
+        int choix = -1;
+        litMess();
     }
+
 
     /**
      * initialise tous les parametre pour le client et son bon fonctionnement, crée un socket avec les informations initialisé dans initPort() et initIp().
@@ -68,6 +69,7 @@ class Client
      */
     private void initPort()
     {
+        this.port = 1025;
         while (65535 < this.port || this.port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les 1024 premiers sont réservés pour des services standard
         {
             System.out.println("Donner le port de connexion (1025 à 65535) : ");
@@ -88,10 +90,28 @@ class Client
             this.ipServer = InetAddress.getByName(sn.next());
 
 
-        } catch (IOException e)
+        } catch (UnknownHostException e)
         {
             this.log.error("L'adresse ip n'est pas bon.");
             initIp();
+        }
+    }
+
+    /**
+     * méthode qui intercepte les message envoyé par le serveur et les affiche dans la console.
+     */
+    private void litMess(){
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()) );
+
+            String mess = in.readLine();
+            while (mess != null){
+                System.out.println(mess);
+                mess = in.readLine();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
