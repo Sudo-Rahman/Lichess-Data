@@ -26,7 +26,7 @@ class Client
     private int port;
     private InetAddress ipServer;
     private Socket socket;
-    private Log log;
+    private final Log log;
 
     protected Client()
     {
@@ -38,7 +38,9 @@ class Client
     public void run()
     {
         initClient();
+        while (true){
 
+        }
 
     }
 

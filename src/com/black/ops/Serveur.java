@@ -28,7 +28,7 @@ class Serveur
     private int nbThreadsPerClient;
     private List<Client> clients;
     private ServerSocket socketServeur;
-    private Log log;
+    private final Log log;
 
     protected Serveur()
     {
@@ -108,7 +108,7 @@ class Serveur
         int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisit d'alouer 4 thread au mini pour un client
         while (this.maxClients < 1 || this.maxClients > nbThreads)
         {
-            System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads par clients, le nombre max de client est : " + nbThreads);
+            System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads au minimum par clients, le nombre max de client est : " + nbThreads);
             Scanner sn = new Scanner(System.in);
             this.maxClients = Integer.parseInt(sn.next());
         }
