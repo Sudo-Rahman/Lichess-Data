@@ -26,13 +26,13 @@ class Serveur
     private int port;
     private int maxClients;
     private int nbThreadsPerClient;
-    private List<Client> clients;
+    private List<ServeurThreadClient> lstServeurClients;
     private ServerSocket socketServeur;
     private final Log log;
 
     protected Serveur()
     {
-        this.clients = new ArrayList<>(maxClients);
+        this.lstServeurClients = new ArrayList<>(maxClients);
         this.port = -1;
         this.maxClients = -1;
         this.log = new Log();
@@ -49,8 +49,23 @@ class Serveur
             while (true)
             {
                 Socket socketClient = this.socketServeur.accept();
-                System.out.println("Connexion avec : " + socketClient.getInetAddress());
-                envoieMessage(afficheChoix(), socketClient);
+                while (this.lstServeurClients.size() >= this.maxClients)
+                {
+                    envoieMessage(Colors.PURPLE_BOLD + "Vous etes en attente", socketClient);
+                    try
+                    {
+                        socketClient.wait();
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                ServeurThreadClient ServeurClient = new ServeurThreadClient(socketClient, this.nbThreadsPerClient);
+                ServeurClient.start();
+                this.lstServeurClients.add(ServeurClient);
+                log.debug("" + this.lstServeurClients.size());
+                litMess(socketClient);
+
             }
         } catch (Exception e)
         {
@@ -80,10 +95,11 @@ class Serveur
      */
     private void initPort()
     {
-        this.port = 1025;
+        //pour tester plus rapidement
+        //this.port = 1025;
         while (65535 < this.port || this.port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les 1024 premiers sont réservés pour des services standard
         {
-            System.out.println("Donner le port de connexion (1025 à 65535) : ");
+            System.out.print("Donner le port de connexion (1025 à 65535) : ");
             Scanner sn = new Scanner(System.in);
             this.port = Integer.parseInt(sn.next());
         }
@@ -123,18 +139,24 @@ class Serveur
     }
 
     /**
-     * affiche les differents choix donner aux clients
+     * méthode qui intercepte les message envoyé par le client et les affiche dans la console.
      */
-    private String afficheChoix()
+    private void litMess(Socket client)
     {
-        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
-                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
-                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
-                Colors.green + "4 / Consulter les parties les plus courtes." + Colors.reset + "\n" +
-                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
-                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
-                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties" + Colors.reset;
-//        System.out.println(Colors.green + "" + Colors.reset);
-//        System.out.println(Colors.cyan + "" + Colors.reset);
+        try
+        {
+            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+            String mess = in.readLine();
+            while (mess != null)
+            {
+                System.out.println(mess);
+                mess = in.readLine();
+            }
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
