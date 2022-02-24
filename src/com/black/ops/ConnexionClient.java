@@ -1,7 +1,7 @@
 /*
- * Nom de classe : ServeurThreadClient
+ * Nom de classe : ConnexionClient
  *
- * Description   : Cette classe traitera un client, il sera lancer par la classe Serveur pour gerer plusieurs clients a la fois.
+ * Description   : Cette classe traitera la connexion d'un client sur le serveur, il sera lancer par la classe Serveur.
  *
  * Version       : 1.0, 1.1
  *
@@ -16,7 +16,7 @@ package com.black.ops;
 import java.io.*;
 import java.net.Socket;
 
-class ConnexioClient extends Thread
+class ConnexionClient extends Thread
 {
     private String username;
     private Socket socketClient;
@@ -25,7 +25,7 @@ class ConnexioClient extends Thread
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    protected ConnexioClient(Socket clientSocket, int nbMaxThread)
+    protected ConnexionClient(Socket clientSocket, int nbMaxThread)
     {
         try
         {
@@ -58,7 +58,7 @@ class ConnexioClient extends Thread
 
 
     /**
-     * méthode qui envoie le message en parametre au serveur en parametre
+     * envoie le message en parametre au client.
      */
     private void envoieMessage(String message)
     {
@@ -76,7 +76,7 @@ class ConnexioClient extends Thread
     }
 
     /**
-     * affiche les differents choix donner aux clients
+     * affiche les differents choix donner au client.
      */
     private String afficheChoix()
     {
@@ -92,16 +92,16 @@ class ConnexioClient extends Thread
     }
 
     /**
-     * méthode qui intercepte les message envoyé par le client et les affiche dans la console.
+     * intercepte les messages envoyé par le client et les affiche dans la console.
      */
     private void litMess()
     {
         try
         {
                 String mess = bufferedReader.readLine();
-                while (mess != null)
+                while (mess != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
                 {
-                    System.out.println(this.socketClient.getPort() + "");
+//                    System.out.println(this.socketClient.getPort() + "");
                     System.out.println(mess);
                     mess = bufferedReader.readLine();
                 }

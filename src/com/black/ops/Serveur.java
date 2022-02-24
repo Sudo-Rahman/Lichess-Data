@@ -24,7 +24,7 @@ class Serveur
 
     private final int maxClients;
     private int nbThreadsPerClient;
-    private List<ConnexioClient> lstConnexion;
+    private List<ConnexionClient> lstConnexion;
     private ServerSocket serverSocket;
     private static final Log log = new Log();
 
@@ -53,9 +53,9 @@ class Serveur
                 } else
                 {
                     log.debug(client.toString());
-                    ConnexioClient connexioClient = new ConnexioClient(client, this.nbThreadsPerClient);
-                    this.lstConnexion.add(connexioClient);
-                    connexioClient.start();
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient);
+                    this.lstConnexion.add(connexionClient);
+                    connexionClient.start();
                 }
             }
         } catch (Exception e)
@@ -91,9 +91,9 @@ class Serveur
     {
         try
         {
-            for (ConnexioClient connexioClient : this.lstConnexion)
+            for (ConnexionClient connexionClient : this.lstConnexion)
             {
-                connexioClient.closeSocket();
+                connexionClient.closeSocket();
             }
             if (this.serverSocket != null)
             {

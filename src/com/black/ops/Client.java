@@ -16,7 +16,6 @@ package com.black.ops;
 
 
 import java.io.*;
-import java.net.DatagramSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -44,6 +43,9 @@ class Client
 
     }
 
+    /**
+     * Lance la connexion au serveur, envoie et ecoute les messages du serveur.
+     */
     public void startClient()
     {
         envoieMessage(this.username);
@@ -57,7 +59,7 @@ class Client
 
 
     /**
-     * méthode qui intercepte les message envoyé par le serveur et les affiche dans la console.
+     * intercepte les messages envoyé par le serveur et les affiche dans la console.
      */
     private void litMess()
     {
@@ -66,7 +68,7 @@ class Client
             while (this.socket.isConnected())
             {
                 String mess = bufferedReader.readLine();
-                while (mess != null)
+                while (mess != null)// permet d'intercepter tout le message y compris si ya des sauts de ligne.
                 {
                     System.out.println(mess);
                     mess = bufferedReader.readLine();
@@ -82,7 +84,7 @@ class Client
     }
 
     /**
-     * méthode qui envoie le message en parametre au serveur en parametre
+     * envoie le message en parametre au serveur.
      */
     private void envoieMessage(String message)
     {
@@ -99,6 +101,9 @@ class Client
         }
     }
 
+    /**
+     * Thread qui ecoute les message venant du serveur, ainsi le client n'est pas bloqué uniquement sur l'écoute.
+     */
     private void listenSocket()
     {
         Thread ecouteurBluetooth =new Thread(() ->

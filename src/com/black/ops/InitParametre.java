@@ -1,7 +1,7 @@
 /*
  * Nom de classe : InitParametre
  *
- * Description   : Classe qui contient des fionction pour initialisé les les ports, sockets et quelque attributs des classes Clients et Serveur.
+ * Description   : Classe qui contient des fonctions pour initialisé les ports, sockets et quelques attributs des classes Clients et Serveur.
  *
  * Version       : 1.0
  *
@@ -25,7 +25,7 @@ class InitParametre
     private static final Log log = new Log();
 
     /**
-     * initialise tous les parametre pour le serveur et son bon fonctionnement crée un socketServer avec les informations initialisé dans initPort() et initIp().
+     * initialise le socket du serveur.
      */
     protected static ServerSocket initServer()
     {
@@ -45,7 +45,7 @@ class InitParametre
 
 
     /**
-     * initialise tous les parametre pour le serveur et son bon fonctionnement crée un socketServer avec les informations initialisé dans initPort() et initIp().
+     * initialise le socket de connexion au serveur.
      */
     protected static Socket initSocket()
     {
@@ -65,12 +65,12 @@ class InitParametre
     }
 
     /**
-     * initialisation du nombre maximal de clients que le serveur pourra taiter en meme temps.
+     * initialisation du nombre maximal de clients que le serveur principale pourra taiter en meme temps.
      */
     protected static int initMaxClients()
     {
         int maxClients = 0;
-        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisit d'alouer 4 thread au mini pour un client
+        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisit d'alouer 4 thread au mini pour le calcule pur et dur, pas les ecoutes,et envoies.
         while (maxClients < 1 || maxClients > nbThreads)
         {
             System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads au minimum par clients, le nombre max de client est : " + nbThreads);
@@ -82,7 +82,7 @@ class InitParametre
 
 
     /**
-     * initialisation du port pour se connecter au serveur.
+     * initialisation d'un port pour un socket.
      */
     protected static int initPort()
     {
