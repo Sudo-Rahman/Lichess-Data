@@ -3,9 +3,9 @@
  *
  * Description   : La classe Main qui executera le programme.
  *
- * Version       : 1.0
+ * Version       : 1.0,1.1
  *
- * Date          : 22/02/2022
+ * Date          : 22/02/2022, 24/02/2022
  *
  * Copyright     : Yilmaz Rahman, Colliat Maxime
  *
@@ -14,6 +14,7 @@
 package com.black.ops;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 
@@ -34,13 +35,19 @@ public class Main
         {
             case 1:
             {
-                Serveur serveur = new Serveur();
+                Serveur serveur = new Serveur(InitParametre.initServer(),InitParametre.initMaxClients());
                 serveur.run();
-            }break;
-            case 2:{
-                Client client = new Client();
-                client.run();
+            }
+            break;
+            case 2:
+            {
+                Scanner sn = new Scanner(System.in);
+                System.out.print("Donner votre username : ");
+                String username = sn.nextLine();
+                Client client = new Client(InitParametre.initSocket(),username);
+                client.startClient();
             }
         }
     }
+
 }

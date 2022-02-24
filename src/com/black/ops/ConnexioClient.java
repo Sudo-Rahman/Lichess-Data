@@ -3,9 +3,9 @@
  *
  * Description   : Cette classe traitera un client, il sera lancer par la classe Serveur pour gerer plusieurs clients a la fois.
  *
- * Version       : 1.0
+ * Version       : 1.0, 1.1
  *
- * Date          : 23/02/2022
+ * Date          : 23/02/2022, 24/02/2022
  *
  * Copyright     : Yilmaz Rahman, Colliat Maxime
  *
@@ -15,47 +15,59 @@ package com.black.ops;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
-class ServeurThreadClient extends Thread
+class ConnexioClient extends Thread
 {
+    private String username;
     private Socket socketClient;
-    private int nbMaxThread;
-    private Log log;
+    private final int nbMaxThread;
+    private static final Log log = new Log();
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
 
-    protected ServeurThreadClient(Socket clientSocket, int nbMaxThread)
+    protected ConnexioClient(Socket clientSocket, int nbMaxThread)
     {
-        this.socketClient = clientSocket;
+        try
+        {
+            this.socketClient = clientSocket;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(this.socketClient.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.socketClient.getOutputStream()));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         this.nbMaxThread = nbMaxThread;
-        this.log = new Log();
     }
 
     @Override
     public void run()
     {
-        System.out.println("Connexion avec : " + this.socketClient.getInetAddress());
-        envoieMessage(afficheChoix(), socketClient);
-        int choix = -1;
-        while (choix < 1 || choix > 7)
+        try
         {
-//            envoieMessage("wsh",socketClient);
+            this.username = bufferedReader.readLine();
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
-        log.debug(choix + " " + this.nbMaxThread);
+        System.out.println("Connexion avec : " + this.username);
+        envoieMessage(afficheChoix());
+        litMess();
 
     }
 
 
     /**
-     * méthode qui envoie le message en parametre au client en parametre
+     * méthode qui envoie le message en parametre au serveur en parametre
      */
-    private void envoieMessage(String message, Socket socketClient)
+    private void envoieMessage(String message)
     {
         try
         {
 
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-            PrintWriter pw = new PrintWriter(wr, true);
-            pw.println(message);
+            this.bufferedWriter.write(message);
+            this.bufferedWriter.newLine();
+            this.bufferedWriter.flush();
 
         } catch (IOException e)
         {
@@ -86,18 +98,32 @@ class ServeurThreadClient extends Thread
     {
         try
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.socketClient.getInputStream()));
-
-            String mess = in.readLine();
-            while (mess != null)
-            {
-                System.out.println(mess);
-                mess = in.readLine();
-            }
+                String mess = bufferedReader.readLine();
+                while (mess != null)
+                {
+                    System.out.println(this.socketClient.getPort() + "");
+                    System.out.println(mess);
+                    mess = bufferedReader.readLine();
+                }
 
         } catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+
+    protected void closeSocket(){
+        try
+        {
+            this.socketClient.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public String getUsername()
+    {
+        return username;
     }
 }

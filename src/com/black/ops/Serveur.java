@@ -3,9 +3,9 @@
  *
  * Description   : Cette classe est un serveur qui recevera des requetes des Clients et les traitera.
  *
- * Version       : 1.0
+ * Version       : 1.0, 1.1
  *
- * Date          : 22/02/2022
+ * Date          : 22/02/2022, 24/02/2022
  *
  * Copyright     : Yilmaz Rahman, Colliat Maxime
  *
@@ -17,25 +17,22 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 class Serveur
 {
 
-    private int port;
-    private int maxClients;
+    private final int maxClients;
     private int nbThreadsPerClient;
-    private List<ServeurThreadClient> lstServeurClients;
-    private ServerSocket socketServeur;
-    private final Log log;
+    private List<ConnexioClient> lstConnexion;
+    private ServerSocket serverSocket;
+    private static final Log log = new Log();
 
-    protected Serveur()
+    protected Serveur(ServerSocket serverSocket, int maxClients)
     {
-        this.lstServeurClients = new ArrayList<>(maxClients);
-        this.port = -1;
-        this.maxClients = -1;
-        this.log = new Log();
+        this.lstConnexion = new ArrayList<>(maxClients);
+        this.serverSocket = serverSocket;
+        this.maxClients = maxClients;
     }
 
     /**
@@ -43,94 +40,43 @@ class Serveur
      */
     public void run()
     {
-        initServer();
+        log.info("Lancement du serveur sur le port " + this.serverSocket.getLocalPort());
         try
         {
-            while (true)
+            while (!this.serverSocket.isClosed())
             {
-                Socket socketClient = this.socketServeur.accept();
-                while (this.lstServeurClients.size() >= this.maxClients)
+                Socket client = this.serverSocket.accept();
+                if (this.maxClients <= this.lstConnexion.size())
                 {
-                    envoieMessage(Colors.PURPLE_BOLD + "Vous etes en attente", socketClient);
-                    try
-                    {
-                        socketClient.wait();
-                    } catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    envoieMessage("Trop de clients, retentez dans quelques instants", client);
+                    client.close();
+                } else
+                {
+                    log.debug(client.toString());
+                    ConnexioClient connexioClient = new ConnexioClient(client, this.nbThreadsPerClient);
+                    this.lstConnexion.add(connexioClient);
+                    connexioClient.start();
                 }
-                ServeurThreadClient ServeurClient = new ServeurThreadClient(socketClient, this.nbThreadsPerClient);
-                ServeurClient.start();
-                this.lstServeurClients.add(ServeurClient);
-                log.debug("" + this.lstServeurClients.size());
-                litMess(socketClient);
-
             }
         } catch (Exception e)
         {
             e.printStackTrace();
+            closeAllSocket();
         }
     }
 
-    /**
-     * initialise tous les parametre pour le serveur et son bon fonctionnement crée un socketServer avec les informations initialisé dans initPort() et initIp().
-     */
-    private void initServer()
-    {
-        initPort();
-        initMaxClients();
-        try
-        {
-            this.socketServeur = new ServerSocket(this.port);
-            this.log.info("Lancement du serveur sur le port " + this.port);
-        } catch (IOException e)
-        {
-            this.log.error("Le port ne marche pas");
-        }
-    }
 
     /**
-     * initialisation du port du serveur.
+     * méthode qui envoie le message en parametre au serveur en parametre
      */
-    private void initPort()
-    {
-        //pour tester plus rapidement
-        //this.port = 1025;
-        while (65535 < this.port || this.port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les 1024 premiers sont réservés pour des services standard
-        {
-            System.out.print("Donner le port de connexion (1025 à 65535) : ");
-            Scanner sn = new Scanner(System.in);
-            this.port = Integer.parseInt(sn.next());
-        }
-    }
-
-    /**
-     * initialisation du nombre maximal de clients que le serveur pourra taiter en meme temps.
-     */
-    private void initMaxClients()
-    {
-        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisit d'alouer 4 thread au mini pour un client
-        while (this.maxClients < 1 || this.maxClients > nbThreads)
-        {
-            System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads au minimum par clients, le nombre max de client est : " + nbThreads);
-            Scanner sn = new Scanner(System.in);
-            this.maxClients = Integer.parseInt(sn.next());
-        }
-        this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / this.maxClients;
-    }
-
-    /**
-     * méthode qui envoie le message en parametre au client en parametre
-     */
-    private void envoieMessage(String message, Socket socketClient)
+    private void envoieMessage(String message, Socket socket)
     {
         try
         {
-
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-            PrintWriter pw = new PrintWriter(wr, true);
-            pw.println(message);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write(message);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
 
         } catch (IOException e)
         {
@@ -139,24 +85,24 @@ class Serveur
     }
 
     /**
-     * méthode qui intercepte les message envoyé par le client et les affiche dans la console.
+     * ferme le socket du serveur et le socket de tout les clients
      */
-    private void litMess(Socket client)
+    public void closeAllSocket()
     {
         try
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-            String mess = in.readLine();
-            while (mess != null)
+            for (ConnexioClient connexioClient : this.lstConnexion)
             {
-                System.out.println(mess);
-                mess = in.readLine();
+                connexioClient.closeSocket();
             }
-
-        } catch (Exception e)
+            if (this.serverSocket != null)
+            {
+                this.serverSocket.close();
+            }
+        } catch (IOException e)
         {
             e.printStackTrace();
         }
     }
+
 }

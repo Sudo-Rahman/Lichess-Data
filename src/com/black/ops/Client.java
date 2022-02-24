@@ -3,9 +3,9 @@
  *
  * Description   : Cette classe jouera le role de client, il se connectera au serveur, et lui enverra des requetes.
  *
- * Version       : 1.0
+ * Version       : 1.0, 1.1
  *
- * Date          : 22/02/2022
+ * Date          : 22/02/2022, 24/02/2022
  *
  * Copyright     : Yilmaz Rahman, Colliat Maxime
  *
@@ -16,93 +16,45 @@ package com.black.ops;
 
 
 import java.io.*;
-import java.net.InetAddress;
+import java.net.DatagramSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 
 class Client
 {
-    private int port;
-    private InetAddress ipServer;
+    private String username;
     private Socket socket;
-    private final Log log;
+    private static final Log log = new Log();
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
 
-    protected Client()
+    protected Client(Socket socket, String username)
     {
-        this.port = -1; this.log = new Log();
-
-    }
-
-    public void run()
-    {
-        initClient(); int choix = -1;
-        while (choix != 0)
-        {
-            log.debug("la");
-//            litMess();
-            log.debug("ici");
-            Scanner sn = new Scanner(System.in);
-            String mess = sn.nextLine();
-            System.out.println(mess);
-            envoieMessage(mess, this.socket);
-        }
-
+        this.username = username;
         try
         {
-            this.socket.close();
+            this.socket = socket;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-    }
-
-
-    /**
-     * initialise tous les parametre pour le client et son bon fonctionnement, crée un socket avec les informations initialisé dans initPort() et initIp().
-     */
-    private void initClient()
-    {
-        initPort(); initIp(); try
-    {
-        this.socket = new Socket(this.ipServer, this.port);
-    } catch (IOException e)
-    {
-        this.log.fatal("Connexion refusé, port ou ip mauvais"); System.exit(-1);
-    } System.out.println("Connexion réalisez avec succès au seveur");
 
     }
 
-    /**
-     * initialisation du port pour se connecter au serveur.
-     */
-    private void initPort()
+    public void startClient()
     {
-        //pour tester plus rapidement
-        //this.port = 1025;
-        while (65535 < this.port || this.port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les 1024 premiers sont réservés pour des services standard
+        envoieMessage(this.username);
+        listenSocket();
+        while (this.socket.isConnected())
         {
-            System.out.print("Donner le port de connexion (1025 à 65535) : "); Scanner sn = new Scanner(System.in);
-            this.port = Integer.parseInt(sn.next());
+            Scanner sn = new Scanner(System.in);
+            envoieMessage(sn.nextLine());
         }
     }
 
-    /**
-     * initialisation de l'adresse ip de connexion.
-     */
-    private void initIp()
-    {
-        System.out.print("Donner l'adresse ip de connexion : "); Scanner sn = new Scanner(System.in); try
-    {
-        this.ipServer = InetAddress.getByName(sn.next());
-
-
-    } catch (UnknownHostException e)
-    {
-        this.log.error("L'adresse ip n'est pas bon."); initIp();
-    }
-    }
 
     /**
      * méthode qui intercepte les message envoyé par le serveur et les affiche dans la console.
@@ -111,14 +63,17 @@ class Client
     {
         try
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            String mess = in.readLine();
-            while (mess != null)
+            while (this.socket.isConnected())
             {
-                System.out.println(mess);
-                mess = in.readLine();
+                String mess = bufferedReader.readLine();
+                while (mess != null)
+                {
+                    System.out.println(mess);
+                    mess = bufferedReader.readLine();
+                }
             }
+            log.fatal("Le serveur ne repond pas !!");
+            System.exit(-1);
 
         } catch (Exception e)
         {
@@ -129,18 +84,29 @@ class Client
     /**
      * méthode qui envoie le message en parametre au serveur en parametre
      */
-    private void envoieMessage(String message, Socket socket)
+    private void envoieMessage(String message)
     {
         try
         {
-
-            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            PrintWriter pw = new PrintWriter(wr, true);
-            pw.println(message);
+            this.bufferedWriter.write(message);
+            this.bufferedWriter.newLine();
+            this.bufferedWriter.flush();
 
         } catch (IOException e)
         {
-            e.printStackTrace();
+            log.fatal("Le serveur ne repond pas !!");
+            System.exit(-1);
         }
+    }
+
+    private void listenSocket()
+    {
+        Thread ecouteurBluetooth =new Thread(() ->
+        {
+            while (socket.isConnected()){
+                litMess();
+            }
+        });
+        ecouteurBluetooth.start();
     }
 }
