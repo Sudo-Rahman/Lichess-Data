@@ -23,9 +23,9 @@ class Serveur
 {
 
     private final int maxClients;
-    private int nbThreadsPerClient;
-    private List<ConnexionClient> lstConnexion;
-    private ServerSocket serverSocket;
+    private final int nbThreadsPerClient;
+    private final List<ConnexionClient> lstConnexion;
+    private final ServerSocket serverSocket;
     private static final Log log = new Log();
 
     protected Serveur(ServerSocket serverSocket, int maxClients)
@@ -33,6 +33,7 @@ class Serveur
         this.lstConnexion = new ArrayList<>(maxClients);
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
+        this.nbThreadsPerClient =Runtime.getRuntime().availableProcessors() / maxClients;
     }
 
     /**
@@ -53,7 +54,7 @@ class Serveur
                 } else
                 {
                     log.debug(client.toString());
-                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient);
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient,this.lstConnexion);
                     this.lstConnexion.add(connexionClient);
                     connexionClient.start();
                 }

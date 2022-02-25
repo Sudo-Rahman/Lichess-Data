@@ -15,9 +15,11 @@ package com.black.ops;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 class ConnexionClient extends Thread
 {
+    private final List<ConnexionClient> lstConnexion;
     private String username;
     private Socket socketClient;
     private final int nbMaxThread;
@@ -25,8 +27,9 @@ class ConnexionClient extends Thread
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    protected ConnexionClient(Socket clientSocket, int nbMaxThread)
+    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst)
     {
+        this.lstConnexion = lst;
         try
         {
             this.socketClient = clientSocket;
@@ -98,12 +101,17 @@ class ConnexionClient extends Thread
     {
         try
         {
-                String mess = bufferedReader.readLine();
-                while (mess != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
+                String mess;
+                while ((mess = bufferedReader.readLine()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
                 {
+                    if(Integer.parseInt(mess) == -1){
+                        log.info(getUsername()+ " à quitté le serveur");
+                        this.lstConnexion.remove(this);
+                        closeSocket();
+                        break;
+                    }
 //                    System.out.println(this.socketClient.getPort() + "");
                     System.out.println(mess);
-                    mess = bufferedReader.readLine();
                 }
 
         } catch (Exception e)

@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 class Client
 {
-    private String username;
+    private final String username;
     private Socket socket;
     private static final Log log = new Log();
     private BufferedReader bufferedReader;
@@ -40,7 +40,6 @@ class Client
         {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -50,6 +49,7 @@ class Client
     {
         envoieMessage(this.username);
         listenSocket();
+
         while (this.socket.isConnected())
         {
             Scanner sn = new Scanner(System.in);
@@ -63,23 +63,21 @@ class Client
      */
     private void litMess()
     {
+        String mess;
         try
         {
-            while (this.socket.isConnected())
+            // permet d'intercepter tout le message y compris si ya des sauts de ligne tant que le serveur est connecté et qu'il y a un message.
+            while ((mess = bufferedReader.readLine()) != null && this.socket.isConnected())
             {
-                String mess = bufferedReader.readLine();
-                while (mess != null)// permet d'intercepter tout le message y compris si ya des sauts de ligne.
-                {
-                    System.out.println(mess);
-                    mess = bufferedReader.readLine();
-                }
+                System.out.println(mess);
             }
-            log.fatal("Le serveur ne repond pas !!");
+            log.fatal("Le serveur ne repond pas !!");// on quitte le programme si le serveur n'est plus connecté ou envoie des null.
             System.exit(-1);
 
         } catch (Exception e)
         {
-            e.printStackTrace();
+            log.fatal("Le serveur ne repond pas !!");
+            System.exit(-1);
         }
     }
 
@@ -106,12 +104,17 @@ class Client
      */
     private void listenSocket()
     {
-        Thread ecouteurBluetooth =new Thread(() ->
-        {
-            while (socket.isConnected()){
-                litMess();
-            }
-        });
+        Thread ecouteurBluetooth = new Thread(this::litMess);
         ecouteurBluetooth.start();
+    }
+
+    private void closeSocket(){
+        try
+        {
+            this.socket.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
