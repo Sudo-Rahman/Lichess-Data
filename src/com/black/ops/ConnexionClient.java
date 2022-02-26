@@ -83,13 +83,16 @@ class ConnexionClient extends Thread
      */
     private String afficheChoix()
     {
-        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
+        return "\033[H\033[2J"+
+                Colors.PURPLE_UNDERLINED+ "Bonjour "+ this.username + " saisissez votre choix :\n\n" + Colors.reset+
+                Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
                 Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
                 Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
                 Colors.green + "4 / Consulter les parties les plus courtes." + Colors.reset + "\n" +
                 Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
                 Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
-                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties" + Colors.reset;
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
+                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
 //        System.out.println(Colors.green + "" + Colors.reset);
 //        System.out.println(Colors.cyan + "" + Colors.reset);
     }
@@ -101,18 +104,22 @@ class ConnexionClient extends Thread
     {
         try
         {
-                String mess;
-                while ((mess = bufferedReader.readLine()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
+            String mess;
+            while ((mess = bufferedReader.readLine()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
+            {
+                if (Integer.parseInt(mess) == -1)
                 {
-                    if(Integer.parseInt(mess) == -1){
-                        log.info(getUsername()+ " à quitté le serveur");
-                        this.lstConnexion.remove(this);
-                        closeAll();
-                        break;
-                    }
-//                    System.out.println(this.socketClient.getPort() + "");
-                    System.out.println(mess);
+                    log.info(getUsername() + " à quitté le serveur");
+                    this.lstConnexion.remove(this);
+                    closeAll();
+                    break;
                 }
+//                    System.out.println(this.socketClient.getPort() + "");
+                System.out.println(mess);
+            }
+            log.info(getUsername() + " à quitté le serveur");
+            this.lstConnexion.remove(this);
+            closeAll();
 
         } catch (Exception e)
         {
@@ -120,7 +127,8 @@ class ConnexionClient extends Thread
         }
     }
 
-    protected void closeAll(){
+    protected void closeAll()
+    {
         try
         {
             this.socketClient.close();

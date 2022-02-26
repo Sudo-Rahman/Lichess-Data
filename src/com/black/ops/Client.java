@@ -49,10 +49,16 @@ class Client
     {
         envoieMessage(this.username);
         listenSocket();
-
+        String message;
         while (this.socket.isConnected())
         {
             Scanner sn = new Scanner(System.in);
+            message = sn.nextLine();
+            if(message.equals("-1")){
+                closeAll();
+                log.info("Vous vous etes deconnecter");
+                System.exit(-1);
+            }
             envoieMessage(sn.nextLine());
         }
     }
@@ -71,8 +77,6 @@ class Client
             {
                 System.out.println(mess);
             }
-            log.fatal("Le serveur ne repond pas !!");// on quitte le programme si le serveur n'est plus connecté ou envoie des null.
-            System.exit(-1);
 
         } catch (Exception e)
         {
