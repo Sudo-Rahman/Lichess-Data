@@ -78,6 +78,7 @@ class Serveur
             bufferedWriter.write(message);
             bufferedWriter.newLine();
             bufferedWriter.flush();
+            bufferedWriter.close();
 
         } catch (IOException e)
         {
@@ -94,7 +95,7 @@ class Serveur
         {
             for (ConnexionClient connexionClient : this.lstConnexion)
             {
-                connexionClient.closeSocket();
+                connexionClient.closeAll();
             }
             if (this.serverSocket != null)
             {

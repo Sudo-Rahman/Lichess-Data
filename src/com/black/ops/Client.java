@@ -108,10 +108,12 @@ class Client
         ecouteurBluetooth.start();
     }
 
-    private void closeSocket(){
+    private void closeAll(){
         try
         {
             this.socket.close();
+            this.bufferedReader.close();
+            this.bufferedWriter.close();
         } catch (IOException e)
         {
             e.printStackTrace();

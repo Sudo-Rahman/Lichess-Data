@@ -107,7 +107,7 @@ class ConnexionClient extends Thread
                     if(Integer.parseInt(mess) == -1){
                         log.info(getUsername()+ " à quitté le serveur");
                         this.lstConnexion.remove(this);
-                        closeSocket();
+                        closeAll();
                         break;
                     }
 //                    System.out.println(this.socketClient.getPort() + "");
@@ -120,10 +120,12 @@ class ConnexionClient extends Thread
         }
     }
 
-    protected void closeSocket(){
+    protected void closeAll(){
         try
         {
             this.socketClient.close();
+            this.bufferedReader.close();
+            this.bufferedWriter.close();
         } catch (IOException e)
         {
             e.printStackTrace();
