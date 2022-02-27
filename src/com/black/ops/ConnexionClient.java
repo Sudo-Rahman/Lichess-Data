@@ -53,7 +53,7 @@ class ConnexionClient extends Thread
         {
             e.printStackTrace();
         }
-        System.out.println("Connexion avec : " + this.username);
+        System.out.println("Connexion avec : " + getUsername());
         envoieMessage(afficheChoix());
         litMess();
 
@@ -105,9 +105,16 @@ class ConnexionClient extends Thread
         try
         {
             String mess;
+            int nb= 0;
             while ((mess = bufferedReader.readLine()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
             {
-                if (Integer.parseInt(mess) == -1)
+                try
+                {
+                    nb = Integer.parseInt(mess);
+                }catch (Exception e){
+                    log.warning("Le client n'envoie pas des nombres");
+                }
+                if (nb == -1)
                 {
                     log.info(getUsername() + " à quitté le serveur");
                     this.lstConnexion.remove(this);

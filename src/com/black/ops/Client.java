@@ -50,16 +50,15 @@ class Client
         envoieMessage(this.username);
         listenSocket();
         String message;
-        while (this.socket.isConnected())
+        while (!this.socket.isClosed() && this.socket.isConnected())
         {
             Scanner sn = new Scanner(System.in);
             message = sn.nextLine();
-            if(message.equals("-1")){
+            if (message.equals("-1"))
+            {
                 closeAll();
                 log.info("Vous vous etes deconnecter");
-                System.exit(-1);
-            }
-            envoieMessage(sn.nextLine());
+            } else envoieMessage(message);
         }
     }
 
@@ -70,20 +69,27 @@ class Client
     private void litMess()
     {
         String mess;
-        try
+        // permet d'intercepter tout le message y compris si ya des sauts de ligne tant que le serveur est connecté et qu'il y a un message.
+        while (!this.socket.isClosed() && this.socket.isConnected())
         {
-            // permet d'intercepter tout le message y compris si ya des sauts de ligne tant que le serveur est connecté et qu'il y a un message.
-            while ((mess = bufferedReader.readLine()) != null && this.socket.isConnected())
+            try
             {
-                System.out.println(mess);
-            }
+                if ((mess = bufferedReader.readLine()) != null) System.out.println(mess);
+                else// si le serveur a été fermé par force et que son socket n'a pas été fermé il enverra que des null, donc on quitte le programme
+                {
+                    log.fatal("Le serveur ne repond pas !!");
+                    closeAll();
+                    System.exit(-1);
+                }
 
-        } catch (Exception e)
-        {
-            log.fatal("Le serveur ne repond pas !!");
-            System.exit(-1);
+            } catch (IOException e)
+            {
+                closeAll();
+                break;
+            }
         }
     }
+
 
     /**
      * envoie le message en parametre au serveur.
@@ -112,7 +118,8 @@ class Client
         ecouteurBluetooth.start();
     }
 
-    private void closeAll(){
+    private void closeAll()
+    {
         try
         {
             this.socket.close();
