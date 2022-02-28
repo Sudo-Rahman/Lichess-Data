@@ -12,15 +12,17 @@
  */
 
 
-package com.black.ops;
+package client;
 
+
+import utils.Log;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
 
-class Client
+public class Client
 {
     private final String username;
     private Socket socket;
@@ -28,7 +30,7 @@ class Client
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    protected Client(Socket socket, String username)
+    public Client(Socket socket, String username)
     {
         this.username = username;
         try

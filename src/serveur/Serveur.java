@@ -11,7 +11,10 @@
  *
  */
 
-package com.black.ops;
+package serveur;
+
+import serveur.ConnexionClient;
+import utils.Log;
 
 import java.net.*;
 import java.io.*;
@@ -19,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class Serveur
+public class Serveur
 {
 
     private final int maxClients;
@@ -28,7 +31,7 @@ class Serveur
     private final ServerSocket serverSocket;
     private static final Log log = new Log();
 
-    protected Serveur(ServerSocket serverSocket, int maxClients)
+    public Serveur(ServerSocket serverSocket, int maxClients)
     {
         this.lstConnexion = new ArrayList<>(maxClients);
         this.serverSocket = serverSocket;

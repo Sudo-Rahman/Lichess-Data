@@ -12,7 +12,7 @@
  */
 
 
-package com.black.ops;
+package utils;
 
 public class Colors
 {

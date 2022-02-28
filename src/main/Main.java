@@ -11,7 +11,12 @@
  *
  */
 
-package com.black.ops;
+package main;
+
+import client.Client;
+import serveur.Serveur;
+import utils.Colors;
+import utils.InitParametre;
 
 import java.util.Scanner;
 
