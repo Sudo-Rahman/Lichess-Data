@@ -13,12 +13,14 @@
 
 package serveur;
 
+import client.Client;
 import utils.Log;
 
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Serveur
@@ -49,6 +51,9 @@ public class Serveur
             while (!this.serverSocket.isClosed())
             {
                 Socket client = this.serverSocket.accept();
+                ObjectInputStream oin = new ObjectInputStream(client.getInputStream());
+                Client test = (Client) oin.readObject();
+                System.out.println(test.toString());
                 if (this.maxClients <= this.lstConnexion.size())
                 {
                     envoieMessage("Trop de clients, retentez dans quelques instants", client);
