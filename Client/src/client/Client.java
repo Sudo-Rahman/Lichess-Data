@@ -54,7 +54,6 @@ public class Client
             objectOutputStream.writeObject(this.clientInfo.getUsername());
         } catch (IOException e)
         {
-            e.printStackTrace();
             log.error("L'objet n'a pas put etre envoyé !!");
         }
         listenSocket();
@@ -70,6 +69,7 @@ public class Client
             } else envoieMessage(message);
         }
     }
+
 
 
     /**
@@ -134,7 +134,7 @@ public class Client
             this.objectOutputStream.close();
         } catch (IOException e)
         {
-            e.printStackTrace();
+            System.exit(-1);
         }
     }
 }

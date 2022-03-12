@@ -14,6 +14,7 @@
 package serveur;
 
 
+import recherche.Recherche;
 import recherche.RecherchePartieSpecifique;
 import utils.Colors;
 import utils.Log;
@@ -137,7 +138,11 @@ class ConnexionClient extends Thread
                 {
                     case 1 -> {
                         RecherchePartieSpecifique recherche = new RecherchePartieSpecifique("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn", this.objectInputStream, this.writer);
-                        recherche.cherche();
+                        Thread th = new Thread(recherche::cherche);
+                        th.setPriority(Thread.MAX_PRIORITY);
+                        th.start();
+                        recherche.lock();
+                        System.out.println("aaaa");
                     }
                 }
             }

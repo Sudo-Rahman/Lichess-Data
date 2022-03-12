@@ -1,3 +1,18 @@
+/*
+ * Nom de classe : partie
+ *
+ * Description   : Class partie qui regroupe tous les elements d'une partie, il n'y a pas tout comme "TimeControl" c'est un choix personnel.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 12/03/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
+
+
 package partie;
 
 
@@ -22,7 +37,11 @@ public class Partie
     private String premierCoup;
     private String termination;
 
-    public Partie(List<String> allLines) throws ParseException
+
+    /**
+     * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
+     */
+    public Partie(List<String> allLines)
     {
         for (String str : allLines)
         {
@@ -38,7 +57,13 @@ public class Partie
                     if (buff[1].charAt(0) == '1') {this.gagnant = this.blanc;} else this.gagnant = this.noir;
                 }
                 case "UTCDate" -> {
-                    this.utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy.MM.dd").parse(buff[1]));
+                    try
+                    {
+                        this.utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy.MM.dd").parse(buff[1]));
+                    } catch (ParseException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
                 case "UTCTime" -> {this.utcTime = buff[1];}
                 case "WhiteElo" -> {this.whiteElo = Integer.parseInt(buff[1]);}
@@ -49,9 +74,8 @@ public class Partie
         }
         try
         {
-
-            this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];
-            if (this.premierCoup.equals(this.resultat)) {this.premierCoup = "";}
+            this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
+            if (this.premierCoup.equals(this.resultat)) {this.premierCoup = "";}// si le premier coup est egale au resultat alors il n'y a pas de premier coup
         } catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
             System.out.println("Impossible de trouver le premier coup!!");
