@@ -1,6 +1,8 @@
 package partie;
 
 
+import utils.Colors;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -24,6 +26,15 @@ public class Partie
         else
             this.gagnant = this.noir;
         this.stringPartieLink = allLines.get(1).split("\"")[1];
+        this.nameOuverture = allLines.get(12).split("\"")[2];
+        System.out.println(allLines.get(12));
+    }
 
+
+    public String toString()
+    {
+        return "Joueur blanc : " + Colors.cyan+blanc+Colors.reset + " contre joueur noir : " + Colors.green+noir+Colors.reset + ".\n" +
+                "Elo " + Colors.cyan+blanc+Colors.reset + " : " + whiteElo + ", elo " + Colors.green+noir+Colors.reset + " : " + blackElo + ".\n" +
+                "Ouverture : " + nameOuverture + ".\n";
     }
 }

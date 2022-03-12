@@ -3,27 +3,27 @@ package partie;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Time;
+import java.util.*;
 
 
 public class testMain
 {
     public static void main(String[] args)
     {
-        File testFile = new File("/Users/sr-71/Documents/GitHub/Projet-INFO-4B/lichess_db_standard_rated_2016-07.pgn");
+        File testFile = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn");
         FileReader reader;
         BufferedReader bufferedReader = null;
         List<String> lst = new ArrayList<>();
-        int nbLines=0;
-        try
-        {
-            nbLines = (int) Files.lines(Path.of(testFile.getAbsolutePath())).count();
-            System.out.println(""+nbLines);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        int nbLines = 0;
+//        try
+//        {
+//            nbLines = (int) Files.lines(Path.of(testFile.getAbsolutePath())).count();
+//            System.out.println(""+nbLines);
+//        } catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
 
         {
             try
@@ -35,20 +35,35 @@ public class testMain
                 e.printStackTrace();
             }
         }
-        int compt = 0;
-        while (compt < nbLines)
+        int compt = 1;
+        HashMap<Long, Partie> partieHashMap = new HashMap<>();
+        Date d = new Date();
+        long t = d.getTime();
+        System.out.println(t);
+        String ligne = "";
+        long partiecount = 0L;
+        try
         {
-            try
+            while ((ligne = bufferedReader.readLine()) != null && partiecount < 1000)
             {
-                if(compt >= nbLines - 18) lst.add(bufferedReader.readLine());
+                lst.add(ligne);
                 compt++;
-            } catch (IOException e)
-            {
-                e.printStackTrace();
+                if (compt == 18)
+                {
+                    compt = 1;
+                    partieHashMap.put(partiecount, new Partie(lst));
+                    partiecount++;
+
+                }
+
             }
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
-        System.out.println(lst);
-        Partie p = new Partie(lst);
+        System.out.println(partieHashMap.get(1L).toString());
+        t = d.getTime() - t;
     }
 }
 
