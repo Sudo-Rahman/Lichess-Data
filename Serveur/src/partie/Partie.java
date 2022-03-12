@@ -1,4 +1,4 @@
-package recherche;
+package partie;
 
 
 import utils.Colors;

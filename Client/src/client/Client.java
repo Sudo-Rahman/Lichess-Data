@@ -28,7 +28,6 @@ public class Client
     private Socket socket;
     private static final Log log = new Log();
     private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
     private ObjectOutputStream objectOutputStream;
 
     public Client(Socket socket, ClientInfoImp info)
@@ -132,7 +131,7 @@ public class Client
         {
             this.socket.close();
             this.bufferedReader.close();
-            this.bufferedWriter.close();
+            this.objectOutputStream.close();
         } catch (IOException e)
         {
             e.printStackTrace();

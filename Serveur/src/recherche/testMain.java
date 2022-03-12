@@ -1,5 +1,7 @@
 package recherche;
 
+import partie.Partie;
+
 import java.io.*;
 import java.util.*;
 

@@ -18,9 +18,8 @@ import client.Client;
 import client.info.ClientInfoImp;
 import utils.Log;
 
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.*;
+import java.util.Scanner;
 
 public class MainClient
 {
@@ -47,7 +46,7 @@ public class MainClient
         {
 //            ipserveur = InetAddress.getByName(sn.next());
 //            Client client = new Client(new Socket(ipserveur,port),username);
-            Client client = new Client(new Socket("localhost",1025), new ClientInfoImp(username));
+            Client client = new Client(new Socket("localhost", 1025), new ClientInfoImp(username));
             client.startClient();
         } catch (Exception e)
         {
