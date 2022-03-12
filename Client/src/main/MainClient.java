@@ -15,6 +15,7 @@
 package main;
 
 import client.Client;
+import client.info.ClientInfoImp;
 import utils.Log;
 
 import java.net.InetAddress;
@@ -39,14 +40,14 @@ public class MainClient
 //            port = Integer.parseInt(sn.next());
 //        }
 
-        System.out.print("Donner l'adresse ip de connexion : ");
-        InetAddress ipserveur;
+//        System.out.print("Donner l'adresse ip de connexion : ");
+//        InetAddress ipserveur;
 
         try
         {
 //            ipserveur = InetAddress.getByName(sn.next());
 //            Client client = new Client(new Socket(ipserveur,port),username);
-            Client client = new Client(new Socket("localhost",1025),username);
+            Client client = new Client(new Socket("localhost",1025), new ClientInfoImp(username));
             client.startClient();
         } catch (Exception e)
         {

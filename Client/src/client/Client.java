@@ -14,6 +14,7 @@ package client;
  */
 
 
+import client.info.ClientInfoImp;
 import utils.Log;
 
 import java.io.*;
@@ -23,20 +24,21 @@ import java.util.Scanner;
 
 public class Client
 {
-    private final String username;
+    private ClientInfoImp clientInfo;
     private Socket socket;
     private static final Log log = new Log();
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
+    private ObjectOutputStream objectOutputStream;
 
-    public Client(Socket socket, String username)
+    public Client(Socket socket, ClientInfoImp info)
     {
-        this.username = username;
+        this.clientInfo = info;
         try
         {
             this.socket = socket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
+            this.objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -48,7 +50,14 @@ public class Client
      */
     public void startClient()
     {
-        envoieMessage(this.username);
+        try
+        {
+            objectOutputStream.writeObject(this.clientInfo.getUsername());
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            log.error("L'objet n'a pas put etre envoyé !!");
+        }
         listenSocket();
         String message;
         while (!this.socket.isClosed() && this.socket.isConnected())
@@ -99,9 +108,7 @@ public class Client
     {
         try
         {
-            this.bufferedWriter.write(message);
-            this.bufferedWriter.newLine();
-            this.bufferedWriter.flush();
+            this.objectOutputStream.writeObject(message);
 
         } catch (IOException e)
         {
