@@ -1,3 +1,15 @@
+/*
+ * Nom de classe : InitChoix
+ *
+ * Description   : Classe qui gere tous les choix du client.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 13/03/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ */
+
 package choix;
 
 import recherche.partie.specifique.RechercheEnFonctionEloJoueur;
@@ -13,7 +25,7 @@ public class InitChoix
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
     private final Log log = new Log();
-    private final String pathFile = "/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn";
+    private final String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-07.pgn";
 
     public InitChoix(int choix, ObjectInputStream o, BufferedWriter b)
     {
