@@ -1,7 +1,7 @@
 /*
  * Nom de classe : partie
  *
- * Description   : Class partie qui regroupe tous les elements d'une partie, il n'y a pas tout comme "TimeControl" c'est un choix personnel.
+ * Description   : Class partie qui regroupe tous les elements d'une partie, il n'y a pas tout comme le "TimeControl" c'est un choix personnel.
  *
  * Version       : 1.0
  *
@@ -34,9 +34,22 @@ public class Partie
     private int whiteElo;
     private int blackElo;
     private String ouverture;
+    private String lstCoup;
     private String premierCoup;
     private String termination;
 
+    /**
+     * accesseur
+     */
+    public int getWhiteElo()
+    {
+        return whiteElo;
+    }
+
+    public int getBlackElo()
+    {
+        return blackElo;
+    }
 
     /**
      * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
@@ -49,9 +62,9 @@ public class Partie
             buff[0] = buff[0].replace(" ", "");
             switch (buff[0])
             {
-                case "White" -> {this.blanc = buff[1];}
-                case "Black" -> {this.noir = buff[1];}
-                case "Site" -> {this.partieLink = buff[1];}
+                case "White" -> this.blanc = buff[1];
+                case "Black" -> this.noir = buff[1];
+                case "Site" -> this.partieLink = buff[1];
                 case "Result" -> {
                     this.resultat = buff[1];
                     if (buff[1].charAt(0) == '1') {this.gagnant = this.blanc;} else this.gagnant = this.noir;
@@ -65,17 +78,18 @@ public class Partie
                         e.printStackTrace();
                     }
                 }
-                case "UTCTime" -> {this.utcTime = buff[1];}
-                case "WhiteElo" -> {this.whiteElo = Integer.parseInt(buff[1]);}
-                case "BlackElo" -> {this.blackElo = Integer.parseInt(buff[1]);}
+                case "UTCTime" -> this.utcTime = buff[1];
+                case "WhiteElo" -> this.whiteElo = Integer.parseInt(buff[1]);
+                case "BlackElo" -> this.blackElo = Integer.parseInt(buff[1]);
                 case "Opening" -> {if (buff[1].equals("?")) {this.ouverture = "";} else this.ouverture = buff[1];}
-                case "Termination" -> {this.termination = buff[1];}
+                case "Termination" -> this.termination = buff[1];
             }
         }
         try
         {
             this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
             if (this.premierCoup.equals(this.resultat)) {this.premierCoup = "";}// si le premier coup est egale au resultat alors il n'y a pas de premier coup
+            else this.lstCoup = allLines.get(allLines.size() - 1);
         } catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
             System.out.println("Impossible de trouver le premier coup!!");
@@ -92,6 +106,7 @@ public class Partie
                 "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
                 "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
                 "Etat de la partie : " + this.termination + ".\n" +
+                "Partie : "+lstCoup+"\n"+
                 "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

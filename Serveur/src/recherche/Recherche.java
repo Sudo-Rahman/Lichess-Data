@@ -20,12 +20,14 @@ import java.io.*;
 public abstract class Recherche
 {
     private BufferedReader fileReader;
-    private ObjectInputStream clientReader;
-    private BufferedWriter clientWriter;
-    public final Log log = new Log();
+    private final ObjectInputStream clientReader;
+    private final BufferedWriter clientWriter;
+    protected final Log log = new Log();
+
 
     public Recherche(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter)
     {
+
         this.clientReader = clientReader;
         this.clientWriter = clientWriter;
         try
@@ -38,18 +40,6 @@ public abstract class Recherche
     }
 
     public abstract void cherche();
-
-    public abstract String toString();
-
-    public BufferedWriter getBufferedWriter()
-    {
-        return clientWriter;
-    }
-
-    public ObjectInputStream getClientReader()
-    {
-        return clientReader;
-    }
 
     public BufferedReader getFileReader()
     {
@@ -66,7 +56,6 @@ public abstract class Recherche
         } catch (IOException e)
         {
             log.error("Impossible d'envoyer le message");
-            System.exit(-1);
         }
     }
 
@@ -79,7 +68,6 @@ public abstract class Recherche
         } catch (Exception e)
         {
             log.error("Impossible de lire le message");
-            System.exit(-1);
         }
         return mess;
     }
@@ -93,41 +81,10 @@ public abstract class Recherche
         } catch (Exception e)
         {
             log.error("Impossible de lire l'entier");
-            System.exit(-1);
         }
         return nb;
     }
 
-    public void lock(){
-        try
-        {
-            System.out.println("tread lock");
-            this.wait();
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void closeReader(){
-        try
-        {
-            this.clientReader.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void closeWriter(){
-        try
-        {
-            this.clientWriter.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     public void closeFileReader(){
         try

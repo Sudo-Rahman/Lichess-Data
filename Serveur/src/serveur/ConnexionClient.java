@@ -14,8 +14,7 @@
 package serveur;
 
 
-import recherche.Recherche;
-import recherche.RecherchePartieSpecifique;
+import choix.InitChoix;
 import utils.Colors;
 import utils.Log;
 
@@ -102,7 +101,7 @@ class ConnexionClient extends Thread
                 Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
                 Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
                 Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
-                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
+                Colors.RED_BOLD_BRIGHT + "0 / Pour quitter le serveur" + Colors.reset;
 //        Colors.green + "" + Colors.reset;
 //        Colors.cyan + "" + Colors.reset;
     }
@@ -125,7 +124,7 @@ class ConnexionClient extends Thread
                 {
                     log.warning("Le client n'envoie pas des nombres");
                 }
-                if (nb == -1)
+                if (nb == 0)
                 {
                     log.info(getUsername() + " à quitté le serveur");
                     this.lstConnexion.remove(this);
@@ -134,17 +133,7 @@ class ConnexionClient extends Thread
                 }
 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
-                switch (nb)
-                {
-                    case 1 -> {
-                        RecherchePartieSpecifique recherche = new RecherchePartieSpecifique("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn", this.objectInputStream, this.writer);
-                        Thread th = new Thread(recherche::cherche);
-                        th.setPriority(Thread.MAX_PRIORITY);
-                        th.start();
-                        recherche.lock();
-                        System.out.println("aaaa");
-                    }
-                }
+                new InitChoix(nb, objectInputStream, writer);// gere toute la partie choix du client
             }
 
         } catch (Exception e)
@@ -177,4 +166,5 @@ class ConnexionClient extends Thread
         this.lstConnexion.remove(this);
         closeAll();
     }
+
 }
