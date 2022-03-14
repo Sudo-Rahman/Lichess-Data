@@ -15,6 +15,7 @@ package serveur;
 
 
 import choix.InitChoix;
+import client.info.ClientInfo;
 import utils.Colors;
 import utils.Log;
 
@@ -26,7 +27,7 @@ import java.util.List;
 class ConnexionClient extends Thread
 {
     private final List<ConnexionClient> lstConnexion;
-    private String username;
+    private ClientInfo username;
     private Socket socketClient;
     private final int nbMaxThread;
     private static final Log log = new Log();
@@ -52,12 +53,14 @@ class ConnexionClient extends Thread
     public void run()
     {
 
-        System.out.println(this.objectInputStream.toString());
+//        System.out.println(this.objectInputStream.toString());
         try
         {
-            this.username = (String) objectInputStream.readObject();
+            this.username = (ClientInfo) objectInputStream.readObject();
+            System.out.println(this.username.getUsername());
         } catch (Exception e)
         {
+            System.out.println("sgsrgs");
             log.error(e.toString());
             this.lstConnexion.remove(this);
             closeAll();
@@ -157,7 +160,7 @@ class ConnexionClient extends Thread
 
     public String getUsername()
     {
-        return this.username;
+        return this.username.getUsername();
     }
 
     private void connexionFailed()

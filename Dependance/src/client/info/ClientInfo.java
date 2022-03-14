@@ -1,17 +1,17 @@
-package client;
+package client.info;
 
 import java.io.Serializable;
 
-public class ClientInfoImp implements Serializable
+public class ClientInfo implements Serializable
 {
-    private String username;
+    private final String username;
 
-    public ClientInfoImp(String username)
+    public ClientInfo(String username)
     {
         this.username = username;
     }
 
-    
+
     public String getUsername()
     {
         return username;

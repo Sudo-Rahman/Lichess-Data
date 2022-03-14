@@ -14,7 +14,7 @@ package client;
  */
 
 
-import client.info.ClientInfoImp;
+import client.info.ClientInfo;
 import utils.Log;
 
 import java.io.*;
@@ -24,13 +24,13 @@ import java.util.Scanner;
 
 public class Client
 {
-    private ClientInfoImp clientInfo;
+    private final ClientInfo clientInfo;
     private Socket socket;
     private static final Log log = new Log();
     private BufferedReader bufferedReader;
     private ObjectOutputStream objectOutputStream;
 
-    public Client(Socket socket, ClientInfoImp info)
+    public Client(Socket socket, ClientInfo info)
     {
         this.clientInfo = info;
         try
@@ -51,7 +51,7 @@ public class Client
     {
         try
         {
-            objectOutputStream.writeObject(this.clientInfo.getUsername());
+            objectOutputStream.writeObject(this.clientInfo);
         } catch (IOException e)
         {
             log.error("L'objet n'a pas put etre envoyé !!");
