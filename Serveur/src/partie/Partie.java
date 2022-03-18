@@ -80,7 +80,7 @@ public class Partie implements Serializable
                 }
                 case "UTCTime" -> this.utcTime = buff[1];
                 case "WhiteElo" -> {try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
-                case "BlackElo" ->  {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
+                case "BlackElo" -> {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
                 case "Opening" -> {if (buff[1].equals("?")) {this.ouverture = "";} else this.ouverture = buff[1];}
                 case "Termination" -> this.termination = buff[1];
             }

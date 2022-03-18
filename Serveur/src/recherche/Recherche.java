@@ -17,6 +17,8 @@ import maps.MapsObjets;
 import utils.Log;
 
 import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 public abstract class Recherche
 {
@@ -39,7 +41,7 @@ public abstract class Recherche
         {
             log.error("Impossible de trouver le fichier !!");
         }
-        this.mapObjets = new MapsObjets(pathFile);
+        this.mapObjets = mapObjets;
     }
 
     public abstract void cherche();
@@ -97,5 +99,31 @@ public abstract class Recherche
         {
             e.printStackTrace();
         }
+    }
+
+
+    public Map<String, List<long[]>> getNameMap()
+    {
+        return mapObjets.getNameMap();
+    }
+
+    public Map<Integer, List<long[]>> getEloMap()
+    {
+        return mapObjets.getEloMap();
+    }
+
+    public Map<String, List<long[]>> getUtcDateMap()
+    {
+        return mapObjets.getUtcDateMap();
+    }
+
+    public Map<String, List<long[]>> getUtcTimeMap()
+    {
+        return mapObjets.getUtcTimeMap();
+    }
+
+    public Map<String, List<long[]>> getOpenningMap()
+    {
+        return mapObjets.getOpenningMap();
     }
 }

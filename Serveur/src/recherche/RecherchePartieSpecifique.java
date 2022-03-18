@@ -16,6 +16,9 @@ public abstract class RecherchePartieSpecifique extends Recherche
     protected List<String> lstLigne;
     protected long tempsRecherche;
     protected int nbParties;
+    protected List<long[]> lstLigneParties;
+    protected int maxNbParties = 1000000;
+
 
 
     public RecherchePartieSpecifique(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
@@ -23,7 +26,11 @@ public abstract class RecherchePartieSpecifique extends Recherche
         super(pathFile, clientReader, clientWriter, mapObjets);
         this.lstPartie = new ArrayList<>();
         this.lstLigne = new ArrayList<>();
+        this.lstLigneParties = new ArrayList<>();
     }
+
+    public abstract void calcule();
+    public  abstract void initDemande();
 
     @Override
     public String toString()
@@ -40,7 +47,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
             mess.append("Rien n'a été trouvé");
             mess.append(Colors.BLUE_BOLD + "\n-----------------------------------------------------\n" + Colors.reset);
         }
-        mess.append("Le temps de recherche est de : ").append(this.tempsRecherche / 1000).append(" secondes.\n");
+        mess.append("Le temps de recherche est de : ").append(this.tempsRecherche / 1000).append(" secondes. Nombre partie : ").append(lstPartie.size()).append(".\n");
 
         return mess.toString();
     }

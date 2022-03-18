@@ -13,14 +13,15 @@
 package choix;
 
 import maps.MapsObjets;
+import recherche.Recherche;
 import recherche.partie.specifique.RechercheEnFonctionEloJoueur;
+import recherche.partie.specifique.RecherchePartieJoueur;
 import recherche.partie.specifique.RechereEnFonctionDuPremierCoup;
 import utils.Colors;
 import utils.Log;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
-import java.util.Map;
 
 public class InitChoix
 {
@@ -38,9 +39,8 @@ public class InitChoix
 
         switch (choix)
         {
-            case 1 -> {
-                choix1();
-            }
+            case 1 -> choix1();
+            case 2 -> choix2();
         }
     }
 
@@ -58,7 +58,7 @@ public class InitChoix
         switch (choix)
         {
             case 1 -> {
-                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(this.mapObjets.getPathFile(), objectInputStream, writer,mapObjets);
+                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
                 recherche.cherche();
             }
             case 2 -> {
@@ -66,6 +66,12 @@ public class InitChoix
                 recherche.cherche();
             }
         }
+    }
+
+    private void choix2()
+    {
+        RecherchePartieJoueur recherche = new RecherchePartieJoueur(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
+        recherche.cherche();
     }
 
     /**

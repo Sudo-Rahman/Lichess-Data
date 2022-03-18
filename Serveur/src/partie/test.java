@@ -1,6 +1,7 @@
 package partie;
 
 import maps.MapsObjets;
+import recherche.partie.specifique.RechereEnFonctionDuPremierCoup;
 
 import java.io.*;
 
@@ -27,6 +28,5 @@ public class test
 //            e.printStackTrace();
 //        }
 
-        MapsObjets r = new MapsObjets(f.getAbsolutePath());
     }
 }

@@ -3,45 +3,35 @@ package recherche.partie.specifique;
 import maps.MapsObjets;
 import partie.Partie;
 import recherche.RecherchePartieSpecifique;
-import utils.Colors;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
+public class RecherchePartieJoueur extends RecherchePartieSpecifique
 {
+    private String joueur;
+    private final Map<String, List<long[]>> nameMap;
 
-    private String coup;
 
-    public RechereEnFonctionDuPremierCoup(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RecherchePartieJoueur(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
         super(pathFile, clientReader, clientWriter, mapObjets);
+        this.nameMap = getNameMap();
     }
-
-    @Override
-    public void initDemande()
-    {
-        envoieMessage("Donner le premier coup, ex : \"d4\"");
-        this.coup = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
-        nbParties = litInt();
-    }
-
 
     @Override
     public void cherche()
     {
         initDemande();
-        if (getOpenningMap().containsKey(this.coup))
+        if (this.nameMap.containsKey(this.joueur))
         {
-            this.lstLigneParties = getOpenningMap().get(this.coup);
+            this.lstLigneParties = this.nameMap.get(this.joueur);
             if (nbParties == -1)
             {
-                nbParties = Math.min(getOpenningMap().get(this.coup).size(), this.maxNbParties);
+                nbParties = Math.min(this.nameMap.get(this.joueur).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -89,4 +79,14 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         this.lstPartie = null;
         System.gc();
     }
+
+    @Override
+    public void initDemande()
+    {
+        envoieMessage("Donner l'username du joueur");
+        this.joueur = litMess();
+        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        nbParties = litInt();
+    }
+
 }

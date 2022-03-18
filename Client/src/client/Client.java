@@ -62,7 +62,7 @@ public class Client
         {
             Scanner sn = new Scanner(System.in);
             message = sn.nextLine();
-            if (message.equals("-1"))
+            if (message.equals("0"))
             {
                 closeAll();
                 log.info("Vous vous etes deconnecter");

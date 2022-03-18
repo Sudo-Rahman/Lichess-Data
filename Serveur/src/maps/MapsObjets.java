@@ -13,6 +13,8 @@ public class MapsObjets
     private final File file;
     private final File fileMaps;
 
+
+    // acceseurs
     public Map<String, List<long[]>> getNameMap()
     {
         return nameMap;
@@ -46,7 +48,8 @@ public class MapsObjets
 
     private final Log log = new Log();
 
-    public String getPathFile(){
+    public String getPathFile()
+    {
         return this.file.getAbsolutePath();
     }
 
@@ -61,7 +64,10 @@ public class MapsObjets
 
         // on crée une objet fichier qui a le meme nom que le fichier classique mais avec l'extension .hasmap
         this.fileMaps = new File(file.getAbsoluteFile().toString().replaceAll(file.getName().substring(file.getName().lastIndexOf(".")), ".hasmap"));
+    }
 
+    public void charge()
+    {
         if (!chargementMap()) createMaps();
     }
 
@@ -137,14 +143,16 @@ public class MapsObjets
                                     log.warning("Elo inconnue");
                                 }
                             }
-                            case "1." -> {
-                                if (this.openningMap.containsKey(buf[1]))
-                                {
-                                    this.openningMap.get(buf[1]).add(tab);
-                                } else
-                                    this.openningMap.put(buf[1], new ArrayList<>(Collections.singletonList(tab)));
-                            }
                         }
+                        if (string.split(" ")[0].equals("1."))
+                        {
+                            if (this.openningMap.containsKey(string.split(" ")[1]))
+                            {
+                                this.openningMap.get(string.split(" ")[1]).add(tab);
+                            } else
+                                this.openningMap.put(string.split(" ")[1], new ArrayList<>(Collections.singletonList(tab)));
+                        }
+
                     }
                     comptLigne = 0;
                     lineDeb = lines + 2;
@@ -168,12 +176,11 @@ public class MapsObjets
             oos.flush();
             oos.writeObject(this.openningMap);
             oos.flush();
+            log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         } catch (IOException e)
         {
             log.fatal("Impossible d'ecrire les maps dans le fichers");
         }
-
-        log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
     }
 
     private boolean chargementMap()
