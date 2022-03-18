@@ -1,15 +1,22 @@
 package partie;
 
-import read.file.ReadFile;
+import maps.MapsObjets;
 
 import java.io.*;
-import java.util.*;
 
 public class test
 {
     public static void main(String[] args)
     {
-        File f = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn");
+        File f = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn");
+//        try (Stream<String> all_lines = Files.lines(Path.of(f.getAbsolutePath()))) {
+//            String specific_line_15 = all_lines.skip(1111111101).findFirst().get();
+//            System.out.println(specific_line_15);
+//        } catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+
 //        try
 //        {
 //            RandomAccessFile re = new RandomAccessFile(f,"r");
@@ -20,7 +27,6 @@ public class test
 //            e.printStackTrace();
 //        }
 
-        ReadFile r = new ReadFile(f.getAbsolutePath());
-        r.read();
+        MapsObjets r = new MapsObjets(f.getAbsolutePath());
     }
 }

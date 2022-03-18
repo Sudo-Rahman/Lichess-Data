@@ -1,28 +1,31 @@
 package recherche.partie.specifique;
 
+import maps.MapsObjets;
 import partie.Partie;
 import recherche.RecherchePartieSpecifique;
-import utils.Colors;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.List;
+import java.util.Map;
 
 public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 {
 
     private String coup;
 
-    public RechereEnFonctionDuPremierCoup(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter)
+    public RechereEnFonctionDuPremierCoup(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter);
+        super(pathFile, clientReader, clientWriter, mapObjets);
     }
+
 
     private void initDemande()
     {
         envoieMessage("Donner le premier coup, ex : \"d4\"");
         this.coup = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ?");
+        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         this.nbParties = litInt();
     }
 
@@ -38,22 +41,29 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
     private void calcule()
     {
+        Map<String, List<long[]>> openningMap = mapObjets.getOpenningMap();
+        if (nbParties == -1) nbParties = openningMap.get(coup).size();
+
         String ligne;
         int comptLigne = 0;
         this.tempsRecherche = System.currentTimeMillis();
+
+        List<long[]> lstLigneParties = openningMap.get(coup);
+        int partie = 0;
         try
         {
             while ((ligne = getFileReader().readLine()) != null && this.lstPartie.size() < this.nbParties)
             {
-                if (ligne.equals("")) {comptLigne++;} else
+                if (comptLigne >= lstLigneParties.get(partie)[0] && comptLigne <= lstLigneParties.get(partie)[1])
                 {
-                    lstLigne.add(ligne);
-                }
-                if (comptLigne == 2)
-                {
-                    if (premierCoupEstDedans(coup)) lstPartie.add(new Partie(lstLigne));
-                    lstLigne.clear();
-                    comptLigne = 0;
+                    if (ligne.equals("")) {comptLigne++;} else lstLigne.add(ligne);
+                    if (comptLigne == 2)
+                    {
+                        if (premierCoupEstDedans(coup)) lstPartie.add(new Partie(lstLigne));
+                        lstLigne.clear();
+                        comptLigne = 0;
+                        partie++;
+                    }
                 }
             }
             this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;

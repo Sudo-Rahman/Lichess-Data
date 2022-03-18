@@ -13,6 +13,7 @@
 
 package recherche;
 
+import maps.MapsObjets;
 import utils.Log;
 
 import java.io.*;
@@ -22,10 +23,11 @@ public abstract class Recherche
     private BufferedReader fileReader;
     private final ObjectInputStream clientReader;
     private final BufferedWriter clientWriter;
+    protected final MapsObjets mapObjets;
     protected final Log log = new Log();
 
 
-    public Recherche(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter)
+    public Recherche(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
 
         this.clientReader = clientReader;
@@ -37,6 +39,7 @@ public abstract class Recherche
         {
             log.error("Impossible de trouver le fichier !!");
         }
+        this.mapObjets = new MapsObjets(pathFile);
     }
 
     public abstract void cherche();

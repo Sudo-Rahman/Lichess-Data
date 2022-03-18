@@ -14,6 +14,7 @@
 package serveur;
 
 
+import maps.MapsObjets;
 import utils.Log;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class Serveur
     private final int nbThreadsPerClient;
     private final List<ConnexionClient> lstConnexion;
     private final ServerSocket serverSocket;
+    private final MapsObjets mapObjets;
     private static final Log log = new Log();
 
     public Serveur(ServerSocket serverSocket, int maxClients)
@@ -40,6 +42,8 @@ public class Serveur
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient =Runtime.getRuntime().availableProcessors() / maxClients;
+        String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-07.pgn";
+        this.mapObjets = new MapsObjets(pathFile);
     }
 
     /**
@@ -60,7 +64,7 @@ public class Serveur
                 } else
                 {
                     log.debug(client.toString());
-                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient,this.lstConnexion);
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient,this.lstConnexion,this.mapObjets);
                     this.lstConnexion.add(connexionClient);
                     connexionClient.start();
                 }

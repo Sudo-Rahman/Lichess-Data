@@ -1,4 +1,4 @@
-package read.file;
+package maps;
 
 import utils.Log;
 
@@ -8,19 +8,49 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ReadFile
+public class MapsObjets
 {
-    private File file;
+    private final File file;
+    private final File fileMaps;
+
+    public Map<String, List<long[]>> getNameMap()
+    {
+        return nameMap;
+    }
+
+    public Map<Integer, List<long[]>> getEloMap()
+    {
+        return eloMap;
+    }
+
+    public Map<String, List<long[]>> getUtcDateMap()
+    {
+        return utcDateMap;
+    }
+
+    public Map<String, List<long[]>> getUtcTimeMap()
+    {
+        return utcTimeMap;
+    }
+
+    public Map<String, List<long[]>> getOpenningMap()
+    {
+        return openningMap;
+    }
+
     private Map<String, List<long[]>> nameMap;
     private Map<Integer, List<long[]>> eloMap;
     private Map<String, List<long[]>> utcDateMap;
     private Map<String, List<long[]>> utcTimeMap;
     private Map<String, List<long[]>> openningMap;
 
-    private Log log = new Log();
+    private final Log log = new Log();
 
+    public String getPathFile(){
+        return this.file.getAbsolutePath();
+    }
 
-    public ReadFile(String pathFile)
+    public MapsObjets(String pathFile)
     {
         this.file = new File(pathFile);
         this.nameMap = new ConcurrentHashMap<>();
@@ -28,39 +58,19 @@ public class ReadFile
         this.utcDateMap = new ConcurrentHashMap<>();
         this.utcTimeMap = new ConcurrentHashMap<>();
         this.openningMap = new ConcurrentHashMap<>();
+
+        // on crée une objet fichier qui a le meme nom que le fichier classique mais avec l'extension .hasmap
+        this.fileMaps = new File(file.getAbsoluteFile().toString().replaceAll(file.getName().substring(file.getName().lastIndexOf(".")), ".hasmap"));
+
+        if (!chargementMap()) createMaps();
     }
 
-    public void read()
+
+    private void createMaps()
     {
 
         long tempsRecherche = System.currentTimeMillis();
 
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1)
-        {
-
-        }
-        System.out.println(name.substring(lastIndexOf));
-
-        File f = new File(file.getAbsoluteFile().toString().replaceAll(name.substring(lastIndexOf), ".hasmap"));
-        System.out.println(f.getName());
-        try
-        {
-            ObjectInputStream or = new ObjectInputStream(new FileInputStream(f));
-            if (f.exists())
-            {
-                System.out.println("exist");
-                this.nameMap = (ConcurrentHashMap) or.readObject();
-                for (long[] t : this.nameMap.get("savinka59"))
-                {
-                    System.out.println(Arrays.toString(t));
-                }
-            }
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 
         // variables pour connaitre les lignes de debut et fin d'une partie
         long lines = 0L;
@@ -68,14 +78,15 @@ public class ReadFile
         long lineFin;
         int comptLigne = 0;
 
-        //
+
         List<String> lstStr = new ArrayList<>();
         String str;
         try (BufferedReader reader = new BufferedReader(new FileReader(file)))
         {
             while ((str = reader.readLine()) != null)
             {
-                if (str.equals("")) {comptLigne++;} else {lstStr.add(str);}
+                if (str.equals("")) comptLigne++;
+                else lstStr.add(str);
                 if (comptLigne == 2)
                 {
                     lineFin = lines + 1;
@@ -91,7 +102,7 @@ public class ReadFile
                             case "White", "Black" -> {
                                 if (this.nameMap.containsKey(buf[1])) this.nameMap.get(buf[1]).add(tab);
                                 else
-                                    this.nameMap.put(buf[1], new ArrayList<>(Collections.singletonList(tab)));
+                                    this.nameMap.put(buf[1], new ArrayList<>(Collections.singleton(tab)));
 
                             }
                             case "Site" -> {}
@@ -123,14 +134,15 @@ public class ReadFile
                                     } else this.eloMap.put(elo, new ArrayList<>(Collections.singletonList(tab)));
                                 } catch (NumberFormatException e)
                                 {
-//                                    log.warning("Elo inconnue");
+                                    log.warning("Elo inconnue");
                                 }
                             }
                             case "1." -> {
                                 if (this.openningMap.containsKey(buf[1]))
                                 {
                                     this.openningMap.get(buf[1]).add(tab);
-                                } else this.openningMap.put(buf[1], new ArrayList<>(Collections.singletonList(tab)));
+                                } else
+                                    this.openningMap.put(buf[1], new ArrayList<>(Collections.singletonList(tab)));
                             }
                         }
                     }
@@ -144,26 +156,47 @@ public class ReadFile
         {
             e.printStackTrace();
         }
-        try
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.fileMaps)))
         {
-            ObjectOutputStream bw = new ObjectOutputStream(new FileOutputStream("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.hasmap"));
-            bw.writeObject(this.nameMap);
-            bw.flush();
+            oos.writeObject(this.nameMap);
+            oos.flush();
+            oos.writeObject(this.eloMap);
+            oos.flush();
+            oos.writeObject(this.utcDateMap);
+            oos.flush();
+            oos.writeObject(this.utcTimeMap);
+            oos.flush();
+            oos.writeObject(this.openningMap);
+            oos.flush();
         } catch (IOException e)
         {
-            e.printStackTrace();
+            log.fatal("Impossible d'ecrire les maps dans le fichers");
         }
 
-        long tempsRecherch = System.currentTimeMillis();
-        System.out.println((tempsRecherch - tempsRecherche) / 1000 + "  " + lines);
-//        for (long[] t : this.nameMap.get("jclp1102"))
-//        {
-//            System.out.println(Arrays.toString(t));
-//        }
-//        for (long[] t : this.utcDateMap.get("31/07/2016"))
-//        {
-//            System.out.println(Arrays.toString(t));
-//        }
-//        System.out.println(System.currentTimeMillis() - tempsRecherch);
+        log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+    }
+
+    private boolean chargementMap()
+    {
+        long tempsRecherche = System.currentTimeMillis();
+
+        // on charge les hasmap dans leur variable
+        if (this.fileMaps.exists())
+        {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.fileMaps)))
+            {
+                this.nameMap = (ConcurrentHashMap) ois.readObject();
+                this.eloMap = (ConcurrentHashMap) ois.readObject();
+                this.utcDateMap = (ConcurrentHashMap) ois.readObject();
+                this.utcTimeMap = (ConcurrentHashMap) ois.readObject();
+                this.openningMap = (ConcurrentHashMap) ois.readObject();
+                log.info("Chargement des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+                return true;
+            } catch (Exception e)
+            {
+                log.error("Impossible d'importer les hasmap !!!");
+            }
+        }
+        return false;
     }
 }

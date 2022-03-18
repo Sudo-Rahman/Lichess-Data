@@ -1,5 +1,6 @@
 package recherche;
 
+import maps.MapsObjets;
 import partie.Partie;
 import utils.Colors;
 
@@ -17,9 +18,9 @@ public abstract class RecherchePartieSpecifique extends Recherche
     protected int nbParties;
 
 
-    public RecherchePartieSpecifique(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter)
+    public RecherchePartieSpecifique(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter);
+        super(pathFile, clientReader, clientWriter, mapObjets);
         this.lstPartie = new ArrayList<>();
         this.lstLigne = new ArrayList<>();
     }

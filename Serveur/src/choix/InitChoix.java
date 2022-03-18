@@ -12,6 +12,7 @@
 
 package choix;
 
+import maps.MapsObjets;
 import recherche.partie.specifique.RechercheEnFonctionEloJoueur;
 import recherche.partie.specifique.RechereEnFonctionDuPremierCoup;
 import utils.Colors;
@@ -19,18 +20,21 @@ import utils.Log;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
+import java.util.Map;
 
 public class InitChoix
 {
-    private BufferedWriter writer;
-    private ObjectInputStream objectInputStream;
+    private final BufferedWriter writer;
+    private final ObjectInputStream objectInputStream;
+    private final MapsObjets mapObjets;
     private final Log log = new Log();
-    private final String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-07.pgn";
 
-    public InitChoix(int choix, ObjectInputStream o, BufferedWriter b)
+    public InitChoix(int choix, ObjectInputStream o, BufferedWriter b, MapsObjets mapObjets)
     {
         this.objectInputStream = o;
         this.writer = b;
+
+        this.mapObjets = mapObjets;
 
         switch (choix)
         {
@@ -54,11 +58,11 @@ public class InitChoix
         switch (choix)
         {
             case 1 -> {
-                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(pathFile, objectInputStream, writer);
+                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(this.mapObjets.getPathFile(), objectInputStream, writer,mapObjets);
                 recherche.cherche();
             }
             case 2 -> {
-                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(pathFile, objectInputStream, writer);
+                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
                 recherche.cherche();
             }
         }

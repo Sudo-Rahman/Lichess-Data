@@ -12,17 +12,17 @@
  */
 
 
-
 package partie;
 
 
 import utils.Colors;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class Partie
+public class Partie implements Serializable
 {
     private String blanc;
     private String noir;
@@ -79,8 +79,8 @@ public class Partie
                     }
                 }
                 case "UTCTime" -> this.utcTime = buff[1];
-                case "WhiteElo" -> this.whiteElo = Integer.parseInt(buff[1]);
-                case "BlackElo" -> this.blackElo = Integer.parseInt(buff[1]);
+                case "WhiteElo" -> {try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
+                case "BlackElo" ->  {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
                 case "Opening" -> {if (buff[1].equals("?")) {this.ouverture = "";} else this.ouverture = buff[1];}
                 case "Termination" -> this.termination = buff[1];
             }
@@ -88,7 +88,10 @@ public class Partie
         try
         {
             this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
-            if (this.premierCoup.equals(this.resultat)) {this.premierCoup = "";}// si le premier coup est egale au resultat alors il n'y a pas de premier coup
+            if (this.premierCoup.equals(this.resultat))
+            {
+                this.premierCoup = "";
+            }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
             else this.lstCoup = allLines.get(allLines.size() - 1);
         } catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
@@ -106,7 +109,7 @@ public class Partie
                 "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
                 "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
                 "Etat de la partie : " + this.termination + ".\n" +
-                "Partie : "+lstCoup+"\n"+
+                "Partie : " + lstCoup + "\n" +
                 "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

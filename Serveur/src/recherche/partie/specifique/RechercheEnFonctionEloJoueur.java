@@ -1,5 +1,6 @@
 package recherche.partie.specifique;
 
+import maps.MapsObjets;
 import partie.Partie;
 import recherche.RecherchePartieSpecifique;
 
@@ -13,10 +14,11 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     private int eloSup;
     private int eloInf;
 
-    public RechercheEnFonctionEloJoueur(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter)
+    public RechercheEnFonctionEloJoueur(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter);
+        super(pathFile, clientReader, clientWriter, mapObjets);
     }
+
 
     @Override
     public void cherche()

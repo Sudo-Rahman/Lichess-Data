@@ -16,6 +16,7 @@ package serveur;
 
 import choix.InitChoix;
 import client.info.ClientInfo;
+import maps.MapsObjets;
 import utils.Colors;
 import utils.Log;
 
@@ -33,8 +34,9 @@ class ConnexionClient extends Thread
     private static final Log log = new Log();
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
+    private final MapsObjets mapObjets;
 
-    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst)
+    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, MapsObjets mapObjets)
     {
         this.lstConnexion = lst;
         try
@@ -47,6 +49,7 @@ class ConnexionClient extends Thread
             e.printStackTrace();
         }
         this.nbMaxThread = nbMaxThread;
+        this.mapObjets = mapObjets;
     }
 
     @Override
@@ -136,7 +139,7 @@ class ConnexionClient extends Thread
                 }
 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
-                new InitChoix(nb, objectInputStream, writer);// gere toute la partie choix du client
+                new InitChoix(nb, objectInputStream, writer,mapObjets);// gere toute la partie choix du client
             }
 
         } catch (Exception e)
