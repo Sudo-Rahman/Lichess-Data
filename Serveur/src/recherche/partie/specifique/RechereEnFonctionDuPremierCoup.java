@@ -17,9 +17,9 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
     private String coup;
 
-    public RechereEnFonctionDuPremierCoup(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechereEnFonctionDuPremierCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjets);
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.Date;
 
 public class Log
 {
-    private Date date;
+    private final Date date;
 
     public Log()
     {

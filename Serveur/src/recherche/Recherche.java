@@ -29,14 +29,14 @@ public abstract class Recherche
     protected final Log log = new Log();
 
 
-    public Recherche(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
 
         this.clientReader = clientReader;
         this.clientWriter = clientWriter;
         try
         {
-            this.fileReader = new BufferedReader(new FileReader(pathFile));
+            this.fileReader = new BufferedReader(new FileReader(mapObjets.getFile()));
         } catch (FileNotFoundException e)
         {
             log.error("Impossible de trouver le fichier !!");

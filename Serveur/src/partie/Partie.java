@@ -20,7 +20,7 @@ import utils.Colors;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 public class Partie implements Serializable
 {
@@ -34,7 +34,7 @@ public class Partie implements Serializable
     private int whiteElo;
     private int blackElo;
     private String ouverture;
-    private String lstCoup;
+    private List<String> lstCoup;
     private String premierCoup;
     private String termination;
 
@@ -92,12 +92,17 @@ public class Partie implements Serializable
             {
                 this.premierCoup = "";
             }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
-            else this.lstCoup = allLines.get(allLines.size() - 1);
+            else {this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));removAcollade();}
         } catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
             System.out.println("Impossible de trouver le premier coup!!");
             this.premierCoup = "";
         }
+    }
+
+    private void removAcollade(){
+        this.lstCoup.removeIf(str -> str.contains("%eval"));
+        this.lstCoup.replaceAll(str -> str.replaceAll("\\.\\.\\." ,".").replaceAll(",",""));
     }
 
 
@@ -109,7 +114,7 @@ public class Partie implements Serializable
                 "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
                 "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
                 "Etat de la partie : " + this.termination + ".\n" +
-                "Partie : " + lstCoup + "\n" +
+                "Partie : " + String.join("",this.lstCoup)+ "\n" +
                 "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

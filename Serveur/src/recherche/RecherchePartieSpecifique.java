@@ -17,13 +17,13 @@ public abstract class RecherchePartieSpecifique extends Recherche
     protected long tempsRecherche;
     protected int nbParties;
     protected List<long[]> lstLigneParties;
-    protected int maxNbParties = 1000000;
+    protected int maxNbParties = 100000;
 
 
 
-    public RecherchePartieSpecifique(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RecherchePartieSpecifique(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjets);
         this.lstPartie = new ArrayList<>();
         this.lstLigne = new ArrayList<>();
         this.lstLigneParties = new ArrayList<>();

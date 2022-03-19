@@ -14,13 +14,17 @@ package choix;
 
 import maps.MapsObjets;
 import recherche.Recherche;
+import recherche.autres.CinqOuverturesPlusJoue;
+import recherche.partie.specifique.RechercheEnFonctionDate;
 import recherche.partie.specifique.RechercheEnFonctionEloJoueur;
 import recherche.partie.specifique.RecherchePartieJoueur;
 import recherche.partie.specifique.RechereEnFonctionDuPremierCoup;
 import utils.Colors;
 import utils.Log;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class InitChoix
@@ -41,6 +45,7 @@ public class InitChoix
         {
             case 1 -> choix1();
             case 2 -> choix2();
+            case 3 -> choix3();
         }
     }
 
@@ -54,15 +59,23 @@ public class InitChoix
         {
             envoieMessage("Donner votre choix");
             choix = litInt();
+            if(choix ==-1){
+                log.fatal("Impossible de lire le flux du client !!!");
+                break;
+            }
         } while (choix > 3 || choix < 1);
         switch (choix)
         {
             case 1 -> {
-                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
+                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjets);
                 recherche.cherche();
             }
             case 2 -> {
-                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
+                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjets);
+                recherche.cherche();
+            }
+            case 3 -> {
+                RechercheEnFonctionDate recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjets);
                 recherche.cherche();
             }
         }
@@ -70,7 +83,12 @@ public class InitChoix
 
     private void choix2()
     {
-        RecherchePartieJoueur recherche = new RecherchePartieJoueur(this.mapObjets.getPathFile(), objectInputStream, writer, mapObjets);
+        RecherchePartieJoueur recherche = new RecherchePartieJoueur(objectInputStream, writer, mapObjets);
+        recherche.cherche();
+    }
+
+    private void choix3(){
+        CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream,writer,mapObjets);
         recherche.cherche();
     }
 
@@ -111,9 +129,12 @@ public class InitChoix
         try
         {
             nb = Integer.parseInt((String) this.objectInputStream.readObject());
-        } catch (Exception e)
+        } catch (NumberFormatException e)
         {
             log.error("Impossible de lire l'entier");
+        } catch (ClassNotFoundException | IOException e)
+        {
+            return -1;
         }
         return nb;
     }

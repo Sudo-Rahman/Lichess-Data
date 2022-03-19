@@ -7,15 +7,13 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
-import java.util.Map;
 
-public class RecherchePartieJoueur extends RecherchePartieSpecifique
+public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
-    private String joueur;
+    private String date;
 
 
-    public RecherchePartieJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionDate(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
         super(clientReader, clientWriter, mapObjets);
     }
@@ -24,12 +22,12 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (getNameMap().containsKey(this.joueur))
+        if (getUtcDateMap().containsKey(this.date))
         {
-            this.lstLigneParties = getNameMap().get(this.joueur);
+            this.lstLigneParties = getUtcDateMap().get(this.date);
             if (nbParties == -1)
             {
-                nbParties = Math.min(getNameMap().get(this.joueur).size(), this.maxNbParties);
+                nbParties = Math.min(getUtcDateMap().get(this.date).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -40,7 +38,6 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-
         String ligne;
         int comptLigneVide = 0;
         long lignes = 0L;
@@ -81,10 +78,11 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     @Override
     public void initDemande()
     {
-        envoieMessage("Donner l'username du joueur");
-        this.joueur = litMess();
+        String dateDeb = (String) getUtcDateMap().keySet().toArray()[0];
+        String dateFin = (String) getUtcDateMap().keySet().toArray()[getUtcDateMap().size() - 1];
+        envoieMessage("Donner la date, (compris entre " + dateDeb + " et " + dateFin + " sur le fichier" + mapObjets.getFile().getName());
+        this.date = litMess();
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         nbParties = litInt();
     }
-
 }

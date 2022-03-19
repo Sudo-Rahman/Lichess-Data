@@ -1,8 +1,10 @@
 package maps;
 
+import partie.Partie;
 import utils.Log;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,6 +14,7 @@ public class MapsObjets
 {
     private final File file;
     private final File fileMaps;
+    private boolean chargementMap;
 
 
     // acceseurs
@@ -48,10 +51,16 @@ public class MapsObjets
 
     private final Log log = new Log();
 
-    public String getPathFile()
+    public File getFile()
     {
-        return this.file.getAbsolutePath();
+        return this.file;
     }
+
+    public boolean getChargementMap()
+    {
+        return this.chargementMap;
+    }
+
 
     public MapsObjets(String pathFile)
     {
@@ -61,6 +70,8 @@ public class MapsObjets
         this.utcDateMap = new ConcurrentHashMap<>();
         this.utcTimeMap = new ConcurrentHashMap<>();
         this.openningMap = new ConcurrentHashMap<>();
+
+        this.chargementMap = false;
 
         // on crée une objet fichier qui a le meme nom que le fichier classique mais avec l'extension .hasmap
         this.fileMaps = new File(file.getAbsoluteFile().toString().replaceAll(file.getName().substring(file.getName().lastIndexOf(".")), ".hasmap"));
@@ -177,6 +188,7 @@ public class MapsObjets
             oos.writeObject(this.openningMap);
             oos.flush();
             log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+            this.chargementMap = true;
         } catch (IOException e)
         {
             log.fatal("Impossible d'ecrire les maps dans le fichers");
@@ -198,6 +210,7 @@ public class MapsObjets
                 this.utcTimeMap = (ConcurrentHashMap) ois.readObject();
                 this.openningMap = (ConcurrentHashMap) ois.readObject();
                 log.info("Chargement des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+                this.chargementMap = true;
                 return true;
             } catch (Exception e)
             {

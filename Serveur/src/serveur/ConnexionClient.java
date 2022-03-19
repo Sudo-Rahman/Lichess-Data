@@ -56,19 +56,21 @@ class ConnexionClient extends Thread
     public void run()
     {
 
-//        System.out.println(this.objectInputStream.toString());
         try
         {
             this.username = (ClientInfo) objectInputStream.readObject();
-            System.out.println(this.username.getUsername());
+            System.out.println("Connexion avec : " + getUsername());
+            while (!mapObjets.getChargementMap())
+            {
+                envoieMessage(Colors.clear + " Chargement des données patienter ");
+                sleep(5000);
+            }
         } catch (Exception e)
         {
-            System.out.println("sgsrgs");
             log.error(e.toString());
             this.lstConnexion.remove(this);
             closeAll();
         }
-//        System.out.println("Connexion avec : " + getUsername());
         envoieMessage(afficheChoix());
         litMess();
 
@@ -133,13 +135,14 @@ class ConnexionClient extends Thread
                 if (nb == 0)
                 {
                     log.info(getUsername() + " à quitté le serveur");
+
                     this.lstConnexion.remove(this);
                     closeAll();
                     break;
                 }
 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
-                new InitChoix(nb, objectInputStream, writer,mapObjets);// gere toute la partie choix du client
+                new InitChoix(nb, objectInputStream, writer, mapObjets);// gere toute la partie choix du client
             }
 
         } catch (Exception e)

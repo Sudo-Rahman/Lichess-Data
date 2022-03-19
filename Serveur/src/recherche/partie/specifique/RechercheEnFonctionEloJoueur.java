@@ -16,12 +16,10 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 
     private int eloSup;
     private int eloInf;
-    private final Map<Integer, List<long[]>> eloMap;
 
-    public RechercheEnFonctionEloJoueur(String pathFile, ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionEloJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
-        super(pathFile, clientReader, clientWriter, mapObjets);
-        this.eloMap = getEloMap();
+        super(clientReader, clientWriter, mapObjets);
     }
 
 
@@ -102,9 +100,9 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     {
         for (int i = this.eloInf; i <= this.eloSup; i++)
         {
-            if (this.eloMap.containsKey(i))
+            if (getEloMap().containsKey(i))
             {
-                this.lstLigneParties.addAll(this.eloMap.get(i));
+                this.lstLigneParties.addAll(getEloMap().get(i));
             }
         }
         return this.lstLigneParties.size();
