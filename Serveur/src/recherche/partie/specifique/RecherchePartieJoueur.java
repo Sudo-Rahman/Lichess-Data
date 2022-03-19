@@ -1,3 +1,16 @@
+/*
+ * Nom de classe : RecherchePartieJoueur
+ *
+ * Description   : classe qui cherche les parties d'un joueur.
+ *
+ * Version       : 1.0 , 1,1
+ *
+ * Date          : 12/03/2022 , 18/03/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
 package recherche.partie.specifique;
 
 import maps.MapsObjets;
@@ -7,8 +20,6 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
-import java.util.Map;
 
 public class RecherchePartieJoueur extends RecherchePartieSpecifique
 {
@@ -20,6 +31,19 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         super(clientReader, clientWriter, mapObjets);
     }
 
+
+    @Override
+    public void initDemande()
+    {
+        envoieMessage("Donner l'username du joueur");
+        this.joueur = litMess();
+        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        nbParties = litInt();
+    }
+
+    /*
+    lance le calcule pour chercher les parties si l'element demander par le client est bien dans l'hasmap
+     */
     @Override
     public void cherche()
     {
@@ -37,6 +61,11 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         } else envoieMessage(toString());
     }
 
+
+    /*
+    lit le fichier tant que le nombre de partie n'a pas été atteint,
+    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+     */
     @Override
     public void calcule()
     {
@@ -55,11 +84,11 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    if (ligne.equals("")) {comptLigneVide++;} else lstLigne.add(ligne);
+                    if (ligne.equals("")) {comptLigneVide++;} else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
                     {
-                        lstPartie.add(new Partie(lstLigne));
-                        lstLigne.clear();
+                        lstPartie.add(new Partie(lstStrLigne));
+                        lstStrLigne.clear();
                         partie++;
                         comptLigneVide = 0;
                     }
@@ -74,17 +103,10 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         }
         envoieMessage(toString());
         closeFileReader();
+
+        //Libere la liste de la memoire
         this.lstPartie = null;
         System.gc();
-    }
-
-    @Override
-    public void initDemande()
-    {
-        envoieMessage("Donner l'username du joueur");
-        this.joueur = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
-        nbParties = litInt();
     }
 
 }

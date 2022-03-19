@@ -92,7 +92,11 @@ public class Partie implements Serializable
             {
                 this.premierCoup = "";
             }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
-            else {this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));removAcollade();}
+            else
+            {
+                this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));
+                removAcollade();
+            }
         } catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
             System.out.println("Impossible de trouver le premier coup!!");
@@ -100,9 +104,11 @@ public class Partie implements Serializable
         }
     }
 
-    private void removAcollade(){
+    private void removAcollade()
+    {
         this.lstCoup.removeIf(str -> str.contains("%eval"));
-        this.lstCoup.replaceAll(str -> str.replaceAll("\\.\\.\\." ,".").replaceAll(",",""));
+        this.lstCoup.replaceAll(str -> str.replaceAll("\\.\\.\\.", ".").replaceAll(",", ""));
+        this.lstCoup = Collections.singletonList(String.join("", this.lstCoup));
     }
 
 
@@ -114,7 +120,7 @@ public class Partie implements Serializable
                 "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
                 "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
                 "Etat de la partie : " + this.termination + ".\n" +
-                "Partie : " + String.join("",this.lstCoup)+ "\n" +
+                "Partie : " + this.lstCoup + "\n" +
                 "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

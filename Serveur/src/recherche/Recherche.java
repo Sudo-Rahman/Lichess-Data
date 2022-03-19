@@ -26,6 +26,7 @@ public abstract class Recherche
     private final ObjectInputStream clientReader;
     private final BufferedWriter clientWriter;
     protected final MapsObjets mapObjets;
+    protected int maxNbParties = 100000;
     protected final Log log = new Log();
 
 

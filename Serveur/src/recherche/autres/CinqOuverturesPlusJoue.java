@@ -1,3 +1,16 @@
+/*
+ * Nom de classe : CinqOuverturesPlusJoue
+ *
+ * Description   : classe qui cherche les 5 ouvertures les plus joué.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 19/03/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
 package recherche.autres;
 
 import maps.MapsObjets;
@@ -25,6 +38,7 @@ public class CinqOuverturesPlusJoue extends Recherche
             lst.put(element.getValue().size(), element.getKey());
             nbParties += element.getValue().size();
         }
+        // enleve toutes les plus petites valeurs et laisse les 5 plus grandes
         for (int i = 0; i < getOpenningMap().size() - 5; i++)
         {
             lst.remove(Collections.min(lst.keySet()));

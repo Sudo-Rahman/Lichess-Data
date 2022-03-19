@@ -1,3 +1,16 @@
+/*
+ * Nom de classe : RecherchePartieSpecifique
+ *
+ * Description   : classe qui herite de Recherche, il engendre des classes pour des recherche specifiques de partie.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 12/03/2022
+ *
+ * Copyright     : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
 package recherche;
 
 import maps.MapsObjets;
@@ -13,11 +26,15 @@ public abstract class RecherchePartieSpecifique extends Recherche
 {
 
     protected List<Partie> lstPartie;
-    protected List<String> lstLigne;
+
+    // liste qui contiendra toutes les lignes pour crée une parties
+    protected List<String> lstStrLigne;
+
     protected long tempsRecherche;
     protected int nbParties;
+
+    // tableau d'entier qui contient les lignes des parties ex : [[0, 18], [19, 37]]
     protected List<long[]> lstLigneParties;
-    protected int maxNbParties = 100000;
 
 
 
@@ -25,7 +42,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
     {
         super(clientReader, clientWriter, mapObjets);
         this.lstPartie = new ArrayList<>();
-        this.lstLigne = new ArrayList<>();
+        this.lstStrLigne = new ArrayList<>();
         this.lstLigneParties = new ArrayList<>();
     }
 
