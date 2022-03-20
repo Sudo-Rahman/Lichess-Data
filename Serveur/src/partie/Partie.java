@@ -107,8 +107,9 @@ public class Partie implements Serializable
     private void removAcollade()
     {
         this.lstCoup.removeIf(str -> str.contains("%eval"));
-        this.lstCoup.replaceAll(str -> str.replaceAll("\\.\\.\\.", ".").replaceAll(",", ""));
-        this.lstCoup = Collections.singletonList(String.join("", this.lstCoup));
+        this.lstCoup = new ArrayList<>(List.of(String.join("",  this.lstCoup).split(" ")));
+        this.lstCoup.removeIf(str -> str.contains("..."));
+        this.lstCoup = Collections.singletonList(String.join(" ", this.lstCoup));
     }
 
 

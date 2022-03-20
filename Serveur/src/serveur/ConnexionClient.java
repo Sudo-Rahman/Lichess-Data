@@ -105,7 +105,7 @@ class ConnexionClient extends Thread
                 Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
                 Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
                 Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
-                Colors.green + "4 / Consulter les parties les plus courtes." + Colors.reset + "\n" +
+                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
                 Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
                 Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
                 Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
@@ -143,6 +143,7 @@ class ConnexionClient extends Thread
 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
                 new InitChoix(nb, objectInputStream, writer, mapObjets);// gere toute la partie choix du client
+                envoieMessage(afficheChoix());
             }
 
         } catch (Exception e)

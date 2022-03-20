@@ -40,6 +40,10 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         this.date = litMess();
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         nbParties = litInt();
+        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
+        if(litMess().equals("no")){
+            this.afficheParties = false;
+        }
     }
 
     /*
@@ -100,7 +104,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        envoieMessage(toString());
+        if(this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

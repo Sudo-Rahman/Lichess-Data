@@ -1,10 +1,8 @@
 package maps;
 
-import partie.Partie;
 import utils.Log;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,11 +41,22 @@ public class MapsObjets
         return openningMap;
     }
 
+    public Map<Integer, List<long[]>> getNbCoupsMap()
+    {
+        return this.nbCoupsMap;
+    }
+
+    public void setNbCoupsMap(Map<Integer, List<long[]>> nbCoupsMap)
+    {
+        this.nbCoupsMap = nbCoupsMap;
+    }
+
     private Map<String, List<long[]>> nameMap;
     private Map<Integer, List<long[]>> eloMap;
     private Map<String, List<long[]>> utcDateMap;
     private Map<String, List<long[]>> utcTimeMap;
     private Map<String, List<long[]>> openningMap;
+    private Map<Integer, List<long[]>> nbCoupsMap;
 
     private final Log log = new Log();
 
@@ -70,6 +79,7 @@ public class MapsObjets
         this.utcDateMap = new ConcurrentHashMap<>();
         this.utcTimeMap = new ConcurrentHashMap<>();
         this.openningMap = new ConcurrentHashMap<>();
+        this.nbCoupsMap = new ConcurrentHashMap<>();
 
         this.chargementMap = false;
 
@@ -157,6 +167,19 @@ public class MapsObjets
                         }
                         if (string.split(" ")[0].equals("1."))
                         {
+                            //map pour les nombre de coups
+                            List<String> lst = new ArrayList<>(List.of(lstStr.get(lstStr.size() - 1).split("[{}]")));
+                            lst.removeIf(strr -> strr.contains("%eval"));
+                            lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
+                            lst.removeIf(strr -> strr.equals("") || strr.contains("."));
+                            // on enleve -1 car le dernier "coup" est le resultat
+                            if (this.nbCoupsMap.containsKey(lst.size() - 1))
+                            {
+                                this.nbCoupsMap.get(lst.size() - 1).add(tab);
+                            } else
+                                this.nbCoupsMap.put(lst.size() - 1, new ArrayList<>(Collections.singletonList(tab)));
+
+                            //map pour les ouvertures
                             if (this.openningMap.containsKey(string.split(" ")[1]))
                             {
                                 this.openningMap.get(string.split(" ")[1]).add(tab);
@@ -187,6 +210,8 @@ public class MapsObjets
             oos.flush();
             oos.writeObject(this.openningMap);
             oos.flush();
+            oos.writeObject(this.nbCoupsMap);
+            oos.flush();
             log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
             this.chargementMap = true;
         } catch (IOException e)
@@ -209,6 +234,7 @@ public class MapsObjets
                 this.utcDateMap = (ConcurrentHashMap) ois.readObject();
                 this.utcTimeMap = (ConcurrentHashMap) ois.readObject();
                 this.openningMap = (ConcurrentHashMap) ois.readObject();
+                this.nbCoupsMap = (ConcurrentHashMap) ois.readObject();
                 log.info("Chargement des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
                 this.chargementMap = true;
                 return true;

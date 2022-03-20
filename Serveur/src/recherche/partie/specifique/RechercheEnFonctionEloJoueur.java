@@ -52,7 +52,6 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
         } else envoieMessage(toString());
-
     }
 
     @Override
@@ -64,6 +63,10 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         this.eloSup = litInt();
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         this.nbParties = litInt();
+        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
+        if(litMess().equals("no")){
+            this.afficheParties = false;
+        }
     }
 
     /*
@@ -85,7 +88,6 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    System.out.println(this.nbParties);
                     if (ligne.equals("")) comptLigneVide++;
                     else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
@@ -108,7 +110,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        envoieMessage(toString());
+        if(this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

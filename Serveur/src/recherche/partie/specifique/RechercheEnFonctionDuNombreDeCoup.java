@@ -1,16 +1,15 @@
 /*
- * Nom de classe : RecherchePartieJoueur
+ * Nom de classe : PartieLesPlusCourt
  *
- * Description   : classe qui cherche les parties d'un joueur.
+ * Description   : classe qui cherche les parties les plus court.
  *
- * Version       : 1.0 , 1,1
+ * Version       : 1.0
  *
- * Date          : 12/03/2022 , 18/03/2022
+ * Date          : 20/03/2022
  *
  * Copyright     : Yilmaz Rahman, Colliat Maxime
  *
  */
-
 package recherche.partie.specifique;
 
 import maps.MapsObjets;
@@ -21,43 +20,40 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class RecherchePartieJoueur extends RecherchePartieSpecifique
+public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
 {
-    private String joueur;
+    private int nbCoups;
 
-
-    public RecherchePartieJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionDuNombreDeCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
     {
         super(clientReader, clientWriter, mapObjets);
+        this.nbCoups = 1;
     }
-
 
     @Override
     public void initDemande()
     {
-        envoieMessage("Donner l'username du joueur");
-        this.joueur = litMess();
+        envoieMessage("Donner le nombre de coups");
+        this.nbCoups = litInt();
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
-        nbParties = litInt();
+        this.nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
         if(litMess().equals("no")){
             this.afficheParties = false;
         }
     }
 
-    /*
-    lance le calcule pour chercher les parties si l'element demander par le client est bien dans l'hasmap
-     */
     @Override
     public void cherche()
     {
         initDemande();
-        if (getNameMap().containsKey(this.joueur))
+        if (getNbCoupsMap().containsKey(this.nbCoups))
         {
-            this.lstLigneParties = getNameMap().get(this.joueur);
+            this.lstLigneParties = getNbCoupsMap().get(this.nbCoups);
+            // -1 correspond au maximum de partie, qui est limité par la variable maxNbParties
             if (nbParties == -1)
             {
-                nbParties = Math.min(getNameMap().get(this.joueur).size(), this.maxNbParties);
+                nbParties = Math.min(getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -65,21 +61,15 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         } else envoieMessage(toString());
     }
 
-
-    /*
-    lit le fichier tant que le nombre de partie n'a pas été atteint,
-    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
-     */
     @Override
     public void calcule()
     {
-
         String ligne;
         int comptLigneVide = 0;
         long lignes = 0L;
 
 
-        tempsRecherche = System.currentTimeMillis();
+        this.tempsRecherche = System.currentTimeMillis();
 
         int partie = 0;
         try

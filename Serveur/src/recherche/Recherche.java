@@ -27,6 +27,7 @@ public abstract class Recherche
     private final BufferedWriter clientWriter;
     protected final MapsObjets mapObjets;
     protected int maxNbParties = 100000;
+    protected  boolean afficheParties = true;
     protected final Log log = new Log();
 
 
@@ -92,7 +93,8 @@ public abstract class Recherche
     }
 
 
-    public void closeFileReader(){
+    public void closeFileReader()
+    {
         try
         {
             this.fileReader.close();
@@ -126,5 +128,10 @@ public abstract class Recherche
     public Map<String, List<long[]>> getOpenningMap()
     {
         return mapObjets.getOpenningMap();
+    }
+
+    public Map<Integer, List<long[]>> getNbCoupsMap()
+    {
+        return mapObjets.getNbCoupsMap();
     }
 }

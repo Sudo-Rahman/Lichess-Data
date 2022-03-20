@@ -15,14 +15,10 @@ package choix;
 import maps.MapsObjets;
 import recherche.Recherche;
 import recherche.autres.CinqOuverturesPlusJoue;
-import recherche.partie.specifique.RechercheEnFonctionDate;
-import recherche.partie.specifique.RechercheEnFonctionEloJoueur;
-import recherche.partie.specifique.RecherchePartieJoueur;
-import recherche.partie.specifique.RechereEnFonctionDuPremierCoup;
+import recherche.partie.specifique.*;
 import utils.Colors;
 import utils.Log;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -46,6 +42,7 @@ public class InitChoix
             case 1 -> choix1();
             case 2 -> choix2();
             case 3 -> choix3();
+            case 4 -> choix4();
         }
     }
 
@@ -89,6 +86,11 @@ public class InitChoix
 
     private void choix3(){
         CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream,writer,mapObjets);
+        recherche.cherche();
+    }
+
+    private void choix4(){
+        RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream,writer,mapObjets);
         recherche.cherche();
     }
 
