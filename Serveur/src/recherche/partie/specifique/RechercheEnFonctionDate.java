@@ -66,9 +66,10 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         } else envoieMessage(toString());
     }
 
-    /*
-    lit le fichier tant que le nombre de partie n'a pas été atteint,
-    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+
+    /**
+    *lit le fichier tant que le nombre de partie n'a pas été atteint,
+    *cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
      */
     @Override
     public void calcule()
@@ -83,7 +84,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         int partie = 0;
         try
         {
-            while ((ligne = getFileReader().readLine()) != null && lstPartie.size() < nbParties)
+            while ((ligne = getFileReader().readLine()) != null &&  lstPartie.size() < nbParties)
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {

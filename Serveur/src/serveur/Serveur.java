@@ -44,7 +44,7 @@ public class Serveur
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient =Runtime.getRuntime().availableProcessors() / maxClients;
-        String pathFile = "/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2014-07.pgn";
+        String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn";
         this.mapObjets = new MapsObjets(pathFile);
         new Thread(mapObjets::charge).start();
     }

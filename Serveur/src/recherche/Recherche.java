@@ -107,31 +107,31 @@ public abstract class Recherche
 
     public Map<String, List<long[]>> getNameMap()
     {
-        return mapObjets.getNameMap();
+        return mapObjets.warm.getNameMap();
     }
 
     public Map<Integer, List<long[]>> getEloMap()
     {
-        return mapObjets.getEloMap();
+        return mapObjets.warm.getEloMap();
     }
 
     public Map<String, List<long[]>> getUtcDateMap()
     {
-        return mapObjets.getUtcDateMap();
+        return mapObjets.warm.getUtcDateMap();
     }
 
     public Map<String, List<long[]>> getUtcTimeMap()
     {
-        return mapObjets.getUtcTimeMap();
+        return mapObjets.warm.getUtcTimeMap();
     }
 
     public Map<String, List<long[]>> getOpenningMap()
     {
-        return mapObjets.getOpenningMap();
+        return mapObjets.warm.getOpenningMap();
     }
 
     public Map<Integer, List<long[]>> getNbCoupsMap()
     {
-        return mapObjets.getNbCoupsMap();
+        return mapObjets.warm.getNbCoupsMap();
     }
 }

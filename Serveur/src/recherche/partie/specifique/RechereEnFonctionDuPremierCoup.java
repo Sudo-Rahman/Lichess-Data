@@ -20,6 +20,9 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 {
@@ -72,6 +75,20 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
+
+        TreeMap<Long, Long> map = new TreeMap<>();
+
+
+        for (long[] t : getOpenningMap().get(this.coup)){
+            map.put(t[0], t[1]);
+        }
+        this.lstLigneParties.clear();
+        for (Map.Entry<Long, Long> t : map.entrySet()){
+            long[] tab = new long[2];
+            tab[0] = t.getKey();
+            tab[1] = t.getValue();
+            this.lstLigneParties.add(tab);
+        }
 
         String ligne;
         int comptLigneVide = 0;

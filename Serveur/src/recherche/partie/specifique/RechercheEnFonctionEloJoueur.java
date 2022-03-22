@@ -84,7 +84,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         int partie = 0;
         try
         {
-            while ((ligne = getFileReader().readLine()) != null && this.lstPartie.size() < this.nbParties)
+            while ((ligne = getFileReader().readLine()) != null && this.lstLigneParties.size() > partie && lstPartie.size() < this.nbParties)
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {

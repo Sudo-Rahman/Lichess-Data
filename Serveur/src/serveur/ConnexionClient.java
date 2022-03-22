@@ -143,7 +143,6 @@ class ConnexionClient extends Thread
 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
                 new InitChoix(nb, objectInputStream, writer, mapObjets);// gere toute la partie choix du client
-                envoieMessage(afficheChoix());
             }
 
         } catch (Exception e)

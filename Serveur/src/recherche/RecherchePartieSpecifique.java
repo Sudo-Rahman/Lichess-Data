@@ -30,7 +30,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
     // liste qui contiendra toutes les lignes pour crée une parties
     protected List<String> lstStrLigne;
 
-    protected long tempsRecherche;
+    protected long tempsRecherche =0;
     protected int nbParties;
 
     // tableau d'entier qui contient les lignes des parties ex : [[0, 18], [19, 37]]

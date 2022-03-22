@@ -21,40 +21,35 @@ import java.util.Date;
 
 public class Log
 {
-    private final Date date;
-
-    public Log()
-    {
-        this.date = new Date();
-    }
+    public Log(){}
 
     public void debug(String s)
     {
-        System.out.println(Colors.grey + getDate().format(date) + " | DEBUG | " + s + Colors.reset);
+        System.out.println(Colors.grey + getDate() + " | DEBUG | " + s + Colors.reset);
     }
 
     public void info(String s)
     {
-        System.out.println(Colors.green + getDate().format(date) + " | INFO | " + s + Colors.reset);
+        System.out.println(Colors.green + getDate() + " | INFO | " + s + Colors.reset);
     }
 
     public void warning(String s)
     {
-        System.out.println(Colors.blue + getDate().format(date) + " | WARNING | " + s + Colors.reset);
+        System.out.println(Colors.blue + getDate() + " | WARNING | " + s + Colors.reset);
     }
 
     public void error(String s)
     {
-        System.out.println(Colors.red + getDate().format(date) + " | ERROR | " + s + Colors.reset);
+        System.out.println(Colors.red + getDate() + " | ERROR | " + s + Colors.reset);
     }
 
     public void fatal(String s)
     {
-        System.out.println(Colors.redBold + getDate().format(date) + " | FATAL | " + s + Colors.reset);
+        System.out.println(Colors.redBold + getDate()+ " | FATAL | " + s + Colors.reset);
     }
 
-    private SimpleDateFormat getDate()
+    private String getDate()
     {
-        return new SimpleDateFormat("d/MM/yyyy H:m:s");
+        return new SimpleDateFormat("d/MM/yyyy H:m:s").format(new Date());
     }
 }
