@@ -3,11 +3,8 @@ package maps;
 
 import utils.Log;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,10 +17,10 @@ public class CreeMap
     private final String file;
 
     private final WriteAndReadMaps warm;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors();
+    private final int nbThreads = Runtime.getRuntime().availableProcessors()/10;
     private final Log log;
-    private long nbLines;
-    private long nbLinesParThread;
+    private long nbOctets;
+    private long nbOctetsParThread;
     private boolean creeMapOk;
 
     public CreeMap(WriteAndReadMaps mo, String path)
@@ -41,14 +38,8 @@ public class CreeMap
 
     public void cree()
     {
-        try
-        {
-            this.nbLines = Files.lines(Path.of(this.file)).count();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        this.nbLinesParThread = this.nbLines / this.nbThreads;
+        this.nbOctets = new File(file).length();
+        this.nbOctetsParThread = this.nbOctets / this.nbThreads;
         createMaps();
     }
 
@@ -58,11 +49,18 @@ public class CreeMap
         long tempsRecherche = System.currentTimeMillis();
 
         List<Thread> lstThreads = new ArrayList<>();
-        for (int i = this.nbThreads - 1; i >= 0; i--)
+        for (int i = 0; i < this.nbThreads; i++)
         {
-            System.out.println("ici");
             int I = i;
-            Thread t = new Thread(() -> calcule(nbLinesParThread * I));
+            Thread t = new Thread(() -> {
+                try
+                {
+                    calcule(nbOctetsParThread * I);
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            });
             lstThreads.add(t);
             t.start();
         }
@@ -81,22 +79,25 @@ public class CreeMap
         System.out.println(this.warm.getNameMap().size() + " - " + this.warm.getEloMap().size() + " - " + this.warm.getUtcDateMap().size() + " " + "- " + this.warm.getUtcTimeMap().size() + " - " + this.warm.getOpenningMap().size() + " - " + this.warm.getNbCoupsMap().size());
     }
 
-    private void calcule(long deb)
+    private void calcule(long deb) throws IOException
     {
+        RandomAccessFile raf = null;
         BufferedReader reader = null;
         try
         {
-            reader = new BufferedReader(new FileReader(file));
+            raf = new RandomAccessFile(file, "r");
+            reader = new BufferedReader(new FileReader(raf.getFD()));
+            raf.seek(deb);
         } catch (Exception e)
         {
-            System.exit(-1);
             log.error("Fichier existe pas");
+            System.exit(-1);
         }
 
         // variables pour connaitre les lignes de debut et fin d'une partie
         long lines = 0L;
-        long lineDeb = 0L;
-        long lineFin;
+        long octetDeb = raf.getFilePointer();
+        long octetFin;
         int comptLigne = 0;
 
 
@@ -104,12 +105,7 @@ public class CreeMap
         String str;
         try
         {
-            while (lines <= deb)
-            {
-                reader.readLine();
-                lines++;
-            }
-            while ((str = reader.readLine()) != null && lines <= deb + nbLinesParThread + 16)
+            while ((str = reader.readLine()) != null && raf.getFilePointer() <= deb + nbOctetsParThread + 1000)
             {
                 if (str.equals("") && lines < 16)
                 {
@@ -120,10 +116,10 @@ public class CreeMap
                 else lstStr.add(str);
                 if (comptLigne == 2)
                 {
-                    lineFin = lines + 1;
+                    octetFin = raf.getFilePointer();
                     long[] tab = new long[2];
-                    tab[0] = lineDeb;
-                    tab[1] = lineFin;
+                    tab[0] = octetDeb;
+                    tab[1] = octetFin;
                     for (String string : lstStr)
                     {
                         String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
@@ -195,7 +191,7 @@ public class CreeMap
                         }
                     }
                     comptLigne = 0;
-                    lineDeb = lines + 2;
+                    octetDeb = octetFin+1;
                     lstStr.clear();
                 }
                 lines++;
