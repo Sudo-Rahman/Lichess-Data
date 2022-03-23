@@ -13,7 +13,6 @@
 package choix;
 
 import maps.MapsObjets;
-import recherche.Recherche;
 import recherche.autres.CinqOuverturesPlusJoue;
 import recherche.partie.specifique.*;
 import utils.Colors;
@@ -48,15 +47,14 @@ public class InitChoix
 
     private void choix1()
     {
-        envoieMessage("\n" + Colors.green + "1/ Recherche de partie(s) en fonction du premier coup" + Colors.reset + ".\n" +
-                Colors.cyan + "2/ Recherche de partie(s) en fonction de l'elo des joueur" + Colors.reset + ".\n" +
-                Colors.green + "3/ Recherche de partie(s) en fonction de la date" + Colors.reset + ".\n");
+        envoieMessage("\n" + Colors.green + "1/ Recherche de partie(s) en fonction du premier coup" + Colors.reset + ".\n" + Colors.cyan + "2/ Recherche de partie(s) en fonction de l'elo des joueur" + Colors.reset + ".\n" + Colors.green + "3/ Recherche de partie(s) en fonction de la date" + Colors.reset + ".\n");
         int choix;
         do
         {
             envoieMessage("Donner votre choix");
             choix = litInt();
-            if(choix ==-1){
+            if (choix == -1)
+            {
                 log.fatal("Impossible de lire le flux du client !!!");
                 break;
             }
@@ -84,13 +82,15 @@ public class InitChoix
         recherche.cherche();
     }
 
-    private void choix3(){
-        CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream,writer,mapObjets);
+    private void choix3()
+    {
+        CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream, writer, mapObjets);
         recherche.cherche();
     }
 
-    private void choix4(){
-        RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream,writer,mapObjets);
+    private void choix4()
+    {
+        RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream, writer, mapObjets);
         recherche.cherche();
     }
 

@@ -38,7 +38,8 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         this.nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if(litMess().equals("no")){
+        if (litMess().equals("no"))
+        {
             this.afficheParties = false;
         }
     }
@@ -58,12 +59,15 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
+        else envoieMessage(toString());
     }
 
     @Override
     public void calcule()
     {
+        trieMapList(getNbCoupsMap(), this.nbCoups);
+
         String ligne;
         int comptLigneVide = 0;
         long lignes = 0L;
@@ -78,7 +82,8 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    if (ligne.equals("")) {comptLigneVide++;} else lstStrLigne.add(ligne);
+                    if (ligne.equals("")) {comptLigneVide++;}
+                    else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
                     {
                         lstPartie.add(new Partie(lstStrLigne));
@@ -95,7 +100,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        if(this.afficheParties) envoieMessage(toString());
+        if (this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

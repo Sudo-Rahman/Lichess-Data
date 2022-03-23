@@ -20,19 +20,11 @@ public class CreeMap
     private final String file;
 
     private final WriteAndReadMaps warm;
-
+    private final int nbThreads = Runtime.getRuntime().availableProcessors();
+    private final Log log;
     private long nbLines;
     private long nbLinesParThread;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
-
-    public boolean isCreeMapOk()
-    {
-        return creeMapOk;
-    }
-
     private boolean creeMapOk;
-
-    private final Log log;
 
     public CreeMap(WriteAndReadMaps mo, String path)
     {
@@ -42,7 +34,13 @@ public class CreeMap
         log = new Log();
     }
 
-    public void cree(){
+    public boolean isCreeMapOk()
+    {
+        return creeMapOk;
+    }
+
+    public void cree()
+    {
         try
         {
             this.nbLines = Files.lines(Path.of(this.file)).count();
@@ -60,9 +58,9 @@ public class CreeMap
         long tempsRecherche = System.currentTimeMillis();
 
         List<Thread> lstThreads = new ArrayList<>();
-
         for (int i = this.nbThreads - 1; i >= 0; i--)
         {
+            System.out.println("ici");
             int I = i;
             Thread t = new Thread(() -> calcule(nbLinesParThread * I));
             lstThreads.add(t);
@@ -80,7 +78,7 @@ public class CreeMap
         }
         this.creeMapOk = true;
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " " + "secondes");
-        System.out.println(this.warm.getNameMap().size() + " - " + this.warm.getEloMap().size() + " - " + this.warm.getUtcDateMap().size() + " " + "- " + this.warm.getUtcTimeMap().size()  + " - " + this.warm.getOpenningMap().size()  + " - " + this.warm.getNbCoupsMap().size() );
+        System.out.println(this.warm.getNameMap().size() + " - " + this.warm.getEloMap().size() + " - " + this.warm.getUtcDateMap().size() + " " + "- " + this.warm.getUtcTimeMap().size() + " - " + this.warm.getOpenningMap().size() + " - " + this.warm.getNbCoupsMap().size());
     }
 
     private void calcule(long deb)
@@ -95,7 +93,6 @@ public class CreeMap
             log.error("Fichier existe pas");
         }
 
-        //        System.out.println(this.nbLignesParThread + deb);
         // variables pour connaitre les lignes de debut et fin d'une partie
         long lines = 0L;
         long lineDeb = 0L;
@@ -134,7 +131,8 @@ public class CreeMap
                         switch (buf[0])
                         {
                             case "White", "Black" -> {
-                                if (this.warm.getNameMap().containsKey(buf[1])) this.warm.getNameMap().get(buf[1]).add(tab);
+                                if (this.warm.getNameMap().containsKey(buf[1]))
+                                    this.warm.getNameMap().get(buf[1]).add(tab);
                                 else
                                     this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(tab))));
                             }
@@ -149,12 +147,14 @@ public class CreeMap
                                 {
                                     log.error("Impossible de parser la date !!");
                                 }
-                                if (this.warm.getUtcDateMap().containsKey(utcDate)) this.warm.getUtcDateMap().get(utcDate).add(tab);
+                                if (this.warm.getUtcDateMap().containsKey(utcDate))
+                                    this.warm.getUtcDateMap().get(utcDate).add(tab);
                                 else
                                     this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
                             }
                             case "UTCTime" -> {
-                                if (this.warm.getUtcTimeMap().containsKey(buf[1])) this.warm.getUtcTimeMap().get(buf[1]).add(tab);
+                                if (this.warm.getUtcTimeMap().containsKey(buf[1]))
+                                    this.warm.getUtcTimeMap().get(buf[1]).add(tab);
                                 else
                                     this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
                             }
@@ -162,7 +162,10 @@ public class CreeMap
                                 try
                                 {
                                     int elo = Integer.parseInt(buf[1]);
-                                    if (this.warm.getEloMap().containsKey(elo)) {this.warm.getEloMap().get(elo).add(tab);}
+                                    if (this.warm.getEloMap().containsKey(elo))
+                                    {
+                                        this.warm.getEloMap().get(elo).add(tab);
+                                    }
                                     else
                                         this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
                                 } catch (NumberFormatException e)

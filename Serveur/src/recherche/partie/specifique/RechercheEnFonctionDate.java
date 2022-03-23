@@ -20,6 +20,9 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
@@ -31,17 +34,40 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         super(clientReader, clientWriter, mapObjets);
     }
 
+
     @Override
     public void initDemande()
     {
-        String dateDeb = (String) getUtcDateMap().keySet().toArray()[0];
-        String dateFin = (String) getUtcDateMap().keySet().toArray()[getUtcDateMap().size() - 1];
-        envoieMessage("Donner la date, (compris entre " + dateDeb + " et " + dateFin + " sur le fichier" + mapObjets.getFile().getName());
+        SimpleDateFormat sdformat = new SimpleDateFormat("dd/MM/yyyy");
+
+        Date dateDeb = null;
+        Date dateFin = null;
+        try
+        {
+            dateDeb = sdformat.parse((String) getUtcDateMap().keySet().toArray()[0]);
+            dateFin = sdformat.parse((String) getUtcDateMap().keySet().toArray()[1]);
+            for (Object date : getUtcDateMap().keySet())
+            {
+                if (dateDeb.compareTo(sdformat.parse((String) date)) > 0)
+                {
+                    dateDeb = sdformat.parse((String) date);
+                }
+                if (dateFin.compareTo(sdformat.parse((String) date)) < 0)
+                {
+                    dateFin = sdformat.parse((String) date);
+                }
+            }
+        } catch (ParseException e)
+        {
+            log.error("Impossible de convertir le String en date !!");
+        }
+        envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjets.getFile().getName());
         this.date = litMess();
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if(litMess().equals("no")){
+        if (litMess().equals("no"))
+        {
             this.afficheParties = false;
         }
     }
@@ -63,17 +89,19 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
+        else envoieMessage(toString());
     }
 
 
     /**
-    *lit le fichier tant que le nombre de partie n'a pas été atteint,
-    *cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+     * lit le fichier tant que le nombre de partie n'a pas été atteint,
+     * cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
      */
     @Override
     public void calcule()
     {
+        trieMapList(getUtcDateMap(), this.date);
         String ligne;
         int comptLigneVide = 0;
         long lignes = 0L;
@@ -84,11 +112,12 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         int partie = 0;
         try
         {
-            while ((ligne = getFileReader().readLine()) != null &&  lstPartie.size() < nbParties)
+            while ((ligne = getFileReader().readLine()) != null && lstPartie.size() < nbParties)
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    if (ligne.equals("")) {comptLigneVide++;} else lstStrLigne.add(ligne);
+                    if (ligne.equals("")) {comptLigneVide++;}
+                    else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
                     {
                         lstPartie.add(new Partie(lstStrLigne));
@@ -105,7 +134,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        if(this.afficheParties) envoieMessage(toString());
+        if (this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

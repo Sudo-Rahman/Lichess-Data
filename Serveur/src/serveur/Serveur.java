@@ -21,30 +21,27 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class Serveur
 {
 
+    private static final Log log = new Log();
     private final int maxClients;
     private final int nbThreadsPerClient;
     private final List<ConnexionClient> lstConnexion;
     private final ServerSocket serverSocket;
     private final MapsObjets mapObjets;
-    private static final Log log = new Log();
 
     public Serveur(ServerSocket serverSocket, int maxClients)
     {
         this.lstConnexion = new ArrayList<>(maxClients);
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
-        this.nbThreadsPerClient =Runtime.getRuntime().availableProcessors() / maxClients;
-        String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn";
+        this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
+        String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2019-10.pgn";
         this.mapObjets = new MapsObjets(pathFile);
         new Thread(mapObjets::charge).start();
     }
@@ -64,10 +61,11 @@ public class Serveur
                 {
                     envoieMessage("Trop de clients, retentez dans quelques instants", client);
                     client.close();
-                } else
+                }
+                else
                 {
                     log.debug(client.toString());
-                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient,this.lstConnexion,this.mapObjets);
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient, this.lstConnexion, this.mapObjets);
                     this.lstConnexion.add(connexionClient);
                     connexionClient.start();
                 }

@@ -21,7 +21,7 @@ import java.util.Date;
 
 public class Log
 {
-    public Log(){}
+    public Log() {}
 
     public void debug(String s)
     {
@@ -45,7 +45,7 @@ public class Log
 
     public void fatal(String s)
     {
-        System.out.println(Colors.redBold + getDate()+ " | FATAL | " + s + Colors.reset);
+        System.out.println(Colors.redBold + getDate() + " | FATAL | " + s + Colors.reset);
     }
 
     private String getDate()

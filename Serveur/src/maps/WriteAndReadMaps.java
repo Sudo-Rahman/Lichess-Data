@@ -13,65 +13,16 @@ public class WriteAndReadMaps implements Externalizable
 {
     @Serial
     private static final long serialVersionUID = -8576293727662889893L;
-    private final List<Map> lstMaps;
-
-    private Map<String, List<long[]>> nameMap;
-    private Map<Integer, List<long[]>> eloMap;
-    private Map<String, List<long[]>> utcDateMap;
-    private Map<String, List<long[]>> utcTimeMap;
-    private Map<String, List<long[]>> openningMap;
-    private Map<Integer, List<long[]>> nbCoupsMap;
-
+    private final List<Map<Object,List<long[]>>> lstMaps;
+    private final Log log = new Log();
+    private Map<Object, List<long[]>> nameMap;
+    private Map<Object, List<long[]>> eloMap;
+    private Map<Object, List<long[]>> utcDateMap;
+    private Map<Object, List<long[]>> utcTimeMap;
+    private Map<Object, List<long[]>> openningMap;
+    private Map<Object, List<long[]>> nbCoupsMap;
     private int ecriturePoucentage;
     private int lecturePoucentage;
-
-    private final Log log = new Log();
-
-
-    public List<Map> getLstMaps()
-    {
-        return lstMaps;
-    }
-
-    public Map<String, List<long[]>> getNameMap()
-    {
-        return nameMap;
-    }
-
-    public Map<Integer, List<long[]>> getEloMap()
-    {
-        return eloMap;
-    }
-
-    public Map<String, List<long[]>> getUtcDateMap()
-    {
-        return utcDateMap;
-    }
-
-    public Map<String, List<long[]>> getUtcTimeMap()
-    {
-        return utcTimeMap;
-    }
-
-    public Map<String, List<long[]>> getOpenningMap()
-    {
-        return openningMap;
-    }
-
-    public Map<Integer, List<long[]>> getNbCoupsMap()
-    {
-        return nbCoupsMap;
-    }
-
-    public boolean isWriteMapsOk()
-    {
-        return this.ecriturePoucentage == 100;
-    }
-
-    public boolean isChargementMapOk()
-    {
-        return this.lecturePoucentage == 100;
-    }
 
     public WriteAndReadMaps()
     {
@@ -97,6 +48,51 @@ public class WriteAndReadMaps implements Externalizable
                 e.printStackTrace();
             }
         }
+    }
+
+    public Map<Object, List<long[]>> getNameMap()
+    {
+        return nameMap;
+    }
+
+    public Map<Object, List<long[]>> getEloMap()
+    {
+        return eloMap;
+    }
+
+    public Map<Object, List<long[]>> getUtcDateMap()
+    {
+        return utcDateMap;
+    }
+
+    public Map<Object, List<long[]>> getUtcTimeMap()
+    {
+        return utcTimeMap;
+    }
+
+    public Map<Object, List<long[]>> getOpenningMap()
+    {
+        return openningMap;
+    }
+
+    public Map<Object, List<long[]>> getNbCoupsMap()
+    {
+        return nbCoupsMap;
+    }
+
+    public List<Map<Object,List<long[]>>> getLstMaps()
+    {
+        return lstMaps;
+    }
+
+    public boolean isWriteMapsOk()
+    {
+        return this.ecriturePoucentage == 100;
+    }
+
+    public boolean isChargementMapOk()
+    {
+        return this.lecturePoucentage == 100;
     }
 
     @Override

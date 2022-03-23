@@ -17,16 +17,19 @@ package client;
 import client.info.ClientInfo;
 import utils.Log;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
 
 public class Client
 {
+    private static final Log log = new Log();
     private final ClientInfo clientInfo;
     private Socket socket;
-    private static final Log log = new Log();
     private BufferedReader bufferedReader;
     private ObjectOutputStream objectOutputStream;
 
@@ -66,10 +69,10 @@ public class Client
             {
                 closeAll();
                 log.info("Vous vous etes deconnecter");
-            } else envoieMessage(message);
+            }
+            else envoieMessage(message);
         }
     }
-
 
 
     /**

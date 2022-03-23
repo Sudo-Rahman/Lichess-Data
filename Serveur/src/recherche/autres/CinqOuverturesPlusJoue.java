@@ -31,12 +31,10 @@ public class CinqOuverturesPlusJoue extends Recherche
     @Override
     public void cherche()
     {
-        long nbParties = 0;
         Map<Integer, String> lst = new HashMap<>();
-        for (Map.Entry<String, List<long[]>> element : getOpenningMap().entrySet())
+        for (Map.Entry<Object, List<long[]>> element : getOpenningMap().entrySet())
         {
-            lst.put(element.getValue().size(), element.getKey());
-            nbParties += element.getValue().size();
+            lst.put(element.getValue().size(), (String) element.getKey());
         }
         // enleve toutes les plus petites valeurs et laisse les 5 plus grandes
         for (int i = 0; i < getOpenningMap().size() - 5; i++)
@@ -49,7 +47,7 @@ public class CinqOuverturesPlusJoue extends Recherche
         lstTrier.putAll(lst);
 
         int i = 1;
-        envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + nbParties + " parties : " + Colors.reset);
+        envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + getNbParties() + " parties : " + Colors.reset);
         for (Map.Entry<Object, Object> element : lstTrier.entrySet())
         {
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");

@@ -20,9 +20,6 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 {
@@ -42,7 +39,8 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if(litMess().equals("no")){
+        if (litMess().equals("no"))
+        {
             this.afficheParties = false;
         }
     }
@@ -64,7 +62,8 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
+        else envoieMessage(toString());
     }
 
 
@@ -76,19 +75,8 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     public void calcule()
     {
 
-        TreeMap<Long, Long> map = new TreeMap<>();
-
-
-        for (long[] t : getOpenningMap().get(this.coup)){
-            map.put(t[0], t[1]);
-        }
-        this.lstLigneParties.clear();
-        for (Map.Entry<Long, Long> t : map.entrySet()){
-            long[] tab = new long[2];
-            tab[0] = t.getKey();
-            tab[1] = t.getValue();
-            this.lstLigneParties.add(tab);
-        }
+        trieMapList(getOpenningMap(), this.coup);
+        System.out.println(getOpenningMap().toString());
 
         String ligne;
         int comptLigneVide = 0;
@@ -104,7 +92,8 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    if (ligne.equals("")) {comptLigneVide++;} else lstStrLigne.add(ligne);
+                    if (ligne.equals("")) {comptLigneVide++;}
+                    else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
                     {
                         lstPartie.add(new Partie(lstStrLigne));
@@ -121,7 +110,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        if(this.afficheParties) envoieMessage(toString());
+        if (this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

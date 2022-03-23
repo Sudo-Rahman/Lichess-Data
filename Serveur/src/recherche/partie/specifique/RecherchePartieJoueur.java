@@ -40,7 +40,8 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if(litMess().equals("no")){
+        if (litMess().equals("no"))
+        {
             this.afficheParties = false;
         }
     }
@@ -62,7 +63,8 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
+        else envoieMessage(toString());
     }
 
 
@@ -73,6 +75,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
+        trieMapList(getNameMap(), this.joueur);
 
         String ligne;
         int comptLigneVide = 0;
@@ -88,7 +91,8 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
             {
                 if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
                 {
-                    if (ligne.equals("")) {comptLigneVide++;} else lstStrLigne.add(ligne);
+                    if (ligne.equals("")) {comptLigneVide++;}
+                    else lstStrLigne.add(ligne);
                     if (comptLigneVide == 2)
                     {
                         lstPartie.add(new Partie(lstStrLigne));
@@ -105,7 +109,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        if(this.afficheParties) envoieMessage(toString());
+        if (this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire

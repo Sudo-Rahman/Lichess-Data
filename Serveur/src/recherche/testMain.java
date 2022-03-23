@@ -2,8 +2,13 @@ package recherche;
 
 import partie.Partie;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class testMain
@@ -15,20 +20,20 @@ public class testMain
         BufferedReader bufferedReader = null;
         List<String> lst = new ArrayList<>();
         int nbLines = 0;
-//        try
-//        {
-//            nbLines = (int) Files.lines(Path.of(testFile.getAbsolutePath())).count();
-//            System.out.println(""+nbLines);
-//        } catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
+        //        try
+        //        {
+        //            nbLines = (int) Files.lines(Path.of(testFile.getAbsolutePath())).count();
+        //            System.out.println(""+nbLines);
+        //        } catch (IOException e)
+        //        {
+        //            e.printStackTrace();
+        //        }
 
         {
             try
             {
                 reader = new FileReader(testFile);
-                bufferedReader = new BufferedReader(reader,16384);
+                bufferedReader = new BufferedReader(reader, 16384);
             } catch (FileNotFoundException e)
             {
                 e.printStackTrace();
@@ -40,18 +45,22 @@ public class testMain
         long partiecount = 0L;
         try
         {
-            while ((ligne = bufferedReader.readLine()) != null && partiecount <150)
+            while ((ligne = bufferedReader.readLine()) != null && partiecount < 150)
             {
-                if (ligne.equals("")){
+                if (ligne.equals(""))
+                {
                     comptLign++;
-                }else{
-                lst.add(ligne);}
+                }
+                else
+                {
+                    lst.add(ligne);
+                }
                 if (comptLign == 2)
                 {
                     comptLign = 0;
                     partieHashMap.put(partiecount, new Partie(lst));
                     partiecount++;
-//                    System.out.println(lst);
+                    //                    System.out.println(lst);
                     lst.clear();
                 }
 

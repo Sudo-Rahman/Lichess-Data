@@ -22,13 +22,13 @@ import java.util.Map;
 
 public abstract class Recherche
 {
-    private BufferedReader fileReader;
+    protected final MapsObjets mapObjets;
+    protected final Log log = new Log();
     private final ObjectInputStream clientReader;
     private final BufferedWriter clientWriter;
-    protected final MapsObjets mapObjets;
     protected int maxNbParties = 100000;
-    protected  boolean afficheParties = true;
-    protected final Log log = new Log();
+    protected boolean afficheParties = true;
+    private BufferedReader fileReader;
 
 
     public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
@@ -105,33 +105,38 @@ public abstract class Recherche
     }
 
 
-    public Map<String, List<long[]>> getNameMap()
+    public Map<Object, List<long[]>> getNameMap()
     {
-        return mapObjets.warm.getNameMap();
+        return mapObjets.getWarm().getNameMap();
     }
 
-    public Map<Integer, List<long[]>> getEloMap()
+    public Map<Object, List<long[]>> getEloMap()
     {
-        return mapObjets.warm.getEloMap();
+        return mapObjets.getWarm().getEloMap();
     }
 
-    public Map<String, List<long[]>> getUtcDateMap()
+    public Map<Object, List<long[]>> getUtcDateMap()
     {
-        return mapObjets.warm.getUtcDateMap();
+        return mapObjets.getWarm().getUtcDateMap();
     }
 
-    public Map<String, List<long[]>> getUtcTimeMap()
+    public Map<Object, List<long[]>> getUtcTimeMap()
     {
-        return mapObjets.warm.getUtcTimeMap();
+        return mapObjets.getWarm().getUtcTimeMap();
     }
 
-    public Map<String, List<long[]>> getOpenningMap()
+    public Map<Object, List<long[]>> getOpenningMap()
     {
-        return mapObjets.warm.getOpenningMap();
+        return mapObjets.getWarm().getOpenningMap();
     }
 
-    public Map<Integer, List<long[]>> getNbCoupsMap()
+    public Map<Object, List<long[]>> getNbCoupsMap()
     {
-        return mapObjets.warm.getNbCoupsMap();
+        return mapObjets.getWarm().getNbCoupsMap();
+    }
+
+    public long getNbParties()
+    {
+        return this.mapObjets.getNbParties();
     }
 }

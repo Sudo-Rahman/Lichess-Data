@@ -20,21 +20,24 @@ import maps.MapsObjets;
 import utils.Colors;
 import utils.Log;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
 
 class ConnexionClient extends Thread
 {
+    private static final Log log = new Log();
     private final List<ConnexionClient> lstConnexion;
+    private final int nbMaxThread;
+    private final MapsObjets mapObjets;
     private ClientInfo username;
     private Socket socketClient;
-    private final int nbMaxThread;
-    private static final Log log = new Log();
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
-    private final MapsObjets mapObjets;
 
     protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, MapsObjets mapObjets)
     {
@@ -71,6 +74,7 @@ class ConnexionClient extends Thread
             this.lstConnexion.remove(this);
             closeAll();
         }
+        envoieMessage("\033[H\033[2J" + Colors.PURPLE_UNDERLINED + "Bonjour " + this.getUsername() + " saisissez votre choix :\n" + Colors.reset);
         envoieMessage(afficheChoix());
         litMess();
 
@@ -100,18 +104,9 @@ class ConnexionClient extends Thread
      */
     private String afficheChoix()
     {
-        return "\033[H\033[2J" +
-                Colors.PURPLE_UNDERLINED + "Bonjour " + this.getUsername() + " saisissez votre choix :\n\n" + Colors.reset +
-                Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
-                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
-                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
-                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
-                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
-                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
-                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
-                Colors.RED_BOLD_BRIGHT + "0 / Pour quitter le serveur" + Colors.reset;
-//        Colors.green + "" + Colors.reset;
-//        Colors.cyan + "" + Colors.reset;
+        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" + Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" + Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" + Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" + Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" + Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" + Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset + Colors.RED_BOLD_BRIGHT + "0 / Pour quitter le serveur" + Colors.reset;
+        //        Colors.green + "" + Colors.reset;
+        //        Colors.cyan + "" + Colors.reset;
     }
 
     /**
@@ -131,6 +126,7 @@ class ConnexionClient extends Thread
                 } catch (Exception e)
                 {
                     log.warning("Le client n'envoie pas des nombres");
+                    envoieMessage(afficheChoix());
                 }
                 if (nb == 0)
                 {
@@ -140,7 +136,7 @@ class ConnexionClient extends Thread
                     closeAll();
                     break;
                 }
-//                    System.out.println(this.socketClient.getPort() + "");
+                //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
                 new InitChoix(nb, objectInputStream, writer, mapObjets);// gere toute la partie choix du client
             }

@@ -1,5 +1,7 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 
 public class test
 {
@@ -35,12 +37,13 @@ public class test
                 }
                 if (cont == 17)
                 {
-//                    print();
-                    if(choix != 1){
+                    //                    print();
+                    if (choix != 1)
+                    {
 
                         lst.removeAll(lst);
                     }
-//                    System.exit(-1);
+                    //                    System.exit(-1);
                     cont = 0;
                     choix++;
 

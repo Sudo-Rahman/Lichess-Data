@@ -19,8 +19,7 @@ import utils.Colors;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class RecherchePartieSpecifique extends Recherche
 {
@@ -30,12 +29,11 @@ public abstract class RecherchePartieSpecifique extends Recherche
     // liste qui contiendra toutes les lignes pour crée une parties
     protected List<String> lstStrLigne;
 
-    protected long tempsRecherche =0;
+    protected long tempsRecherche = 0;
     protected int nbParties;
 
     // tableau d'entier qui contient les lignes des parties ex : [[0, 18], [19, 37]]
     protected List<long[]> lstLigneParties;
-
 
 
     public RecherchePartieSpecifique(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
@@ -47,7 +45,49 @@ public abstract class RecherchePartieSpecifique extends Recherche
     }
 
     public abstract void calcule();
-    public  abstract void initDemande();
+
+    public abstract void initDemande();
+
+    protected void trieMapList(Map<Object, List<long[]>> hashMap, Object objet)
+    {
+        TreeMap<Long, Long> map = new TreeMap<>();
+        for (long[] t : hashMap.get(objet))
+        {
+            map.put(t[0], t[1]);
+        }
+        this.lstLigneParties.clear();
+        for (Map.Entry<Long, Long> t : map.entrySet())
+        {
+            long[] tab = new long[2];
+            tab[0] = t.getKey();
+            tab[1] = t.getValue();
+            this.lstLigneParties.add(tab);
+        }
+    }
+
+    protected void trieMapList(Map<Object, List<long[]>> hashMap, List<Object> lstObjet)
+    {
+        TreeMap<Long, Long> map = new TreeMap<>();
+        for (Object obj : lstObjet)
+        {
+            if (hashMap.containsKey(obj))
+            {
+                for (long[] l : hashMap.get(obj))
+                {
+                    map.put(l[0], l[1]);
+                }
+            }
+        }
+
+        // ajout des lignes du debu et de fin des parties dans lstLigneParties
+        for (Map.Entry<Long, Long> element : map.entrySet())
+        {
+            long[] tab = new long[2];
+            tab[0] = element.getKey();
+            tab[1] = element.getValue();
+            this.lstLigneParties.add(tab);
+        }
+    }
 
     @Override
     public String toString()

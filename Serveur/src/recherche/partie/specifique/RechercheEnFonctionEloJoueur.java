@@ -20,7 +20,8 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 {
@@ -41,8 +42,11 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (trouveElo() > 0)
+        trieMapList(getEloMap(), IntStream.rangeClosed(this.eloInf, this.eloSup).boxed().collect(Collectors.toList()));
+        if (this.lstLigneParties.size() > 0)
         {
+            System.out.println("dedans");
+
             // -1 correspond au maximum de partie, qui est limité par la variable maxNbParties
             if (nbParties == -1)
             {
@@ -51,7 +55,8 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
+        else envoieMessage(toString());
     }
 
     @Override
@@ -64,7 +69,8 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
         this.nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if(litMess().equals("no")){
+        if (litMess().equals("no"))
+        {
             this.afficheParties = false;
         }
     }
@@ -76,6 +82,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
+        this.tempsRecherche = System.currentTimeMillis();
         String ligne;
         int comptLigneVide = 0;
         long lignes = 0L;
@@ -110,42 +117,11 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         {
             e.printStackTrace();
         }
-        if(this.afficheParties) envoieMessage(toString());
+        if (this.afficheParties) envoieMessage(toString());
         closeFileReader();
 
         //Libere la liste de la memoire
         this.lstPartie = null;
         System.gc();
-    }
-
-
-    /*
-      recherche de tous les elos dans la borne qui sont dans la hasmap puis,
-       on ajoute le tableau contenant les lignes du debut et de la fin de la partie a lstLigneParties
-     */
-    private int trouveElo()
-    {
-        this.tempsRecherche = System.currentTimeMillis();
-
-        //creation d'une map trié en ordre croissant
-        TreeMap<Long, Long> map = new TreeMap<>();
-        for (int i = this.eloInf; i <= this.eloSup; i++)
-        {
-            if (getEloMap().containsKey(i))
-            {
-                for(long[] l  : getEloMap().get(i)){
-                    map.put(l[0], l[1]);
-                }
-            }
-        }
-
-        // ajout des lignes du debu et de fin des parties dans lstLigneParties
-        for(Map.Entry<Long, Long> element : map.entrySet()){
-            long[] tab = new long[2];
-            tab[0] = element.getKey();
-            tab[1] = element.getValue();
-            this.lstLigneParties.add(tab);
-        }
-        return this.lstLigneParties.size();
     }
 }
