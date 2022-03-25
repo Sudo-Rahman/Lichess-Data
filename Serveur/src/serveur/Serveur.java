@@ -17,6 +17,7 @@ package serveur;
 import maps.MapsObjets;
 import utils.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -35,14 +36,13 @@ public class Serveur
     private final ServerSocket serverSocket;
     private final MapsObjets mapObjets;
 
-    public Serveur(ServerSocket serverSocket, int maxClients)
+    public Serveur(ServerSocket serverSocket, int maxClients, File file)
     {
         this.lstConnexion = new ArrayList<>(maxClients);
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
-        String pathFile = "/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn";
-        this.mapObjets = new MapsObjets(pathFile);
+        this.mapObjets = new MapsObjets(file.getAbsolutePath());
         new Thread(mapObjets::charge).start();
     }
 

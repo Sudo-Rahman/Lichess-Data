@@ -34,7 +34,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     {
         envoieMessage("Donner le premier coup, ex : \"d4\"");
         this.coup = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
         if (litMess().equals("no"))
@@ -53,7 +53,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         if (getOpenningMap().containsKey(this.coup))
         {
             this.lstLigneParties = getOpenningMap().get(this.coup);
-            if (nbParties == -1)// -1 correspond au maximum de partie, qui est limité par la variable maxNbParties
+            if (nbParties == 0)// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
             {
                 nbParties = Math.min(getOpenningMap().get(this.coup).size(), this.maxNbParties);
             }
@@ -76,7 +76,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties, nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

@@ -78,14 +78,15 @@ public class MapsObjets
             {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileMaps));
                 this.chargementMap = cr.isCreeMapOk();
+                for (List<Long> t : this.warm.getNameMap().values())
+                {this.nbParties += t.size();}
+                this.nbParties /=2;
                 oos.writeObject(this.warm);
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
-        for (List<Long> t : this.warm.getNameMap().values())
-        {this.nbParties += t.size();}
-        log.info("Il y a  " + this.nbParties / 2 + " parties dans le fichiers " + this.file.getName());
+        log.info("Il y a  " + this.nbParties + " parties dans le fichiers " + this.file.getName());
     }
 }

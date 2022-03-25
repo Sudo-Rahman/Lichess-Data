@@ -33,7 +33,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     {
         envoieMessage("Donner le nombre de coups");
         this.nbCoups = litInt();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
         this.nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
         if (litMess().equals("no"))
@@ -49,8 +49,8 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
         if (getNbCoupsMap().containsKey(this.nbCoups))
         {
             this.lstLigneParties = getNbCoupsMap().get(this.nbCoups);
-            // -1 correspond au maximum de partie, qui est limité par la variable maxNbParties
-            if (nbParties == -1)
+            // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+            if (nbParties == 0)
             {
                 nbParties = Math.min(getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
             }
@@ -67,11 +67,11 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
 
         this.tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties, this.nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, this.nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
-        this.parsePartie.closeReader();
+        this.partiesFile.closeReader();
 
         //Libere la liste de la memoire
         this.lstPartie = null;

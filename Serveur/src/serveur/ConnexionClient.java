@@ -104,7 +104,14 @@ class ConnexionClient extends Thread
      */
     private String afficheChoix()
     {
-        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" + Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" + Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" + Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" + Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" + Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" + Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset + Colors.RED_BOLD_BRIGHT + "0 / Pour quitter le serveur" + Colors.reset;
+        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
+                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
+                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
+                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
+                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
+                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
+                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
         //        Colors.green + "" + Colors.reset;
         //        Colors.cyan + "" + Colors.reset;
     }
@@ -117,7 +124,7 @@ class ConnexionClient extends Thread
         try
         {
             String mess;
-            int nb = 0;
+            int nb = -1;
             while ((mess = (String) objectInputStream.readObject()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
             {
                 try
@@ -128,7 +135,7 @@ class ConnexionClient extends Thread
                     log.warning("Le client n'envoie pas des nombres");
                     envoieMessage(afficheChoix());
                 }
-                if (nb == 0)
+                if (nb == -1)
                 {
                     log.info(getUsername() + " à quitté le serveur");
 

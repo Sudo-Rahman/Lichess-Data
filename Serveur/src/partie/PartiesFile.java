@@ -1,32 +1,53 @@
+/*
+ * Nom de classe : ParsePartie
+ *
+ * Description   : Classe qui va chercher dans le fichier de donné la partie indiqué par sa position, et crée des Parties.
+ *
+ * Version       : 1.0
+ *
+ * Date          : 22/03/2022
+ *
+ * @author : Yilmaz Rahman, Colliat Maxime
+ *
+ */
+
+
 package partie;
 
 import utils.Log;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParsePartie
+public class PartiesFile
 {
     private static final Log log = new Log();
-    private RandomAccessFile randomAccessFile;
+    private FileInputStream fileInputStream;
 
-    public ParsePartie(File file)
+    public PartiesFile(File file)
     {
         try
         {
-            this.randomAccessFile = new RandomAccessFile(file, "r");
+            this.fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e)
         {
             log.error("Impossible de trouver le fichier !!");
         }
     }
 
+    /**
+     * @param pos position de la partie dans le fichier
+     * @return nouvelle Partie
+     * @throws IOException
+     */
     public Partie getPartieInFile(long pos) throws IOException
     {
-        BufferedReader reader = new BufferedReader(new FileReader(this.randomAccessFile.getFD()));
+        //crée un nouveau bufferedReader car impossible de vider le buffer autrement
+        BufferedReader reader = new BufferedReader(new InputStreamReader(this.fileInputStream));
 
-        this.randomAccessFile.seek(pos);
+        this.fileInputStream.getChannel().position(pos);
         int comptLigneVide = 0;
         int lignes = 0;
 
@@ -48,6 +69,11 @@ public class ParsePartie
         return new Partie(lstStr);
     }
 
+    /**
+     * @param lstPos
+     * @param maxNbParties
+     * @return
+     */
     public List<Partie> getAllParties(List<Long> lstPos, int maxNbParties)
     {
         int compteur = 0;
@@ -70,7 +96,7 @@ public class ParsePartie
     {
         try
         {
-            this.randomAccessFile.close();
+            this.fileInputStream.close();
         } catch (IOException e)
         {
             log.error("Impossible de fermer randomeAccessFile et bufferedReader !!");

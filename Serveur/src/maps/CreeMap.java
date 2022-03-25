@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class CreeMap
@@ -18,9 +19,9 @@ public class CreeMap
     private final String file;
 
     private final WriteAndReadMaps warm;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    private final int nbThreads = Runtime.getRuntime().availableProcessors();
     private final Log log;
-    private long nbOctets;
+    private long nbOctetsLu;
     private long nbOctetsParThread;
     private boolean creeMapOk;
 
@@ -39,8 +40,8 @@ public class CreeMap
 
     public void cree()
     {
-        this.nbOctets = new File(file).length();
-        this.nbOctetsParThread = this.nbOctets / this.nbThreads;
+        this.nbOctetsLu = 0;
+        this.nbOctetsParThread = new File(file).length() / this.nbThreads;
         createMaps();
     }
 
@@ -64,8 +65,12 @@ public class CreeMap
                 }
             });
             lstThreads.add(t);
+            t.setPriority(Thread.MAX_PRIORITY);
             t.start();
         }
+        Thread th = new Thread(this::afficheOctetLu);
+        lstThreads.add(th);
+        th.start();
         for (Thread t : lstThreads)
         {
             try
@@ -83,14 +88,13 @@ public class CreeMap
 
     private void calcule(long deb) throws IOException
     {
-        RandomAccessFile raf = null;
         BufferedReader reader = null;
+        FileInputStream in = null;
         try
         {
-            raf = new RandomAccessFile(file, "r");
-
-            reader = new BufferedReader(new FileReader(raf.getFD()));
-            raf.seek(deb);
+            in = new FileInputStream(file);
+            reader = new BufferedReader(new InputStreamReader(in));
+            in.getChannel().position(deb);
         } catch (Exception e)
         {
             log.error("Fichier existe pas");
@@ -98,51 +102,60 @@ public class CreeMap
         }
 
 
-        // variables pour connaitre les lignes de debut et fin d'une partie
-        long lines = 0L;
-        Long octetDeb = raf.getFilePointer();
-        System.out.println(octetDeb);
+        // variables pour connaitre l'octet de debut et fin d'une partie
+        Long octetDeb = in.getChannel().position();
         int comptLigne = 0;
 
+        int partie = 0;
+
         int octetOffset = 0;
-
-        int p = 0;
-
 
         List<String> lstStr = new ArrayList<>();
         String str;
         try
         {
-            while ((str = reader.readLine()) != null && raf.getFilePointer() <= deb + nbOctetsParThread + 10000)
+            while ((str = reader.readLine()) != null && in.getChannel().position() <= deb + nbOctetsParThread + 10000)
             {
-                if (str.equals("") && lines < 15)
+                if (str.equals("")) comptLigne++;
+                else lstStr.add(str);
+
+                if (partie == 0)
                 {
-                    for (String s : lstStr)
+                    if (comptLigne == 2)
                     {
-                        octetDeb += s.getBytes(UTF_8).length + 1;
+                        for (String s : lstStr)
+                        {
+                            octetDeb += s.getBytes(UTF_8).length + 1;
+                        }
+                        octetDeb += 1;
+                        comptLigne = 0;
+                        lstStr.clear();
+                        partie++;
                     }
-                    octetDeb += 1;
-                    comptLigne = 0;
-                    System.out.println("aaa" + octetDeb);
-                    lstStr.clear();
-                } else if (str.equals("")) {comptLigne++;} else lstStr.add(str);
+                }
+
                 if (comptLigne == 2)
                 {
+                    if (in.getChannel().position() > deb + nbOctetsParThread)
+                    {
+                        if (inMap(lstStr, octetDeb)) break;
+                    }
                     octetOffset++;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
                     for (String string : lstStr)
                     {
-                        octetOffset += string.getBytes(UTF_8).length + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
+                        octetOffset += string.length() + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
                         String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
                         buf[0] = buf[0].replaceAll(" ", "");
                         switch (buf[0])
                         {
                             case "White", "Black" -> {
-                                reader.mark(0);
-                                System.out.println(octetDeb + " " + lstStr);
+//                                System.out.println(octetDeb + " " + lstStr);
                                 if (this.warm.getNameMap().containsKey(buf[1]))
+                                {
                                     this.warm.getNameMap().get(buf[1]).add(octetDeb);
 
-                                this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
+                                } else
+                                    this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
                             }
                             case "Site" -> {}
                             case "Result" -> {}
@@ -156,14 +169,16 @@ public class CreeMap
                                     log.error("Impossible de parser la date !!");
                                 }
                                 if (this.warm.getUtcDateMap().containsKey(utcDate))
+                                {
                                     this.warm.getUtcDateMap().get(utcDate).add(octetDeb);
-                                else
+                                } else
                                     this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             }
                             case "UTCTime" -> {
                                 if (this.warm.getUtcTimeMap().containsKey(buf[1]))
+                                {
                                     this.warm.getUtcTimeMap().get(buf[1]).add(octetDeb);
-                                else
+                                } else
                                     this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             }
                             case "WhiteElo", "BlackElo" -> {
@@ -190,26 +205,73 @@ public class CreeMap
                             lst.removeIf(strr -> strr.equals("") || strr.contains("."));
                             // on enleve -1 car le dernier "coup" est le resultat
                             if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
-                            {this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);} else
+                            {
+                                this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
+                            } else
                                 this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
 
                             //map pour les ouvertures
                             if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
-                            {this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);} else
+                            {
+                                this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);
+                            } else
                                 this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
                         }
                     }
                     comptLigne = 0;
-                    octetDeb = octetDeb + octetOffset + 1;
+                    lu(octetOffset + 1);
+                    octetDeb += octetOffset + 1;
                     lstStr.clear();
                     octetOffset = 0;
-                    p++;
                 }
-                lines++;
             }
         } catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param lstStr   liste des lignes d'une partie
+     * @param octetDeb l'octet dans le fichier du debut de la partie
+     * @return retourne vrai si la partie est deja la hashmap des joueurs sinon faux
+     */
+    private boolean inMap(List<String> lstStr, Long octetDeb)
+    {
+        for (String sr : lstStr)
+        {
+            String[] buf = sr.replaceAll("[\\[\\]]", "").split("\"");
+            buf[0] = buf[0].replaceAll(" ", "");
+            if (buf[0].equals("White"))
+            {
+                if (this.warm.getNameMap().containsKey(sr.split("\"")[1]))
+                {
+                    if (this.warm.getNameMap().get(sr.split("\"")[1]).contains(octetDeb))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private synchronized void lu(long l)
+    {
+        this.nbOctetsLu += l;
+    }
+
+    private void afficheOctetLu()
+    {
+        long tailleFichier = new File(file).length();
+        while (tailleFichier > this.nbOctetsLu)
+        {
+            log.info("Lecture en cours : " + this.nbOctetsLu * 100 / tailleFichier + "%");
+            try
+            {
+                sleep(1000);
+            } catch (InterruptedException e) {e.printStackTrace();}
+        }
+        log.info("Lecture en cours : " + this.nbOctetsLu * 100 / tailleFichier + "%");
     }
 }

@@ -61,7 +61,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         }
         envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjets.getFile().getName());
         this.date = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
         if (litMess().equals("no"))
@@ -80,7 +80,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         if (getUtcDateMap().containsKey(this.date))
         {
             this.lstLigneParties = getUtcDateMap().get(this.date);
-            if (nbParties == -1)
+            if (nbParties == 0)
             {
                 nbParties = Math.min(getUtcDateMap().get(this.date).size(), this.maxNbParties);
             }
@@ -102,7 +102,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties, nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

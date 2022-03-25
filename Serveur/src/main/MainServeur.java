@@ -14,10 +14,15 @@
 package main;
 
 import serveur.Serveur;
+import utils.Colors;
 import utils.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class MainServeur
@@ -35,6 +40,35 @@ public class MainServeur
             System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads " + "au minimum par clients pour les calcules pas les ecoutes, le nombre max de client est : " + nbThreads);
             maxClients = Integer.parseInt(sn.next());
         }
+        List<File> lstFiles = new ArrayList<>();
+        for (File file : Objects.requireNonNull(new File("others/").listFiles()))
+        {
+            if (file.isFile())
+            {
+                if (file.getName().contains("."))
+                {
+                    if (file.getName().split("\\.")[file.getName().split("\\.").length - 1].equals("pgn"))
+                        lstFiles.add(file);
+
+                }
+            }
+        }
+
+        String mes ="Choisissez entre tous ces fichiers\n";
+        int o = 1;
+        for (File file : lstFiles){
+            mes += Colors.cyan + o + " / "+ file.getName() + "\n";
+            o++;
+        }
+        mes+= Colors.reset;
+
+        int entrer = -1;
+        while (entrer <1 || entrer >lstFiles.size()){
+            System.out.println(mes);
+            try{
+                entrer = sn.nextInt();
+            }catch (NumberFormatException e ){System.out.println("Vous devez entrer un nombre");}
+        }
 
         //initialisation du port
         //        int port = 0;
@@ -51,7 +85,7 @@ public class MainServeur
         {
             s = new ServerSocket(1025);
             //            s = new ServerSocket(port);
-            Serveur serveur = new Serveur(s, maxClients);
+            Serveur serveur = new Serveur(s, maxClients,lstFiles.get(entrer-1));
             serveur.run();
         } catch (IOException e)
         {

@@ -35,7 +35,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     {
         envoieMessage("Donner l'username du joueur");
         this.joueur = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (-1) pour toutes les parties.");
+        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
         nbParties = litInt();
         envoieMessage("Voulez vous afficher les parties ? (no/yes)");
         if (litMess().equals("no"))
@@ -54,7 +54,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         if (getNameMap().containsKey(this.joueur))
         {
             this.lstLigneParties = getNameMap().get(this.joueur);
-            if (nbParties == -1)
+            if (nbParties == 0)
             {
                 nbParties = Math.min(getNameMap().get(this.joueur).size(), this.maxNbParties);
             }
@@ -76,7 +76,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
 
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties, nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

@@ -13,7 +13,7 @@ public class WriteAndReadMaps implements Externalizable
 {
     @Serial
     private static final long serialVersionUID = -8576293727662889893L;
-    private final List<Map<Object, List<long[]>>> lstMaps;
+    private final List<Map<Object, List<Long>>> lstMaps;
     private final Log log = new Log();
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
@@ -80,7 +80,7 @@ public class WriteAndReadMaps implements Externalizable
         return nbCoupsMap;
     }
 
-    public List<Map<Object, List<long[]>>> getLstMaps()
+    public List<Map<Object, List<Long>>> getLstMaps()
     {
         return lstMaps;
     }

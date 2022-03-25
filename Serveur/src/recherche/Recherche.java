@@ -14,7 +14,7 @@
 package recherche;
 
 import maps.MapsObjets;
-import partie.ParsePartie;
+import partie.PartiesFile;
 import utils.Log;
 
 import java.io.BufferedWriter;
@@ -31,7 +31,7 @@ public abstract class Recherche
     private final BufferedWriter clientWriter;
     protected int maxNbParties = 100000;
     protected boolean afficheParties = true;
-    protected ParsePartie parsePartie;
+    protected PartiesFile partiesFile;
 
 
     public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
@@ -40,7 +40,7 @@ public abstract class Recherche
         this.clientReader = clientReader;
         this.clientWriter = clientWriter;
         this.mapObjets = mapObjets;
-        this.parsePartie = new ParsePartie(mapObjets.getFile());
+        this.partiesFile = new PartiesFile(mapObjets.getFile());
     }
 
     public abstract void cherche();
