@@ -84,7 +84,7 @@ public class MapsObjets
                 e.printStackTrace();
             }
         }
-        for (List<long[]> t : this.warm.getNameMap().values())
+        for (List<Long> t : this.warm.getNameMap().values())
         {this.nbParties += t.size();}
         log.info("Il y a  " + this.nbParties / 2 + " parties dans le fichiers " + this.file.getName());
     }

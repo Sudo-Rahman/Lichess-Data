@@ -16,6 +16,7 @@ package partie;
 
 
 import utils.Colors;
+import utils.Log;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Partie implements Serializable
+public class Partie
 {
     private String blanc;
     private String noir;
@@ -39,6 +40,8 @@ public class Partie implements Serializable
     private List<String> lstCoup;
     private String premierCoup;
     private String termination;
+
+    private static final Log log = new Log();
 
     /**
      * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
@@ -65,36 +68,40 @@ public class Partie implements Serializable
                         this.utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy.MM.dd").parse(buff[1]));
                     } catch (ParseException e)
                     {
-                        e.printStackTrace();
+                        log.warning("Error parsing");
                     }
                 }
-                case "UTCTime" -> this.utcTime = buff[1];
-                case "WhiteElo" -> {try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
-                case "BlackElo" -> {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {}}
+                case "UTCTime" -> {try{this.utcTime = buff[1];}catch (ArrayIndexOutOfBoundsException e){System.out.println(str);}}
+                case "WhiteElo" -> {try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {log.warning("Impossible de recuperer l'elo");}}
+                case "BlackElo" -> {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {log.warning("Impossible de recuperer l'elo");}}
                 case "Opening" -> {
                     if (buff[1].equals("?")) {this.ouverture = "";}
                     else this.ouverture = buff[1];
                 }
                 case "Termination" -> this.termination = buff[1];
             }
-        }
-        try
-        {
-            this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
-            if (this.premierCoup.equals(this.resultat))
+            try
             {
+                if (str.split(" ")[0].equals("1."))
+                {
+                    this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
+                    if (this.premierCoup.equals(this.resultat))
+                    {
+                        this.premierCoup = "";
+                    }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
+                    else
+                    {
+                        this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));
+                        removAcollade();
+                    }
+                }
+            } catch (java.lang.ArrayIndexOutOfBoundsException e)
+            {
+                System.out.println("Impossible de trouver le premier coup!!");
                 this.premierCoup = "";
-            }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
-            else
-            {
-                this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));
-                removAcollade();
             }
-        } catch (java.lang.ArrayIndexOutOfBoundsException e)
-        {
-            System.out.println("Impossible de trouver le premier coup!!");
-            this.premierCoup = "";
         }
+
     }
 
     /**
@@ -112,7 +119,7 @@ public class Partie implements Serializable
 
     private void removAcollade()
     {
-        this.lstCoup.removeIf(str -> str.contains("%eval"));
+        this.lstCoup.removeIf(str -> str.contains("%eval") ||str.contains("%clk"));
         this.lstCoup = new ArrayList<>(List.of(String.join("", this.lstCoup).split(" ")));
         this.lstCoup.removeIf(str -> str.contains("..."));
         this.lstCoup = Collections.singletonList(String.join(" ", this.lstCoup));

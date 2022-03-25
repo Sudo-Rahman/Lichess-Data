@@ -14,6 +14,7 @@
 package recherche;
 
 import maps.MapsObjets;
+import partie.ParsePartie;
 import utils.Log;
 
 import java.io.*;
@@ -28,7 +29,7 @@ public abstract class Recherche
     private final BufferedWriter clientWriter;
     protected int maxNbParties = 100000;
     protected boolean afficheParties = true;
-    private BufferedReader fileReader;
+    protected ParsePartie parsePartie;
 
 
     public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
@@ -36,22 +37,12 @@ public abstract class Recherche
 
         this.clientReader = clientReader;
         this.clientWriter = clientWriter;
-        try
-        {
-            this.fileReader = new BufferedReader(new FileReader(mapObjets.getFile()));
-        } catch (FileNotFoundException e)
-        {
-            log.error("Impossible de trouver le fichier !!");
-        }
         this.mapObjets = mapObjets;
+        this.parsePartie = new ParsePartie(mapObjets.getFile());
     }
 
     public abstract void cherche();
 
-    public BufferedReader getFileReader()
-    {
-        return fileReader;
-    }
 
     public void envoieMessage(String message)
     {
@@ -93,44 +84,32 @@ public abstract class Recherche
     }
 
 
-    public void closeFileReader()
-    {
-        try
-        {
-            this.fileReader.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-
-    public Map<Object, List<long[]>> getNameMap()
+    public Map<Object, List<Long>> getNameMap()
     {
         return mapObjets.getWarm().getNameMap();
     }
 
-    public Map<Object, List<long[]>> getEloMap()
+    public Map<Object, List<Long>> getEloMap()
     {
         return mapObjets.getWarm().getEloMap();
     }
 
-    public Map<Object, List<long[]>> getUtcDateMap()
+    public Map<Object, List<Long>> getUtcDateMap()
     {
         return mapObjets.getWarm().getUtcDateMap();
     }
 
-    public Map<Object, List<long[]>> getUtcTimeMap()
+    public Map<Object, List<Long>> getUtcTimeMap()
     {
         return mapObjets.getWarm().getUtcTimeMap();
     }
 
-    public Map<Object, List<long[]>> getOpenningMap()
+    public Map<Object, List<Long>> getOpenningMap()
     {
         return mapObjets.getWarm().getOpenningMap();
     }
 
-    public Map<Object, List<long[]>> getNbCoupsMap()
+    public Map<Object, List<Long>> getNbCoupsMap()
     {
         return mapObjets.getWarm().getNbCoupsMap();
     }

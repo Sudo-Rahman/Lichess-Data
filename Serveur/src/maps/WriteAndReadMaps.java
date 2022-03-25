@@ -15,12 +15,43 @@ public class WriteAndReadMaps implements Externalizable
     private static final long serialVersionUID = -8576293727662889893L;
     private final List<Map<Object,List<long[]>>> lstMaps;
     private final Log log = new Log();
-    private Map<Object, List<long[]>> nameMap;
-    private Map<Object, List<long[]>> eloMap;
-    private Map<Object, List<long[]>> utcDateMap;
-    private Map<Object, List<long[]>> utcTimeMap;
-    private Map<Object, List<long[]>> openningMap;
-    private Map<Object, List<long[]>> nbCoupsMap;
+    private Map<Object, List<Long>> nameMap;
+    private Map<Object, List<Long>> eloMap;
+    private Map<Object, List<Long>> utcDateMap;
+    private Map<Object, List<Long>> utcTimeMap;
+    private Map<Object, List<Long>> openningMap;
+
+    public Map<Object, List<Long>> getNameMap()
+    {
+        return nameMap;
+    }
+
+    public Map<Object, List<Long>> getEloMap()
+    {
+        return eloMap;
+    }
+
+    public Map<Object, List<Long>> getUtcDateMap()
+    {
+        return utcDateMap;
+    }
+
+    public Map<Object, List<Long>> getUtcTimeMap()
+    {
+        return utcTimeMap;
+    }
+
+    public Map<Object, List<Long>> getOpenningMap()
+    {
+        return openningMap;
+    }
+
+    public Map<Object, List<Long>> getNbCoupsMap()
+    {
+        return nbCoupsMap;
+    }
+
+    private Map<Object, List<Long>> nbCoupsMap;
     private int ecriturePoucentage;
     private int lecturePoucentage;
 
@@ -48,36 +79,6 @@ public class WriteAndReadMaps implements Externalizable
                 e.printStackTrace();
             }
         }
-    }
-
-    public Map<Object, List<long[]>> getNameMap()
-    {
-        return nameMap;
-    }
-
-    public Map<Object, List<long[]>> getEloMap()
-    {
-        return eloMap;
-    }
-
-    public Map<Object, List<long[]>> getUtcDateMap()
-    {
-        return utcDateMap;
-    }
-
-    public Map<Object, List<long[]>> getUtcTimeMap()
-    {
-        return utcTimeMap;
-    }
-
-    public Map<Object, List<long[]>> getOpenningMap()
-    {
-        return openningMap;
-    }
-
-    public Map<Object, List<long[]>> getNbCoupsMap()
-    {
-        return nbCoupsMap;
     }
 
     public List<Map<Object,List<long[]>>> getLstMaps()

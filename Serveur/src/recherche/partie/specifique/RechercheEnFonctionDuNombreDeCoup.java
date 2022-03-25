@@ -68,40 +68,13 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     {
         trieMapList(getNbCoupsMap(), this.nbCoups);
 
-        String ligne;
-        int comptLigneVide = 0;
-        long lignes = 0L;
-
-
         this.tempsRecherche = System.currentTimeMillis();
 
-        int partie = 0;
-        try
-        {
-            while ((ligne = getFileReader().readLine()) != null && lstPartie.size() < nbParties)
-            {
-                if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
-                {
-                    if (ligne.equals("")) {comptLigneVide++;}
-                    else lstStrLigne.add(ligne);
-                    if (comptLigneVide == 2)
-                    {
-                        lstPartie.add(new Partie(lstStrLigne));
-                        lstStrLigne.clear();
-                        partie++;
-                        comptLigneVide = 0;
-                    }
-                }
-                lignes++;
-            }
-            this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
+        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties,this.nbParties);
 
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
-        closeFileReader();
+        this.parsePartie.closeReader();
 
         //Libere la liste de la memoire
         this.lstPartie = null;

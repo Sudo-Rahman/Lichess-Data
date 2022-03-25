@@ -83,42 +83,26 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void calcule()
     {
         this.tempsRecherche = System.currentTimeMillis();
-        String ligne;
-        int comptLigneVide = 0;
-        long lignes = 0L;
 
-
-        int partie = 0;
-        try
+        for (long pos : this.lstLigneParties)
         {
-            while ((ligne = getFileReader().readLine()) != null && this.lstLigneParties.size() > partie && lstPartie.size() < this.nbParties)
+            if (this.lstPartie.size() < this.nbParties)
             {
-                if (lignes >= lstLigneParties.get(partie)[0] && lignes <= lstLigneParties.get(partie)[1])
+                try
                 {
-                    if (ligne.equals("")) comptLigneVide++;
-                    else lstStrLigne.add(ligne);
-                    if (comptLigneVide == 2)
+                    Partie p = this.parsePartie.getPartieInFile(pos);
+                    if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
                     {
-                        Partie p = new Partie(lstStrLigne);
-                        if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
-                        {
-                            this.lstPartie.add(p);
-                        }
-                        lstStrLigne.clear();
-                        comptLigneVide = 0;
-                        partie++;
+                        this.lstPartie.add(p);
                     }
-                }
-                lignes++;
+                } catch (IOException e) {e.printStackTrace();}
             }
-            this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
-
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            else break;
         }
+
+        this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
-        closeFileReader();
+        this.parsePartie.closeReader();
 
         //Libere la liste de la memoire
         this.lstPartie = null;

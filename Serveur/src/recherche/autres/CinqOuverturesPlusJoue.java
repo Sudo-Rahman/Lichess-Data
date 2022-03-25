@@ -32,7 +32,7 @@ public class CinqOuverturesPlusJoue extends Recherche
     public void cherche()
     {
         Map<Integer, String> lst = new HashMap<>();
-        for (Map.Entry<Object, List<long[]>> element : getOpenningMap().entrySet())
+        for (Map.Entry<Object, List<Long>> element : getOpenningMap().entrySet())
         {
             lst.put(element.getValue().size(), (String) element.getKey());
         }

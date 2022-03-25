@@ -4,7 +4,6 @@ package maps;
 import utils.Log;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class CreeMap
     private final String file;
 
     private final WriteAndReadMaps warm;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors()/10;
+    private final int nbThreads = Runtime.getRuntime().availableProcessors() /10;
     private final Log log;
     private long nbOctets;
     private long nbOctetsParThread;
@@ -94,10 +93,10 @@ public class CreeMap
             System.exit(-1);
         }
 
+
         // variables pour connaitre les lignes de debut et fin d'une partie
         long lines = 0L;
-        long octetDeb = raf.getFilePointer();
-        long octetFin;
+        Long octetDeb = raf.getFilePointer();
         int comptLigne = 0;
 
 
@@ -105,21 +104,18 @@ public class CreeMap
         String str;
         try
         {
-            while ((str = reader.readLine()) != null && raf.getFilePointer() <= deb + nbOctetsParThread + 1000)
+            while ((str = reader.readLine()) != null && raf.getFilePointer() <= deb + nbOctetsParThread + 10000)
             {
-                if (str.equals("") && lines < 16)
+                if (str.equals("") && lines < 15)
                 {
                     comptLigne = 0;
                     lstStr.clear();
+                    octetDeb = raf.getFilePointer()+1;
                 }
-                if (str.equals("")) comptLigne++;
+                else if (str.equals("")) comptLigne++;
                 else lstStr.add(str);
                 if (comptLigne == 2)
                 {
-                    octetFin = raf.getFilePointer();
-                    long[] tab = new long[2];
-                    tab[0] = octetDeb;
-                    tab[1] = octetFin;
                     for (String string : lstStr)
                     {
                         String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
@@ -127,10 +123,12 @@ public class CreeMap
                         switch (buf[0])
                         {
                             case "White", "Black" -> {
+                                reader.mark(0);
+                                System.out.println(raf.getFilePointer()+ " "+ lstStr);
                                 if (this.warm.getNameMap().containsKey(buf[1]))
-                                    this.warm.getNameMap().get(buf[1]).add(tab);
-                                else
-                                    this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(tab))));
+                                    this.warm.getNameMap().get(buf[1]).add(octetDeb);
+
+                                    this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
                             }
                             case "Site" -> {}
                             case "Result" -> {}
@@ -144,15 +142,15 @@ public class CreeMap
                                     log.error("Impossible de parser la date !!");
                                 }
                                 if (this.warm.getUtcDateMap().containsKey(utcDate))
-                                    this.warm.getUtcDateMap().get(utcDate).add(tab);
+                                    this.warm.getUtcDateMap().get(utcDate).add(octetDeb);
                                 else
-                                    this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
+                                    this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             }
                             case "UTCTime" -> {
                                 if (this.warm.getUtcTimeMap().containsKey(buf[1]))
-                                    this.warm.getUtcTimeMap().get(buf[1]).add(tab);
+                                    this.warm.getUtcTimeMap().get(buf[1]).add(octetDeb);
                                 else
-                                    this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
+                                    this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             }
                             case "WhiteElo", "BlackElo" -> {
                                 try
@@ -160,10 +158,10 @@ public class CreeMap
                                     int elo = Integer.parseInt(buf[1]);
                                     if (this.warm.getEloMap().containsKey(elo))
                                     {
-                                        this.warm.getEloMap().get(elo).add(tab);
+                                        this.warm.getEloMap().get(elo).add(octetDeb);
                                     }
                                     else
-                                        this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
+                                        this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                                 } catch (NumberFormatException e)
                                 {
                                     log.warning("Elo inconnue");
@@ -173,26 +171,27 @@ public class CreeMap
                         if (string.split(" ")[0].equals("1."))
                         {
                             //map pour les nombre de coups
-                            List<String> lst = new ArrayList<>(List.of(lstStr.get(lstStr.size() - 1).split("[{}]")));
-                            lst.removeIf(strr -> strr.contains("%eval"));
+                            List<String> lst = new ArrayList<>(List.of(string.split("[{}]")));
+                            lst.removeIf(strr -> strr.contains("%eval") || strr.contains("%clk"));
                             lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
                             lst.removeIf(strr -> strr.equals("") || strr.contains("."));
                             // on enleve -1 car le dernier "coup" est le resultat
                             if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
-                            {this.warm.getNbCoupsMap().get(lst.size() - 1).add(tab);}
+                            {this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);}
                             else
-                                this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(tab))));
+                                this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
 
                             //map pour les ouvertures
                             if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
-                            {this.warm.getOpenningMap().get(string.split(" ")[1]).add(tab);}
+                            {this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);}
                             else
-                                this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(tab)))));
+                                this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
                         }
                     }
                     comptLigne = 0;
-                    octetDeb = octetFin+1;
+                    octetDeb = raf.getFilePointer()+1;
                     lstStr.clear();
+                    break;
                 }
                 lines++;
             }

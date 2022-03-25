@@ -1,29 +1,24 @@
 package partie;
 
-import java.io.File;
+import java.io.*;
+import java.nio.channels.FileChannel;
 
 public class test
 {
     public static void main(String[] args)
     {
-        File f = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2016-08.pgn");
-        //        try (Stream<String> all_lines = Files.lines(Path.of(f.getAbsolutePath()))) {
-        //            String specific_line_15 = all_lines.skip(1111111101).findFirst().get();
-        //            System.out.println(specific_line_15);
-        //        } catch (IOException e)
-        //        {
-        //            e.printStackTrace();
-        //        }
+        File f = new File("/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn");
+        try{
+            RandomAccessFile randomAccessFile = new RandomAccessFile(f, "r");
+            FileReader fileReader = new FileReader(randomAccessFile.getFD());
+            BufferedReader reader = new BufferedReader(fileReader);
+            randomAccessFile.seek(16668);
+            for (int i = 0; i <18;i++){
+                System.out.println(randomAccessFile.getFilePointer() + " " +reader.readLine() );
 
-        //        try
-        //        {
-        //            RandomAccessFile re = new RandomAccessFile(f,"r");
-        //            re.skipBytes(69);
-        //            System.out.println(re.readLine() + " "+ re.getFilePointer());
-        //        } catch (Exception e)
-        //        {
-        //            e.printStackTrace();
-        //        }
-
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+        }
     }
 }
