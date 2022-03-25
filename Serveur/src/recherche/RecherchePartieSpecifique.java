@@ -19,7 +19,10 @@ import utils.Colors;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public abstract class RecherchePartieSpecifique extends Recherche
 {

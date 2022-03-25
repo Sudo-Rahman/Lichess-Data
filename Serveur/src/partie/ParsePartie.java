@@ -8,27 +8,24 @@ import java.util.List;
 
 public class ParsePartie
 {
-    private RandomAccessFile randomAccessFile;
-    private BufferedReader reader;
     private static final Log log = new Log();
+    private RandomAccessFile randomAccessFile;
 
     public ParsePartie(File file)
     {
         try
         {
             this.randomAccessFile = new RandomAccessFile(file, "r");
-            this.reader = new BufferedReader(new FileReader(this.randomAccessFile.getFD()));
         } catch (FileNotFoundException e)
         {
             log.error("Impossible de trouver le fichier !!");
-        } catch (IOException e)
-        {
-            e.printStackTrace();
         }
     }
 
     public Partie getPartieInFile(long pos) throws IOException
     {
+        BufferedReader reader = new BufferedReader(new FileReader(this.randomAccessFile.getFD()));
+
         this.randomAccessFile.seek(pos);
         int comptLigneVide = 0;
         int lignes = 0;
@@ -37,19 +34,17 @@ public class ParsePartie
         List<String> lstStr = new ArrayList<>();
         while (comptLigneVide < 2)
         {
-            str = this.randomAccessFile.readLine();
+            str = reader.readLine();
             if (lignes < 15 && str.equals(""))
             {
                 comptLigneVide = 0;
-            }
-            else
+            } else
             {
                 if (str.equals("")) comptLigneVide++;
                 else lstStr.add(str);
             }
             lignes++;
         }
-//        System.out.println(lstStr);
         return new Partie(lstStr);
     }
 
@@ -66,9 +61,7 @@ public class ParsePartie
                     lstParties.add(getPartieInFile(pos));
                     compteur++;
                 } catch (IOException e) {e.printStackTrace();}
-            }
-//            break;
-                        else break;
+            } else break;
         }
         return lstParties;
     }
@@ -78,7 +71,6 @@ public class ParsePartie
         try
         {
             this.randomAccessFile.close();
-            this.reader.close();
         } catch (IOException e)
         {
             log.error("Impossible de fermer randomeAccessFile et bufferedReader !!");

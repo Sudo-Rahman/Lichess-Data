@@ -14,11 +14,9 @@
 package recherche.partie.specifique;
 
 import maps.MapsObjets;
-import partie.Partie;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
@@ -62,8 +60,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        }
-        else envoieMessage(toString());
+        } else envoieMessage(toString());
     }
 
 
@@ -76,11 +73,10 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     {
 
         trieMapList(getOpenningMap(), this.coup);
-        System.out.println(getOpenningMap().get(this.coup));
 
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties,nbParties);
+        this.lstPartie = this.parsePartie.getAllParties(this.lstLigneParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

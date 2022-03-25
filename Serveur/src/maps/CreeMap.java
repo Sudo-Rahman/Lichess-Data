@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class CreeMap
 {
 
     private final String file;
 
     private final WriteAndReadMaps warm;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors() /10;
+    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     private final Log log;
     private long nbOctets;
     private long nbOctetsParThread;
@@ -51,7 +53,8 @@ public class CreeMap
         for (int i = 0; i < this.nbThreads; i++)
         {
             int I = i;
-            Thread t = new Thread(() -> {
+            Thread t = new Thread(() ->
+            {
                 try
                 {
                     calcule(nbOctetsParThread * I);
@@ -85,6 +88,7 @@ public class CreeMap
         try
         {
             raf = new RandomAccessFile(file, "r");
+
             reader = new BufferedReader(new FileReader(raf.getFD()));
             raf.seek(deb);
         } catch (Exception e)
@@ -97,7 +101,12 @@ public class CreeMap
         // variables pour connaitre les lignes de debut et fin d'une partie
         long lines = 0L;
         Long octetDeb = raf.getFilePointer();
+        System.out.println(octetDeb);
         int comptLigne = 0;
+
+        int octetOffset = 0;
+
+        int p = 0;
 
 
         List<String> lstStr = new ArrayList<>();
@@ -108,27 +117,32 @@ public class CreeMap
             {
                 if (str.equals("") && lines < 15)
                 {
+                    for (String s : lstStr)
+                    {
+                        octetDeb += s.getBytes(UTF_8).length + 1;
+                    }
+                    octetDeb += 1;
                     comptLigne = 0;
+                    System.out.println("aaa" + octetDeb);
                     lstStr.clear();
-                    octetDeb = raf.getFilePointer()+1;
-                }
-                else if (str.equals("")) comptLigne++;
-                else lstStr.add(str);
+                } else if (str.equals("")) {comptLigne++;} else lstStr.add(str);
                 if (comptLigne == 2)
                 {
+                    octetOffset++;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
                     for (String string : lstStr)
                     {
+                        octetOffset += string.getBytes(UTF_8).length + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
                         String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
                         buf[0] = buf[0].replaceAll(" ", "");
                         switch (buf[0])
                         {
                             case "White", "Black" -> {
                                 reader.mark(0);
-                                System.out.println(raf.getFilePointer()+ " "+ lstStr);
+                                System.out.println(octetDeb + " " + lstStr);
                                 if (this.warm.getNameMap().containsKey(buf[1]))
                                     this.warm.getNameMap().get(buf[1]).add(octetDeb);
 
-                                    this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
+                                this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
                             }
                             case "Site" -> {}
                             case "Result" -> {}
@@ -159,8 +173,7 @@ public class CreeMap
                                     if (this.warm.getEloMap().containsKey(elo))
                                     {
                                         this.warm.getEloMap().get(elo).add(octetDeb);
-                                    }
-                                    else
+                                    } else
                                         this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                                 } catch (NumberFormatException e)
                                 {
@@ -177,21 +190,20 @@ public class CreeMap
                             lst.removeIf(strr -> strr.equals("") || strr.contains("."));
                             // on enleve -1 car le dernier "coup" est le resultat
                             if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
-                            {this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);}
-                            else
+                            {this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);} else
                                 this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
 
                             //map pour les ouvertures
                             if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
-                            {this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);}
-                            else
+                            {this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);} else
                                 this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
                         }
                     }
                     comptLigne = 0;
-                    octetDeb = raf.getFilePointer()+1;
+                    octetDeb = octetDeb + octetOffset + 1;
                     lstStr.clear();
-                    break;
+                    octetOffset = 0;
+                    p++;
                 }
                 lines++;
             }

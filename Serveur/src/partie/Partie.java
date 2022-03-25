@@ -18,7 +18,6 @@ package partie;
 import utils.Colors;
 import utils.Log;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import java.util.List;
 
 public class Partie
 {
+    private static final Log log = new Log();
     private String blanc;
     private String noir;
     private String partieLink;
@@ -40,8 +40,6 @@ public class Partie
     private List<String> lstCoup;
     private String premierCoup;
     private String termination;
-
-    private static final Log log = new Log();
 
     /**
      * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
@@ -59,8 +57,7 @@ public class Partie
                 case "Site" -> this.partieLink = buff[1];
                 case "Result" -> {
                     this.resultat = buff[1];
-                    if (buff[1].charAt(0) == '1') {this.gagnant = this.blanc;}
-                    else this.gagnant = this.noir;
+                    if (buff[1].charAt(0) == '1') {this.gagnant = this.blanc;} else this.gagnant = this.noir;
                 }
                 case "UTCDate" -> {
                     try
@@ -71,12 +68,23 @@ public class Partie
                         log.warning("Error parsing");
                     }
                 }
-                case "UTCTime" -> {try{this.utcTime = buff[1];}catch (ArrayIndexOutOfBoundsException e){System.out.println(str);}}
-                case "WhiteElo" -> {try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {log.warning("Impossible de recuperer l'elo");}}
-                case "BlackElo" -> {try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e) {log.warning("Impossible de recuperer l'elo");}}
+                case "UTCTime" -> {
+                    try {this.utcTime = buff[1];} catch (ArrayIndexOutOfBoundsException e) {System.out.println(str);}
+                }
+                case "WhiteElo" -> {
+                    try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e)
+                    {
+                        log.warning("Impossible de recuperer l'elo");
+                    }
+                }
+                case "BlackElo" -> {
+                    try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e)
+                    {
+                        log.warning("Impossible de recuperer l'elo");
+                    }
+                }
                 case "Opening" -> {
-                    if (buff[1].equals("?")) {this.ouverture = "";}
-                    else this.ouverture = buff[1];
+                    if (buff[1].equals("?")) {this.ouverture = "";} else this.ouverture = buff[1];
                 }
                 case "Termination" -> this.termination = buff[1];
             }
@@ -119,7 +127,7 @@ public class Partie
 
     private void removAcollade()
     {
-        this.lstCoup.removeIf(str -> str.contains("%eval") ||str.contains("%clk"));
+        this.lstCoup.removeIf(str -> str.contains("%eval") || str.contains("%clk"));
         this.lstCoup = new ArrayList<>(List.of(String.join("", this.lstCoup).split(" ")));
         this.lstCoup.removeIf(str -> str.contains("..."));
         this.lstCoup = Collections.singletonList(String.join(" ", this.lstCoup));

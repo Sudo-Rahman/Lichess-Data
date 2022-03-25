@@ -55,8 +55,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        }
-        else envoieMessage(toString());
+        } else envoieMessage(toString());
     }
 
     @Override
@@ -96,8 +95,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
                         this.lstPartie.add(p);
                     }
                 } catch (IOException e) {e.printStackTrace();}
-            }
-            else break;
+            } else break;
         }
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;

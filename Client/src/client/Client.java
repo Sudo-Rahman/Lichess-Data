@@ -69,8 +69,7 @@ public class Client
             {
                 closeAll();
                 log.info("Vous vous etes deconnecter");
-            }
-            else envoieMessage(message);
+            } else envoieMessage(message);
         }
     }
 

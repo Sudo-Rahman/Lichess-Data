@@ -41,7 +41,7 @@ public class Serveur
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
-        String pathFile = "/Users/sr-71/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn";
+        String pathFile = "/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn";
         this.mapObjets = new MapsObjets(pathFile);
         new Thread(mapObjets::charge).start();
     }
@@ -61,8 +61,7 @@ public class Serveur
                 {
                     envoieMessage("Trop de clients, retentez dans quelques instants", client);
                     client.close();
-                }
-                else
+                } else
                 {
                     log.debug(client.toString());
                     ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient, this.lstConnexion, this.mapObjets);

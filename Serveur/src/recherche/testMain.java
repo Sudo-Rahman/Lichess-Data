@@ -50,8 +50,7 @@ public class testMain
                 if (ligne.equals(""))
                 {
                     comptLign++;
-                }
-                else
+                } else
                 {
                     lst.add(ligne);
                 }

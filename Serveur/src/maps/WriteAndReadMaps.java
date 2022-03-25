@@ -13,13 +13,42 @@ public class WriteAndReadMaps implements Externalizable
 {
     @Serial
     private static final long serialVersionUID = -8576293727662889893L;
-    private final List<Map<Object,List<long[]>>> lstMaps;
+    private final List<Map<Object, List<long[]>>> lstMaps;
     private final Log log = new Log();
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
     private Map<Object, List<Long>> utcDateMap;
     private Map<Object, List<Long>> utcTimeMap;
     private Map<Object, List<Long>> openningMap;
+    private Map<Object, List<Long>> nbCoupsMap;
+    private int ecriturePoucentage;
+    private int lecturePoucentage;
+
+    public WriteAndReadMaps()
+    {
+        this.ecriturePoucentage = 0;
+        this.lecturePoucentage = 0;
+
+        this.nameMap = new ConcurrentHashMap<>();
+        this.eloMap = new ConcurrentHashMap<>();
+        this.utcDateMap = new ConcurrentHashMap<>();
+        this.utcTimeMap = new ConcurrentHashMap<>();
+        this.openningMap = new ConcurrentHashMap<>();
+        this.nbCoupsMap = new ConcurrentHashMap<>();
+
+        // on cree une liste qui contient toutes les hasmap
+        this.lstMaps = new ArrayList<>();
+        for (Field field : this.getClass().getDeclaredFields())
+        {
+            try
+            {
+                if (field.get(this) instanceof Map) lstMaps.add((ConcurrentHashMap) field.get(this));
+            } catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public Map<Object, List<Long>> getNameMap()
     {
@@ -51,37 +80,7 @@ public class WriteAndReadMaps implements Externalizable
         return nbCoupsMap;
     }
 
-    private Map<Object, List<Long>> nbCoupsMap;
-    private int ecriturePoucentage;
-    private int lecturePoucentage;
-
-    public WriteAndReadMaps()
-    {
-        this.ecriturePoucentage = 0;
-        this.lecturePoucentage = 0;
-
-        this.nameMap = new ConcurrentHashMap<>();
-        this.eloMap = new ConcurrentHashMap<>();
-        this.utcDateMap = new ConcurrentHashMap<>();
-        this.utcTimeMap = new ConcurrentHashMap<>();
-        this.openningMap = new ConcurrentHashMap<>();
-        this.nbCoupsMap = new ConcurrentHashMap<>();
-
-        // on cree une liste qui contient toutes les hasmap
-        this.lstMaps = new ArrayList<>();
-        for (Field field : this.getClass().getDeclaredFields())
-        {
-            try
-            {
-                if (field.get(this) instanceof Map) lstMaps.add((ConcurrentHashMap) field.get(this));
-            } catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public List<Map<Object,List<long[]>>> getLstMaps()
+    public List<Map<Object, List<long[]>>> getLstMaps()
     {
         return lstMaps;
     }
