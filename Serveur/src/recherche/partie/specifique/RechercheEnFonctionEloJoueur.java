@@ -20,8 +20,6 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 {
@@ -42,12 +40,8 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        trieMapList(getEloMap(), IntStream.rangeClosed(this.eloInf, this.eloSup).boxed().collect(Collectors.toList()));
-        if (this.lstLigneParties.size() > 0)
-        {
-            System.out.println("dedans");
-
-            // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+        if (getAllElos() > 0)
+        {// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
             if (nbParties == 0)
             {
                 nbParties = Math.min(this.lstLigneParties.size(), this.maxNbParties);
@@ -55,7 +49,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
-        } else envoieMessage(toString());
+        }
     }
 
     @Override
@@ -82,7 +76,6 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void calcule()
     {
         this.tempsRecherche = System.currentTimeMillis();
-
         for (long pos : this.lstLigneParties)
         {
             if (this.lstPartie.size() < this.nbParties)
@@ -105,5 +98,19 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         //Libere la liste de la memoire
         this.lstPartie = null;
         System.gc();
+    }
+
+    private int getAllElos()
+    {
+        int compt = 0;
+        for (int i = this.eloInf; i < this.eloSup; i++)
+        {
+            if (getEloMap().containsKey(i))
+            {
+                this.lstLigneParties.addAll(getEloMap().get(i));
+                compt += getEloMap().get(i).size();
+            }
+        }
+        return compt;
     }
 }

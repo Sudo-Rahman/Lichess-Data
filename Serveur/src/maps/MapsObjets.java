@@ -61,6 +61,9 @@ public class MapsObjets
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileMaps));
                 this.warm = (WriteAndReadMaps) ois.readObject();
                 this.chargementMap = this.warm.isChargementMapOk();
+                for (List<Long> t : this.warm.getNameMap().values())
+                {this.nbParties += t.size();}
+                this.nbParties /= 2;
             }
         } catch (IOException e)
         {
@@ -80,7 +83,7 @@ public class MapsObjets
                 this.chargementMap = cr.isCreeMapOk();
                 for (List<Long> t : this.warm.getNameMap().values())
                 {this.nbParties += t.size();}
-                this.nbParties /=2;
+                this.nbParties /= 2;
                 oos.writeObject(this.warm);
             } catch (IOException e)
             {

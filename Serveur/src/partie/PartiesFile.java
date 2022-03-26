@@ -17,7 +17,6 @@ package partie;
 import utils.Log;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,14 +55,8 @@ public class PartiesFile
         while (comptLigneVide < 2)
         {
             str = reader.readLine();
-            if (lignes < 15 && str.equals(""))
-            {
-                comptLigneVide = 0;
-            } else
-            {
-                if (str.equals("")) comptLigneVide++;
-                else lstStr.add(str);
-            }
+            if (str.equals("")) comptLigneVide++;
+            else lstStr.add(str);
             lignes++;
         }
         return new Partie(lstStr);

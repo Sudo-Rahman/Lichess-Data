@@ -41,7 +41,7 @@ public class MainServeur
             maxClients = Integer.parseInt(sn.next());
         }
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("others/").listFiles()))
+        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/").listFiles()))
         {
             if (file.isFile())
             {
@@ -54,20 +54,23 @@ public class MainServeur
             }
         }
 
-        String mes ="Choisissez entre tous ces fichiers\n";
+        String mes = "Choisissez entre tous ces fichiers\n";
         int o = 1;
-        for (File file : lstFiles){
-            mes += Colors.cyan + o + " / "+ file.getName() + "\n";
+        for (File file : lstFiles)
+        {
+            mes += Colors.cyan + o + " / " + file.getName() + "\n";
             o++;
         }
-        mes+= Colors.reset;
+        mes += Colors.reset;
 
         int entrer = -1;
-        while (entrer <1 || entrer >lstFiles.size()){
+        while (entrer < 1 || entrer > lstFiles.size())
+        {
             System.out.println(mes);
-            try{
+            try
+            {
                 entrer = sn.nextInt();
-            }catch (NumberFormatException e ){System.out.println("Vous devez entrer un nombre");}
+            } catch (NumberFormatException e) {System.out.println("Vous devez entrer un nombre");}
         }
 
         //initialisation du port
@@ -85,7 +88,7 @@ public class MainServeur
         {
             s = new ServerSocket(1025);
             //            s = new ServerSocket(port);
-            Serveur serveur = new Serveur(s, maxClients,lstFiles.get(entrer-1));
+            Serveur serveur = new Serveur(s, maxClients, lstFiles.get(entrer - 1));
             serveur.run();
         } catch (IOException e)
         {

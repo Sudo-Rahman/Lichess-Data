@@ -69,20 +69,21 @@ public class CreeMap
             t.start();
         }
         Thread th = new Thread(this::afficheOctetLu);
-        lstThreads.add(th);
         th.start();
-        for (Thread t : lstThreads)
+        try
         {
-            try
+            for (Thread t : lstThreads)
             {
                 t.join();
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
+
             }
+            this.creeMapOk = true;
+            th.join();
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
-        this.creeMapOk = true;
-        log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " " + "secondes");
+        log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         System.out.println(this.warm.getNameMap().size() + " - " + this.warm.getEloMap().size() + " - " + this.warm.getUtcDateMap().size() + " " + "- " + this.warm.getUtcTimeMap().size() + " - " + this.warm.getOpenningMap().size() + " - " + this.warm.getNbCoupsMap().size());
     }
 
@@ -112,123 +113,115 @@ public class CreeMap
 
         List<String> lstStr = new ArrayList<>();
         String str;
-        try
+
+        while ((str = reader.readLine()) != null && octetDeb <= deb + nbOctetsParThread + 5000)
         {
-            while ((str = reader.readLine()) != null && in.getChannel().position() <= deb + nbOctetsParThread + 10000)
+            if (str.equals("") && partie == 0)
             {
+                octetDeb += 1;
+            } else if (!str.contains("[Event \"") && partie == 0)
+            {
+                octetDeb += str.getBytes(UTF_8).length + 1;
+            } else
+            {
+                partie++;
                 if (str.equals("")) comptLigne++;
                 else lstStr.add(str);
-
-                if (partie == 0)
-                {
-                    if (comptLigne == 2)
-                    {
-                        for (String s : lstStr)
-                        {
-                            octetDeb += s.getBytes(UTF_8).length + 1;
-                        }
-                        octetDeb += 1;
-                        comptLigne = 0;
-                        lstStr.clear();
-                        partie++;
-                    }
-                }
-
-                if (comptLigne == 2)
-                {
-                    if (in.getChannel().position() > deb + nbOctetsParThread)
-                    {
-                        if (inMap(lstStr, octetDeb)) break;
-                    }
-                    octetOffset++;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
-                    for (String string : lstStr)
-                    {
-                        octetOffset += string.length() + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
-                        String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
-                        buf[0] = buf[0].replaceAll(" ", "");
-                        switch (buf[0])
-                        {
-                            case "White", "Black" -> {
-//                                System.out.println(octetDeb + " " + lstStr);
-                                if (this.warm.getNameMap().containsKey(buf[1]))
-                                {
-                                    this.warm.getNameMap().get(buf[1]).add(octetDeb);
-
-                                } else
-                                    this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
-                            }
-                            case "Site" -> {}
-                            case "Result" -> {}
-                            case "UTCDate" -> {
-                                String utcDate = null;
-                                try
-                                {
-                                    utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]));
-                                } catch (ParseException e)
-                                {
-                                    log.error("Impossible de parser la date !!");
-                                }
-                                if (this.warm.getUtcDateMap().containsKey(utcDate))
-                                {
-                                    this.warm.getUtcDateMap().get(utcDate).add(octetDeb);
-                                } else
-                                    this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
-                            }
-                            case "UTCTime" -> {
-                                if (this.warm.getUtcTimeMap().containsKey(buf[1]))
-                                {
-                                    this.warm.getUtcTimeMap().get(buf[1]).add(octetDeb);
-                                } else
-                                    this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
-                            }
-                            case "WhiteElo", "BlackElo" -> {
-                                try
-                                {
-                                    int elo = Integer.parseInt(buf[1]);
-                                    if (this.warm.getEloMap().containsKey(elo))
-                                    {
-                                        this.warm.getEloMap().get(elo).add(octetDeb);
-                                    } else
-                                        this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
-                                } catch (NumberFormatException e)
-                                {
-                                    log.warning("Elo inconnue");
-                                }
-                            }
-                        }
-                        if (string.split(" ")[0].equals("1."))
-                        {
-                            //map pour les nombre de coups
-                            List<String> lst = new ArrayList<>(List.of(string.split("[{}]")));
-                            lst.removeIf(strr -> strr.contains("%eval") || strr.contains("%clk"));
-                            lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
-                            lst.removeIf(strr -> strr.equals("") || strr.contains("."));
-                            // on enleve -1 car le dernier "coup" est le resultat
-                            if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
-                            {
-                                this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
-                            } else
-                                this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
-
-                            //map pour les ouvertures
-                            if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
-                            {
-                                this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);
-                            } else
-                                this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
-                        }
-                    }
-                    comptLigne = 0;
-                    lu(octetOffset + 1);
-                    octetDeb += octetOffset + 1;
-                    lstStr.clear();
-                    octetOffset = 0;
-                }
             }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+
+            if (comptLigne == 2)
+            {
+                if (in.getChannel().position() > deb + nbOctetsParThread)
+                {
+                    if (inMap(lstStr, octetDeb)) break;
+                }
+                octetOffset++;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
+                for (String string : lstStr)
+                {
+                    octetOffset += string.length() + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
+                    String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
+                    buf[0] = buf[0].replaceAll(" ", "");
+                    switch (buf[0])
+                    {
+                        case "White", "Black" -> {
+//                                System.out.println(octetDeb + " " + lstStr);
+                            if (this.warm.getNameMap().containsKey(buf[1]))
+                            {
+                                this.warm.getNameMap().get(buf[1]).add(octetDeb);
+
+                            } else
+                                this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
+                        }
+                        case "Site" -> {}
+                        case "Result" -> {}
+                        case "UTCDate" -> {
+                            String utcDate = null;
+                            try
+                            {
+                                utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]));
+                            } catch (ParseException e)
+                            {
+                                log.error("Impossible de parser la date !!");
+                            }
+                            if (this.warm.getUtcDateMap().containsKey(utcDate))
+                            {
+                                this.warm.getUtcDateMap().get(utcDate).add(octetDeb);
+                            } else
+                                this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                        }
+                        case "UTCTime" -> {
+                            if (this.warm.getUtcTimeMap().containsKey(buf[1]))
+                            {
+                                this.warm.getUtcTimeMap().get(buf[1]).add(octetDeb);
+                            } else
+                                this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                        }
+                        case "WhiteElo", "BlackElo" -> {
+                            try
+                            {
+                                int elo = Integer.parseInt(buf[1]);
+                                if (this.warm.getEloMap().containsKey(elo))
+                                {
+                                    this.warm.getEloMap().get(elo).add(octetDeb);
+                                } else
+                                    this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                            } catch (NumberFormatException e)
+                            {
+                                log.warning("Elo inconnue");
+                            }
+                        }
+                    }
+                    if (string.split(" ")[0].equals("1."))
+                    {
+                        //map pour les nombre de coups
+                        List<String> lst = new ArrayList<>(List.of(string.split("[{}]")));
+                        lst.removeIf(strr -> strr.contains("%eval") || strr.contains("%clk"));
+                        lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
+                        lst.removeIf(strr -> strr.equals("") || strr.contains("."));
+                        // on enleve -1 car le dernier "coup" est le resultat
+                        if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
+                        {
+                            this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
+                        } else
+                            this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+
+                        //map pour les ouvertures
+                        if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
+                        {
+                            this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);
+                        } else
+                            this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
+                    }
+                }
+                comptLigne = 0;
+                addOctetsLu(octetOffset + 1);
+                octetDeb += octetOffset + 1;
+                lstStr.clear();
+                octetOffset = 0;
+            }
         }
+
+        System.out.println(octetDeb - deb + "  " + deb + " " + this.nbOctetsParThread + " " + partie);
     }
 
     /**
@@ -256,7 +249,7 @@ public class CreeMap
         return false;
     }
 
-    private synchronized void lu(long l)
+    private synchronized void addOctetsLu(long l)
     {
         this.nbOctetsLu += l;
     }
@@ -264,14 +257,22 @@ public class CreeMap
     private void afficheOctetLu()
     {
         long tailleFichier = new File(file).length();
-        while (tailleFichier > this.nbOctetsLu)
+        long avant = 0L;
+        long apres;
+        log.info("Lecture en cours : 0%");
+        while (!this.creeMapOk)
         {
-            log.info("Lecture en cours : " + this.nbOctetsLu * 100 / tailleFichier + "%");
+            apres = this.nbOctetsLu * 100 / tailleFichier;
+            if (avant < apres)
+            {
+                log.info("Lecture en cours : " + apres + "%");
+                avant = apres;
+            }
             try
             {
                 sleep(1000);
             } catch (InterruptedException e) {e.printStackTrace();}
         }
-        log.info("Lecture en cours : " + this.nbOctetsLu * 100 / tailleFichier + "%");
+        log.info("Lecture en cours : 100%");
     }
 }
