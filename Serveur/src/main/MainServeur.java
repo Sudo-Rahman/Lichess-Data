@@ -41,7 +41,7 @@ public class MainServeur
             maxClients = Integer.parseInt(sn.next());
         }
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/").listFiles()))
+        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/").listFiles()))
         {
             if (file.isFile())
             {
@@ -54,14 +54,14 @@ public class MainServeur
             }
         }
 
-        String mes = "Choisissez entre tous ces fichiers\n";
+        StringBuilder mes = new StringBuilder("Choisissez entre tous ces fichiers\n");
         int o = 1;
         for (File file : lstFiles)
         {
-            mes += Colors.cyan + o + " / " + file.getName() + "\n";
+            mes.append(Colors.cyan).append(o).append(" / ").append(file.getName()).append("\n");
             o++;
         }
-        mes += Colors.reset;
+        mes.append(Colors.reset);
 
         int entrer = -1;
         while (entrer < 1 || entrer > lstFiles.size())

@@ -9,26 +9,20 @@ public class test
 {
     public static void main(String[] args)
     {
-        File f = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/others/lichess_db_standard_rated_2013-01.pgn");
+        File f = new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/lichess_db_standard_rated_2019-10.pgn");
         try
         {
             RandomAccessFile randomAccessFile = new RandomAccessFile(f, "r");
             FileReader fileReader = new FileReader(randomAccessFile.getFD());
             BufferedReader reader = new BufferedReader(fileReader);
-            randomAccessFile.seek(0);
+            randomAccessFile.seek(10680857883L);
             int compt = 0;
             int partie = 0;
             String str;
-            while ((str = reader.readLine()) != null)
+            for (int i = 0; i < 19; i++)
             {
-                if (str.equals("")) compt++;
-                if (compt == 2)
-                {
-                    partie++;
-                    compt = 0;
-                }
+                System.out.println(reader.readLine());
             }
-            System.out.println(partie);
         } catch (Exception e)
         {
             e.printStackTrace();

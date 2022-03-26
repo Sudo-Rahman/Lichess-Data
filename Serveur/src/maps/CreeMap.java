@@ -19,7 +19,7 @@ public class CreeMap
     private final String file;
 
     private final WriteAndReadMaps warm;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors();
+    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     private final Log log;
     private long nbOctetsLu;
     private long nbOctetsParThread;
@@ -84,7 +84,6 @@ public class CreeMap
             e.printStackTrace();
         }
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
-        System.out.println(this.warm.getNameMap().size() + " - " + this.warm.getEloMap().size() + " - " + this.warm.getUtcDateMap().size() + " " + "- " + this.warm.getUtcTimeMap().size() + " - " + this.warm.getOpenningMap().size() + " - " + this.warm.getNbCoupsMap().size());
     }
 
     private void calcule(long deb) throws IOException
@@ -135,16 +134,16 @@ public class CreeMap
                 {
                     if (inMap(lstStr, octetDeb)) break;
                 }
-                octetOffset++;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
+                octetOffset += 1;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
                 for (String string : lstStr)
                 {
-                    octetOffset += string.length() + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
+                    octetOffset += string.getBytes(UTF_8).length + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
                     String[] buf = string.replaceAll("[\\[\\]]", "").split("\"");
                     buf[0] = buf[0].replaceAll(" ", "");
                     switch (buf[0])
                     {
                         case "White", "Black" -> {
-//                                System.out.println(octetDeb + " " + lstStr);
+//                                System.out.println(octetDeb + " " + lstStr + "\n\n");
                             if (this.warm.getNameMap().containsKey(buf[1]))
                             {
                                 this.warm.getNameMap().get(buf[1]).add(octetDeb);
@@ -220,8 +219,6 @@ public class CreeMap
                 octetOffset = 0;
             }
         }
-
-        System.out.println(octetDeb - deb + "  " + deb + " " + this.nbOctetsParThread + " " + partie);
     }
 
     /**

@@ -92,14 +92,14 @@ public class Partie
             {
                 if (str.split(" ")[0].equals("1."))
                 {
-                    this.premierCoup = allLines.get(allLines.size() - 1).split(" ")[1];// on recupere le premier coup
+                    this.premierCoup = str.split(" ")[1];// on recupere le premier coup
                     if (this.premierCoup.equals(this.resultat))
                     {
                         this.premierCoup = "";
                     }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
                     else
                     {
-                        this.lstCoup = new ArrayList<>(List.of(allLines.get(allLines.size() - 1).split("[{}]")));
+                        this.lstCoup = new ArrayList<>(List.of(str.split("[{}]")));
                         removAcollade();
                     }
                 }

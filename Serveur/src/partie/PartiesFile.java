@@ -43,7 +43,7 @@ public class PartiesFile
      */
     public Partie getPartieInFile(long pos) throws IOException
     {
-        //crée un nouveau bufferedReader car impossible de vider le buffer autrement
+        //création d'un nouveau bufferedReader car impossible de vider le buffer autrement
         BufferedReader reader = new BufferedReader(new InputStreamReader(this.fileInputStream));
 
         this.fileInputStream.getChannel().position(pos);
@@ -63,9 +63,9 @@ public class PartiesFile
     }
 
     /**
-     * @param lstPos
-     * @param maxNbParties
-     * @return
+     * @param lstPos list des positions des parties dans le fichier
+     * @param maxNbParties definie le maximum de partie à retourner
+     * @return retourne la liste des parties
      */
     public List<Partie> getAllParties(List<Long> lstPos, int maxNbParties)
     {
