@@ -48,7 +48,6 @@ public class PartiesFile
 
         this.fileInputStream.getChannel().position(pos);
         int comptLigneVide = 0;
-        int lignes = 0;
 
         String str;
         List<String> lstStr = new ArrayList<>();
@@ -57,13 +56,12 @@ public class PartiesFile
             str = reader.readLine();
             if (str.equals("")) comptLigneVide++;
             else lstStr.add(str);
-            lignes++;
         }
         return new Partie(lstStr);
     }
 
     /**
-     * @param lstPos list des positions des parties dans le fichier
+     * @param lstPos       list des positions des parties dans le fichier
      * @param maxNbParties definie le maximum de partie à retourner
      * @return retourne la liste des parties
      */
@@ -81,6 +79,23 @@ public class PartiesFile
                     compteur++;
                 } catch (IOException e) {e.printStackTrace();}
             } else break;
+        }
+        return lstParties;
+    }
+
+    /**
+     * @param lstPos list des positions des parties dans le fichier
+     * @return retourne la liste des parties
+     */
+    public List<Partie> getAllParties(List<Long> lstPos)
+    {
+        List<Partie> lstParties = new ArrayList<>();
+        for (Long pos : lstPos)
+        {
+            try
+            {
+                lstParties.add(getPartieInFile(pos));
+            } catch (IOException e) {e.printStackTrace();}
         }
         return lstParties;
     }

@@ -5,47 +5,34 @@ import utils.Log;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 
-public class MapsObjets
+
+public class CreeMapsOrRead
 {
     private final File file;
     private final File fileMaps;
     private final Log log = new Log();
     private boolean chargementMap;
-    private long nbParties;
-    private WriteAndReadMaps warm;
+    private MapsObjet mapsObjet;
 
-    public MapsObjets(String pathFile)
+    public CreeMapsOrRead(String pathFile)
     {
         this.file = new File(pathFile);
 
-
         this.chargementMap = false;
-
-        this.nbParties = 0L;
 
         // on crée une objet fichier qui a le meme nom que le fichier classique mais avec l'extension .hasmap
         this.fileMaps = new File(file.getAbsoluteFile().toString().replaceAll(file.getName().substring(file.getName().lastIndexOf(".")), ".hashmap"));
 
-        this.warm = new WriteAndReadMaps();
+        this.mapsObjet = new MapsObjet(this.file);
     }
 
-    public long getNbParties()
+    public MapsObjet getMapsObjet()
     {
-        return nbParties;
+        return mapsObjet;
     }
 
-    public WriteAndReadMaps getWarm()
-    {
-        return warm;
-    }
-
-    public File getFile()
-    {
-        return this.file;
-    }
 
     public boolean getChargementMap()
     {
@@ -59,11 +46,8 @@ public class MapsObjets
             if (Files.exists(Path.of(fileMaps.getAbsolutePath())))
             {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileMaps));
-                this.warm = (WriteAndReadMaps) ois.readObject();
-                this.chargementMap = this.warm.isChargementMapOk();
-                for (List<Long> t : this.warm.getNameMap().values())
-                {this.nbParties += t.size();}
-                this.nbParties /= 2;
+                this.mapsObjet = (MapsObjet) ois.readObject();
+                this.chargementMap = this.mapsObjet.isChargementMapOk();
             }
         } catch (IOException e)
         {
@@ -73,23 +57,20 @@ public class MapsObjets
         {
             e.printStackTrace();
         }
-        if (!this.warm.isChargementMapOk())
+        if (!this.mapsObjet.isChargementMapOk())
         {
-            CreeMap cr = new CreeMap(this.warm, file.getAbsolutePath());
+            CreeMap cr = new CreeMap(this.mapsObjet, file.getAbsolutePath(), 0L, file.length());
             cr.cree();
             try
             {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileMaps));
                 this.chargementMap = cr.isCreeMapOk();
-                for (List<Long> t : this.warm.getNameMap().values())
-                {this.nbParties += t.size();}
-                this.nbParties /= 2;
-                oos.writeObject(this.warm);
+                oos.writeObject(this.mapsObjet);
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
-        log.info("Il y a  " + this.nbParties + " parties dans le fichiers " + this.file.getName());
+        log.info("Il y a  " + this.mapsObjet.getNbParties() + " parties dans le fichiers " + this.file.getName());
     }
 }

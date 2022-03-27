@@ -13,7 +13,7 @@
 
 package recherche.partie.specifique;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
@@ -27,9 +27,9 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     private String date;
 
 
-    public RechercheEnFonctionDate(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionDate(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
     }
 
 
@@ -42,9 +42,9 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         Date dateFin = null;
         try
         {
-            dateDeb = sdformat.parse((String) getUtcDateMap().keySet().toArray()[0]);
-            dateFin = sdformat.parse((String) getUtcDateMap().keySet().toArray()[1]);
-            for (Object date : getUtcDateMap().keySet())
+            dateDeb = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[0]);
+            dateFin = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[1]);
+            for (Object date : mapObjet.getUtcDateMap().keySet())
             {
                 if (dateDeb.compareTo(sdformat.parse((String) date)) > 0)
                 {
@@ -59,14 +59,14 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         {
             log.error("Impossible de convertir le String en date !!");
         }
-        envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjets.getFile().getName());
+        envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjet.getFile().getName());
         this.date = litMess();
         envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
         nbParties = litInt();
-        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if (litMess().equals("no"))
+        envoieMessage("Voulez vous réiterez sur les partie (yes) ou afficher les parties (no) :");
+        if (!litMess().equals("yes"))
         {
-            this.afficheParties = false;
+            this.afficheParties = true;
         }
     }
 
@@ -77,12 +77,12 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (getUtcDateMap().containsKey(this.date))
+        if (mapObjet.getUtcDateMap().containsKey(this.date))
         {
-            this.lstLigneParties = getUtcDateMap().get(this.date);
+            this.lstLigneParties = mapObjet.getUtcDateMap().get(this.date);
             if (nbParties == 0)
             {
-                nbParties = Math.min(getUtcDateMap().get(this.date).size(), this.maxNbParties);
+                nbParties = Math.min(mapObjet.getUtcDateMap().get(this.date).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -98,7 +98,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(getUtcDateMap(), this.date);
+        trieMapList(mapObjet.getUtcDateMap(), this.date);
 
         tempsRecherche = System.currentTimeMillis();
 

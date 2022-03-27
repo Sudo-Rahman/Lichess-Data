@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class WriteAndReadMaps implements Externalizable
+public class MapsObjet implements Externalizable
 {
     @Serial
     private static final long serialVersionUID = -8576293727662889893L;
-    private final List<Map<Object, List<Long>>> lstMaps;
+    private List<Map<Object, List<Long>>> lstMaps;
     private final Log log = new Log();
+    private File file;
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
     private Map<Object, List<Long>> utcDateMap;
@@ -24,8 +25,21 @@ public class WriteAndReadMaps implements Externalizable
     private int ecriturePoucentage;
     private int lecturePoucentage;
 
-    public WriteAndReadMaps()
+
+    private long nbParties;
+
+    public MapsObjet(File file)
     {
+        this.file = file;
+        initMapObjet();
+    }
+
+    public MapsObjet() {
+        initMapObjet();
+    }
+
+    private void initMapObjet(){
+
         this.ecriturePoucentage = 0;
         this.lecturePoucentage = 0;
 
@@ -36,18 +50,35 @@ public class WriteAndReadMaps implements Externalizable
         this.openningMap = new ConcurrentHashMap<>();
         this.nbCoupsMap = new ConcurrentHashMap<>();
 
+
         // on cree une liste qui contient toutes les hasmap
         this.lstMaps = new ArrayList<>();
         for (Field field : this.getClass().getDeclaredFields())
         {
             try
             {
-                if (field.get(this) instanceof Map) lstMaps.add((ConcurrentHashMap) field.get(this));
+                if (field.get(this) instanceof Map<?,?>) {
+                    lstMaps.add((ConcurrentHashMap) field.get(this));
+                }
             } catch (IllegalAccessException e)
             {
                 e.printStackTrace();
             }
         }
+    }
+
+    public long getNbParties()
+    {
+        return nbParties;
+    }
+    public void setNbParties(long nbParties)
+    {
+        this.nbParties = nbParties;
+    }
+
+    public File getFile()
+    {
+        return file;
     }
 
     public Map<Object, List<Long>> getNameMap()
@@ -108,6 +139,8 @@ public class WriteAndReadMaps implements Externalizable
             log.info("Ecriture des Maps : " + this.ecriturePoucentage + "%");
             out.writeObject(map);
         }
+        out.writeObject(this.nbParties);
+        out.writeObject(this.file);
         this.ecriturePoucentage = (int) (p * i);
         log.info("Ecriture des Maps : " + this.ecriturePoucentage + "%");
         log.info("Ecriture des Maps términé en : " + (System.currentTimeMillis() - temps) / 1000 + " secondes");
@@ -126,6 +159,8 @@ public class WriteAndReadMaps implements Externalizable
             log.info("Lecture des Maps : " + this.lecturePoucentage + "%");
             map.putAll((ConcurrentHashMap) in.readObject());
         }
+        this.nbParties = (long) in.readObject();
+        this.file = (File) in.readObject();
         this.lecturePoucentage = (int) (p * i);
         log.info("Lecture des Maps : " + this.lecturePoucentage + "%");
         log.info("Lecture des Maps términé en : " + (System.currentTimeMillis() - temps) / 1000 + " secondes");

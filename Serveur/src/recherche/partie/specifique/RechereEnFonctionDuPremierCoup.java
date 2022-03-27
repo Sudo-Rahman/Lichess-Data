@@ -13,7 +13,8 @@
 
 package recherche.partie.specifique;
 
-import maps.MapsObjets;
+
+import maps.MapsObjet;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
@@ -24,9 +25,9 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
     private String coup;
 
-    public RechereEnFonctionDuPremierCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechereEnFonctionDuPremierCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
     }
 
     @Override
@@ -50,12 +51,12 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (getOpenningMap().containsKey(this.coup))
+        if (mapObjet.getOpenningMap().containsKey(this.coup))
         {
-            this.lstLigneParties = getOpenningMap().get(this.coup);
+            this.lstLigneParties = mapObjet.getOpenningMap().get(this.coup);
             if (nbParties == 0)// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
             {
-                nbParties = Math.min(getOpenningMap().get(this.coup).size(), this.maxNbParties);
+                nbParties = Math.min(mapObjet.getOpenningMap().get(this.coup).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -72,7 +73,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     public void calcule()
     {
 
-        trieMapList(getOpenningMap(), this.coup);
+        trieMapList(mapObjet.getOpenningMap(), this.coup);
 
         tempsRecherche = System.currentTimeMillis();
 

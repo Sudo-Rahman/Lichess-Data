@@ -16,7 +16,7 @@ package serveur;
 
 import choix.InitChoix;
 import client.info.ClientInfo;
-import maps.MapsObjets;
+import maps.CreeMapsOrRead;
 import utils.Colors;
 import utils.Log;
 
@@ -33,13 +33,13 @@ class ConnexionClient extends Thread
     private static final Log log = new Log();
     private final List<ConnexionClient> lstConnexion;
     private final int nbMaxThread;
-    private final MapsObjets mapObjets;
+    private final CreeMapsOrRead creeMapsOrRead;
     private ClientInfo username;
     private Socket socketClient;
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
 
-    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, MapsObjets mapObjets)
+    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, CreeMapsOrRead creeMapsOrRead)
     {
         this.lstConnexion = lst;
         try
@@ -52,7 +52,7 @@ class ConnexionClient extends Thread
             e.printStackTrace();
         }
         this.nbMaxThread = nbMaxThread;
-        this.mapObjets = mapObjets;
+        this.creeMapsOrRead = creeMapsOrRead;
     }
 
     @Override
@@ -63,7 +63,7 @@ class ConnexionClient extends Thread
         {
             this.username = (ClientInfo) objectInputStream.readObject();
             System.out.println("Connexion avec : " + getUsername());
-            while (!mapObjets.getChargementMap())
+            while (!creeMapsOrRead.getChargementMap())
             {
                 envoieMessage(Colors.clear + " Chargement des données patienter ");
                 sleep(5000);
@@ -124,7 +124,7 @@ class ConnexionClient extends Thread
         try
         {
             String mess;
-            int nb = -1;
+            int nb;
             while ((mess = (String) objectInputStream.readObject()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
             {
                 try
@@ -134,6 +134,7 @@ class ConnexionClient extends Thread
                 {
                     log.warning("Le client n'envoie pas des nombres");
                     envoieMessage(afficheChoix());
+                    nb = 0;
                 }
                 if (nb == -1)
                 {
@@ -145,7 +146,8 @@ class ConnexionClient extends Thread
                 }
                 //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
-                new InitChoix(nb, objectInputStream, writer, mapObjets);// gere toute la partie choix du client
+                if (nb > 0 && nb < 8)
+                    new InitChoix(nb, objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
             }
 
         } catch (Exception e)
@@ -153,6 +155,7 @@ class ConnexionClient extends Thread
             connexionFailed();
         }
     }
+
 
     protected void closeAll()
     {

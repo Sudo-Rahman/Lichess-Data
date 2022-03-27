@@ -13,7 +13,7 @@
 
 package recherche.partie.specifique;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import partie.Partie;
 import recherche.RecherchePartieSpecifique;
 
@@ -27,9 +27,9 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     private int eloSup;
     private int eloInf;
 
-    public RechercheEnFonctionEloJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionEloJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
     }
 
 
@@ -105,10 +105,10 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         int compt = 0;
         for (int i = this.eloInf; i < this.eloSup; i++)
         {
-            if (getEloMap().containsKey(i))
+            if (mapObjet.getEloMap().containsKey(i))
             {
-                this.lstLigneParties.addAll(getEloMap().get(i));
-                compt += getEloMap().get(i).size();
+                this.lstLigneParties.addAll(mapObjet.getEloMap().get(i));
+                compt += mapObjet.getEloMap().get(i).size();
             }
         }
         return compt;

@@ -12,8 +12,9 @@
 
 package choix;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import recherche.autres.CinqOuverturesPlusJoue;
+import recherche.autres.JoueursLesplusActifs;
 import recherche.partie.specifique.*;
 import utils.Colors;
 import utils.Log;
@@ -26,15 +27,15 @@ public class InitChoix
 {
     private final BufferedWriter writer;
     private final ObjectInputStream objectInputStream;
-    private final MapsObjets mapObjets;
+    private final MapsObjet mapObjet;
     private final Log log = new Log();
 
-    public InitChoix(int choix, ObjectInputStream o, BufferedWriter b, MapsObjets mapObjets)
+    public InitChoix(int choix, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
     {
         this.objectInputStream = o;
         this.writer = b;
 
-        this.mapObjets = mapObjets;
+        this.mapObjet = mapObjet;
 
         switch (choix)
         {
@@ -42,6 +43,7 @@ public class InitChoix
             case 2 -> choix2();
             case 3 -> choix3();
             case 4 -> choix4();
+            case 5 -> choix5();
         }
     }
 
@@ -51,6 +53,7 @@ public class InitChoix
         int choix;
         do
         {
+
             envoieMessage("Donner votre choix");
             choix = litInt();
             if (choix == -1)
@@ -62,15 +65,15 @@ public class InitChoix
         switch (choix)
         {
             case 1 -> {
-                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjets);
+                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
             case 2 -> {
-                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjets);
+                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
             case 3 -> {
-                RechercheEnFonctionDate recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjets);
+                RechercheEnFonctionDate recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
         }
@@ -78,19 +81,26 @@ public class InitChoix
 
     private void choix2()
     {
-        RecherchePartieJoueur recherche = new RecherchePartieJoueur(objectInputStream, writer, mapObjets);
+        RecherchePartieJoueur recherche = new RecherchePartieJoueur(objectInputStream, writer, mapObjet);
         recherche.cherche();
     }
 
     private void choix3()
     {
-        CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream, writer, mapObjets);
+        CinqOuverturesPlusJoue recherche = new CinqOuverturesPlusJoue(objectInputStream, writer, mapObjet);
         recherche.cherche();
     }
 
     private void choix4()
     {
-        RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream, writer, mapObjets);
+        RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream, writer, mapObjet);
+        recherche.cherche();
+    }
+
+
+    private void choix5()
+    {
+        JoueursLesplusActifs recherche = new JoueursLesplusActifs(objectInputStream, writer, mapObjet);
         recherche.cherche();
     }
 

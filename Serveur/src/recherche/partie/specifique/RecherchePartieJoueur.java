@@ -13,7 +13,7 @@
 
 package recherche.partie.specifique;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
@@ -24,9 +24,9 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     private String joueur;
 
 
-    public RecherchePartieJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RecherchePartieJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
     }
 
 
@@ -51,12 +51,12 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (getNameMap().containsKey(this.joueur))
+        if (mapObjet.getNameMap().containsKey(this.joueur))
         {
-            this.lstLigneParties = getNameMap().get(this.joueur);
+            this.lstLigneParties = mapObjet.getNameMap().get(this.joueur);
             if (nbParties == 0)
             {
-                nbParties = Math.min(getNameMap().get(this.joueur).size(), this.maxNbParties);
+                nbParties = Math.min(mapObjet.getNameMap().get(this.joueur).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -72,7 +72,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(getNameMap(), this.joueur);
+        trieMapList(mapObjet.getNameMap(), this.joueur);
 
         tempsRecherche = System.currentTimeMillis();
 

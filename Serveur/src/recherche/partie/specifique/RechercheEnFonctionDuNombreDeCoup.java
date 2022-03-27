@@ -12,7 +12,7 @@
  */
 package recherche.partie.specifique;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
@@ -22,9 +22,9 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
 {
     private int nbCoups;
 
-    public RechercheEnFonctionDuNombreDeCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RechercheEnFonctionDuNombreDeCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
         this.nbCoups = 1;
     }
 
@@ -46,13 +46,13 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     public void cherche()
     {
         initDemande();
-        if (getNbCoupsMap().containsKey(this.nbCoups))
+        if (mapObjet.getNbCoupsMap().containsKey(this.nbCoups))
         {
-            this.lstLigneParties = getNbCoupsMap().get(this.nbCoups);
+            this.lstLigneParties = mapObjet.getNbCoupsMap().get(this.nbCoups);
             // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
             if (nbParties == 0)
             {
-                nbParties = Math.min(getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
+                nbParties = Math.min(mapObjet.getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
             }
             Thread t = new Thread(this::calcule);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -63,7 +63,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(getNbCoupsMap(), this.nbCoups);
+        trieMapList(mapObjet.getNbCoupsMap(), this.nbCoups);
 
         this.tempsRecherche = System.currentTimeMillis();
 

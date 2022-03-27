@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.Thread.sleep;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -18,18 +19,24 @@ public class CreeMap
 
     private final String file;
 
-    private final WriteAndReadMaps warm;
+    private final MapsObjet mapsObjet;
     private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     private final Log log;
     private long nbOctetsLu;
     private long nbOctetsParThread;
     private boolean creeMapOk;
 
-    public CreeMap(WriteAndReadMaps mo, String path)
+    private final long posDeb;
+    private final long posFin;
+
+    public CreeMap(MapsObjet mo, String path, long posDeb, long posFin)
     {
         this.file = path;
-        this.warm = mo;
+        this.mapsObjet = mo;
         this.creeMapOk = false;
+
+        this.posDeb = posDeb;
+        this.posFin = posFin;
         log = new Log();
     }
 
@@ -41,7 +48,7 @@ public class CreeMap
     public void cree()
     {
         this.nbOctetsLu = 0;
-        this.nbOctetsParThread = new File(file).length() / this.nbThreads;
+        this.nbOctetsParThread = (this.posFin - this.posDeb) / this.nbThreads;
         createMaps();
     }
 
@@ -58,7 +65,7 @@ public class CreeMap
             {
                 try
                 {
-                    calcule(nbOctetsParThread * I);
+                    calcule(this.posDeb + (nbOctetsParThread * I));
                 } catch (IOException e)
                 {
                     e.printStackTrace();
@@ -83,6 +90,11 @@ public class CreeMap
         {
             e.printStackTrace();
         }
+        long partie = 0;
+        for(Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet()){
+            partie += element.getValue().size();
+        }
+        this.mapsObjet.setNbParties(partie/2);
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
     }
 
@@ -144,12 +156,12 @@ public class CreeMap
                     {
                         case "White", "Black" -> {
 //                                System.out.println(octetDeb + " " + lstStr + "\n\n");
-                            if (this.warm.getNameMap().containsKey(buf[1]))
+                            if (this.mapsObjet.getNameMap().containsKey(buf[1]))
                             {
-                                this.warm.getNameMap().get(buf[1]).add(octetDeb);
+                                this.mapsObjet.getNameMap().get(buf[1]).add(octetDeb);
 
                             } else
-                                this.warm.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
+                                this.mapsObjet.getNameMap().putIfAbsent(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singleton(octetDeb))));
                         }
                         case "Site" -> {}
                         case "Result" -> {}
@@ -162,28 +174,28 @@ public class CreeMap
                             {
                                 log.error("Impossible de parser la date !!");
                             }
-                            if (this.warm.getUtcDateMap().containsKey(utcDate))
+                            if (this.mapsObjet.getUtcDateMap().containsKey(utcDate))
                             {
-                                this.warm.getUtcDateMap().get(utcDate).add(octetDeb);
+                                this.mapsObjet.getUtcDateMap().get(utcDate).add(octetDeb);
                             } else
-                                this.warm.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                                this.mapsObjet.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                         }
                         case "UTCTime" -> {
-                            if (this.warm.getUtcTimeMap().containsKey(buf[1]))
+                            if (this.mapsObjet.getUtcTimeMap().containsKey(buf[1]))
                             {
-                                this.warm.getUtcTimeMap().get(buf[1]).add(octetDeb);
+                                this.mapsObjet.getUtcTimeMap().get(buf[1]).add(octetDeb);
                             } else
-                                this.warm.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                                this.mapsObjet.getUtcTimeMap().put(buf[1], Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                         }
                         case "WhiteElo", "BlackElo" -> {
                             try
                             {
                                 int elo = Integer.parseInt(buf[1]);
-                                if (this.warm.getEloMap().containsKey(elo))
+                                if (this.mapsObjet.getEloMap().containsKey(elo))
                                 {
-                                    this.warm.getEloMap().get(elo).add(octetDeb);
+                                    this.mapsObjet.getEloMap().get(elo).add(octetDeb);
                                 } else
-                                    this.warm.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                                    this.mapsObjet.getEloMap().put(elo, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             } catch (NumberFormatException e)
                             {
                                 log.warning("Elo inconnue");
@@ -198,18 +210,18 @@ public class CreeMap
                         lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
                         lst.removeIf(strr -> strr.equals("") || strr.contains("."));
                         // on enleve -1 car le dernier "coup" est le resultat
-                        if (this.warm.getNbCoupsMap().containsKey(lst.size() - 1))
+                        if (this.mapsObjet.getNbCoupsMap().containsKey(lst.size() - 1))
                         {
-                            this.warm.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
+                            this.mapsObjet.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
                         } else
-                            this.warm.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
+                            this.mapsObjet.getNbCoupsMap().put(lst.size() - 1, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
 
                         //map pour les ouvertures
-                        if (this.warm.getOpenningMap().containsKey(string.split(" ")[1]))
+                        if (this.mapsObjet.getOpenningMap().containsKey(string.split(" ")[1]))
                         {
-                            this.warm.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);
+                            this.mapsObjet.getOpenningMap().get(string.split(" ")[1]).add(octetDeb);
                         } else
-                            this.warm.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
+                            this.mapsObjet.getOpenningMap().put(string.split(" ")[1], Collections.synchronizedList((new ArrayList<>(Collections.singletonList(octetDeb)))));
                     }
                 }
                 comptLigne = 0;
@@ -234,9 +246,9 @@ public class CreeMap
             buf[0] = buf[0].replaceAll(" ", "");
             if (buf[0].equals("White"))
             {
-                if (this.warm.getNameMap().containsKey(sr.split("\"")[1]))
+                if (this.mapsObjet.getNameMap().containsKey(sr.split("\"")[1]))
                 {
-                    if (this.warm.getNameMap().get(sr.split("\"")[1]).contains(octetDeb))
+                    if (this.mapsObjet.getNameMap().get(sr.split("\"")[1]).contains(octetDeb))
                     {
                         return true;
                     }

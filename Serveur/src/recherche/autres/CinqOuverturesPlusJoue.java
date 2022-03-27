@@ -13,7 +13,7 @@
 
 package recherche.autres;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import recherche.Recherche;
 import utils.Colors;
 
@@ -23,21 +23,21 @@ import java.util.*;
 
 public class CinqOuverturesPlusJoue extends Recherche
 {
-    public CinqOuverturesPlusJoue(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public CinqOuverturesPlusJoue(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
     }
 
     @Override
     public void cherche()
     {
         Map<Integer, String> lst = new HashMap<>();
-        for (Map.Entry<Object, List<Long>> element : getOpenningMap().entrySet())
+        for (Map.Entry<Object, List<Long>> element : mapObjet.getOpenningMap().entrySet())
         {
             lst.put(element.getValue().size(), (String) element.getKey());
         }
         // enleve toutes les plus petites valeurs et laisse les 5 plus grandes
-        for (int i = 0; i < getOpenningMap().size() - 5; i++)
+        for (int i = 0; i < mapObjet.getOpenningMap().size() - 5; i++)
         {
             lst.remove(Collections.min(lst.keySet()));
         }
@@ -47,7 +47,7 @@ public class CinqOuverturesPlusJoue extends Recherche
         lstTrier.putAll(lst);
 
         int i = 1;
-        envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + getNbParties() + " parties : " + Colors.reset);
+        envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + mapObjet.getNbParties() + " parties : " + Colors.reset);
         for (Map.Entry<Object, Object> element : lstTrier.entrySet())
         {
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");

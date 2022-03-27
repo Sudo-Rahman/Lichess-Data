@@ -13,7 +13,7 @@
 
 package recherche;
 
-import maps.MapsObjets;
+import maps.MapsObjet;
 import partie.Partie;
 import utils.Colors;
 
@@ -39,9 +39,9 @@ public abstract class RecherchePartieSpecifique extends Recherche
     protected List<Long> lstLigneParties;
 
 
-    public RecherchePartieSpecifique(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjets mapObjets)
+    public RecherchePartieSpecifique(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-        super(clientReader, clientWriter, mapObjets);
+        super(clientReader, clientWriter, mapObjet);
         this.lstPartie = new ArrayList<>();
         this.lstStrLigne = new ArrayList<>();
         this.lstLigneParties = new ArrayList<>();

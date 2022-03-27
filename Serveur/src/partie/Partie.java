@@ -40,7 +40,6 @@ public class Partie
     private List<String> lstCoup;
     private String premierCoup;
     private String termination;
-
     /**
      * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
      */
@@ -110,6 +109,16 @@ public class Partie
             }
         }
 
+    }
+
+    public String getBlanc()
+    {
+        return blanc;
+    }
+
+    public String getNoir()
+    {
+        return noir;
     }
 
     /**

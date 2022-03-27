@@ -14,7 +14,7 @@
 package serveur;
 
 
-import maps.MapsObjets;
+import maps.CreeMapsOrRead;
 import utils.Log;
 
 import java.io.File;
@@ -34,7 +34,7 @@ public class Serveur
     private final int nbThreadsPerClient;
     private final List<ConnexionClient> lstConnexion;
     private final ServerSocket serverSocket;
-    private final MapsObjets mapObjets;
+    private final CreeMapsOrRead creeMapsOrRead;
 
     public Serveur(ServerSocket serverSocket, int maxClients, File file)
     {
@@ -42,8 +42,8 @@ public class Serveur
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
-        this.mapObjets = new MapsObjets(file.getAbsolutePath());
-        new Thread(mapObjets::charge).start();
+        this.creeMapsOrRead = new CreeMapsOrRead(file.getAbsolutePath());
+        new Thread(creeMapsOrRead::charge).start();
     }
 
     /**
@@ -64,7 +64,7 @@ public class Serveur
                 } else
                 {
                     log.debug(client.toString());
-                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient, this.lstConnexion, this.mapObjets);
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient, this.lstConnexion, this.creeMapsOrRead);
                     this.lstConnexion.add(connexionClient);
                     connexionClient.start();
                 }
