@@ -13,8 +13,11 @@
 
 package recherche;
 
+import choix.InitChoix;
+import maps.CreeMap;
 import maps.MapsObjet;
 import partie.PartiesFile;
+import utils.Colors;
 import utils.Log;
 
 import java.io.BufferedWriter;
@@ -25,8 +28,8 @@ public abstract class Recherche
 {
     protected final MapsObjet mapObjet;
     protected final Log log = new Log();
-    private final ObjectInputStream clientReader;
-    private final BufferedWriter clientWriter;
+    protected final ObjectInputStream clientReader;
+    protected final BufferedWriter clientWriter;
     protected int maxNbParties = 100000;
     protected boolean afficheParties = true;
     protected PartiesFile partiesFile;
@@ -81,5 +84,24 @@ public abstract class Recherche
             log.error("Impossible de lire l'entier");
         }
         return nb;
+    }
+
+
+
+    /**
+     * affiche les differents choix donner au client.
+     */
+    public String afficheChoix()
+    {
+        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
+                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
+                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
+                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
+                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
+                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
+                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
+        //        Colors.green + "" + Colors.reset;
+        //        Colors.cyan + "" + Colors.reset;
     }
 }

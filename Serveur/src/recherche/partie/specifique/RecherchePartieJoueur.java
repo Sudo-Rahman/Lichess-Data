@@ -35,12 +35,14 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     {
         envoieMessage("Donner l'username du joueur");
         this.joueur = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
-        nbParties = litInt();
-        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if (litMess().equals("no"))
+        envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
+        if (litMess().equals("yes"))
         {
             this.afficheParties = false;
+        } else
+        {
+            envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
+            nbParties = litInt();
         }
     }
 
@@ -54,13 +56,16 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         if (mapObjet.getNameMap().containsKey(this.joueur))
         {
             this.lstLigneParties = mapObjet.getNameMap().get(this.joueur);
-            if (nbParties == 0)
+            if (this.afficheParties)
             {
-                nbParties = Math.min(mapObjet.getNameMap().get(this.joueur).size(), this.maxNbParties);
-            }
-            Thread t = new Thread(this::calcule);
-            t.setPriority(Thread.MAX_PRIORITY);
-            t.start();
+                if (nbParties == 0)
+                {
+                    nbParties = Math.min(mapObjet.getNameMap().get(this.joueur).size(), this.maxNbParties);
+                }
+                Thread t = new Thread(this::calcule);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } else reiterationSurParties();
         } else envoieMessage(toString());
     }
 

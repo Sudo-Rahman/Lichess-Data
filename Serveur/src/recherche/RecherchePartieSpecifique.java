@@ -13,6 +13,9 @@
 
 package recherche;
 
+import choix.InitChoix;
+import maps.CreeMap;
+import maps.CreeMapIteration;
 import maps.MapsObjet;
 import partie.Partie;
 import utils.Colors;
@@ -62,6 +65,18 @@ public abstract class RecherchePartieSpecifique extends Recherche
         {
             Collections.sort(hashMap.get(obj));
         }
+    }
+
+
+    public void reiterationSurParties()
+    {
+        envoieMessage(afficheChoix());
+        MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
+        new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstLigneParties).cree();
+        new InitChoix(litInt(), this.clientReader, this.clientWriter, mp);
+        envoieMessage(afficheChoix());
+        mp = null;
+        System.gc();
     }
 
     @Override

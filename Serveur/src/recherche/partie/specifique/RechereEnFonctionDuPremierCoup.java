@@ -35,12 +35,14 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     {
         envoieMessage("Donner le premier coup, ex : \"d4\"");
         this.coup = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
-        nbParties = litInt();
-        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if (litMess().equals("no"))
+        envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
+        if (litMess().equals("yes"))
         {
             this.afficheParties = false;
+        } else
+        {
+            envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
+            nbParties = litInt();
         }
     }
 
@@ -54,13 +56,16 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         if (mapObjet.getOpenningMap().containsKey(this.coup))
         {
             this.lstLigneParties = mapObjet.getOpenningMap().get(this.coup);
-            if (nbParties == 0)// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+            if (this.afficheParties)
             {
-                nbParties = Math.min(mapObjet.getOpenningMap().get(this.coup).size(), this.maxNbParties);
-            }
-            Thread t = new Thread(this::calcule);
-            t.setPriority(Thread.MAX_PRIORITY);
-            t.start();
+                if (nbParties == 0)// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+                {
+                    nbParties = Math.min(mapObjet.getOpenningMap().get(this.coup).size(), this.maxNbParties);
+                }
+                Thread t = new Thread(this::calcule);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } else reiterationSurParties();
         } else envoieMessage(toString());
     }
 

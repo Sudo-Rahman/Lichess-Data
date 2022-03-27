@@ -59,7 +59,7 @@ public class CreeMapsOrRead
         }
         if (!this.mapsObjet.isChargementMapOk())
         {
-            CreeMap cr = new CreeMap(this.mapsObjet, file.getAbsolutePath(), 0L, file.length());
+            CreeMap cr = new CreeMap(this.mapsObjet, file, 0L, file.length());
             cr.cree();
             try
             {

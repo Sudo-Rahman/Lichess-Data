@@ -41,15 +41,19 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     {
         initDemande();
         if (getAllElos() > 0)
-        {// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
-            if (nbParties == 0)
+        {
+            // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+            if (this.afficheParties)
             {
-                nbParties = Math.min(this.lstLigneParties.size(), this.maxNbParties);
-            }
-            Thread t = new Thread(this::calcule);
-            t.setPriority(Thread.MAX_PRIORITY);
-            t.start();
-        }
+                if (nbParties == 0)
+                {
+                    nbParties = Math.min(this.lstLigneParties.size(), this.maxNbParties);
+                }
+                Thread t = new Thread(this::calcule);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } else reiterationSurParties();
+        } else envoieMessage(toString());
     }
 
     @Override
@@ -59,12 +63,14 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         this.eloInf = litInt();
         envoieMessage("Donner la borne superieur ex : 2000 -> les joueurs au dessus de 2000 ne serons pas pris");
         this.eloSup = litInt();
-        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
-        this.nbParties = litInt();
-        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if (litMess().equals("no"))
+        envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
+        if (litMess().equals("yes"))
         {
             this.afficheParties = false;
+        } else
+        {
+            envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
+            nbParties = litInt();
         }
     }
 

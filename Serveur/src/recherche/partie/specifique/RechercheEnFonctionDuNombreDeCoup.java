@@ -33,12 +33,14 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     {
         envoieMessage("Donner le nombre de coups");
         this.nbCoups = litInt();
-        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
-        this.nbParties = litInt();
-        envoieMessage("Voulez vous afficher les parties ? (no/yes)");
-        if (litMess().equals("no"))
+        envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
+        if (litMess().equals("yes"))
         {
             this.afficheParties = false;
+        } else
+        {
+            envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
+            nbParties = litInt();
         }
     }
 
@@ -49,14 +51,17 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
         if (mapObjet.getNbCoupsMap().containsKey(this.nbCoups))
         {
             this.lstLigneParties = mapObjet.getNbCoupsMap().get(this.nbCoups);
-            // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
-            if (nbParties == 0)
+            if (this.afficheParties)
             {
-                nbParties = Math.min(mapObjet.getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
-            }
-            Thread t = new Thread(this::calcule);
-            t.setPriority(Thread.MAX_PRIORITY);
-            t.start();
+                // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
+                if (nbParties == 0)
+                {
+                    nbParties = Math.min(mapObjet.getNbCoupsMap().get(this.nbCoups).size(), this.maxNbParties);
+                }
+                Thread t = new Thread(this::calcule);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } else reiterationSurParties();
         } else envoieMessage(toString());
     }
 

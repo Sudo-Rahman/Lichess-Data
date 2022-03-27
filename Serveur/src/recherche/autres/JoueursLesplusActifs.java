@@ -1,7 +1,7 @@
 package recherche.autres;
 
+import maps.CreeMapIteration;
 import maps.MapsObjet;
-import partie.Partie;
 import recherche.Recherche;
 import utils.Colors;
 
@@ -14,9 +14,11 @@ import java.util.*;
 public class JoueursLesplusActifs extends Recherche
 {
 
-    private String mois;
-    private String anne;
+    private int mois;
+    private int anne;
     private final SimpleDateFormat sdformat;
+    private Calendar calendar;
+
     private Date debut;
     private Date fin;
 
@@ -24,16 +26,20 @@ public class JoueursLesplusActifs extends Recherche
     {
         super(clientReader, clientWriter, mapObjet);
         this.sdformat = new SimpleDateFormat("dd/MM/yyyy");
+        this.calendar = Calendar.getInstance(Locale.FRANCE);
     }
 
     @Override
     public void cherche()
     {
-        getDate();
+        if (mapObjet.getUtcDateMap().size() > 0) getDate();
         new Thread(this::lePlusActifSurLemois).start();
         new Thread(this::lePlusActifDeChaqueSemaine).start();
     }
 
+    /**
+     * cherche le joueur le plus actif du mois, du fichier.
+     */
     private void lePlusActifSurLemois()
     {
         int compteur = 0;
@@ -48,88 +54,83 @@ public class JoueursLesplusActifs extends Recherche
                 compteur = element.getValue().size();
             }
         }
-        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'anné : " + this.anne + " est : " + joueur + " avec " + compteur + " parties.\n" + Colors.reset);
+        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'année : " + this.anne + " est : " + joueur + " avec " + compteur + " parties." + Colors.reset);
     }
 
+    /**
+     * Cherche pour chaque semaine le joueur le plus actif.
+     * Les semaines sont faites automatiquement, la premiere semaine est les 7 premiers jours du fichier et ainsi de suite pour les autres semaines.
+     */
     private void lePlusActifDeChaqueSemaine()
     {
         List<Thread> lstThreads = new ArrayList<>();
-        int compteur = 0;
-        int coompt = 0;
-        String joueur = "";
-        long timeDiff = 7 * 60 * 60 * 24 * 1000;
-        long fin = this.debut.getTime() + timeDiff;
+        List<Long> lstPosParties = new ArrayList<>();
 
-        List<Long> lstLong = new ArrayList<>();
+        long unJourEnMillisecondes = 60 * 60 * 24 * 1000;
+        long debut = this.debut.getTime();
 
-        for (int i = 1; i <= (mapObjet.getUtcDateMap().size() / 7) + 1; i++)
+        for (int i = 0; i < (int) (Math.ceil(mapObjet.getUtcDateMap().size() / 7.0)); i++)
         {
-            for (Map.Entry<Object, List<Long>> elmt : mapObjet.getUtcDateMap().entrySet())
+            for (int y = 0; y < 7 && debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes <= this.fin.getTime(); y++)
             {
-                try
-                {
-                    if (fin - sdformat.parse((String) elmt.getKey()).getTime() > 0 && fin - sdformat.parse((String) elmt.getKey()).getTime() <= timeDiff)
-                    {
-                        lstLong.addAll(elmt.getValue());
-                    }
-
-                } catch (ParseException e)
-                {
-                    e.printStackTrace();
-                }
+                lstPosParties.addAll(mapObjet.getUtcDateMap().get(sdformat.format(new Date(debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes))));
             }
-            Thread th = new Thread(() -> calcule(lstLong));
+            Date date = new Date(debut + i * 7 * unJourEnMillisecondes);
+            this.calendar.setTime(date);
+            int finalI = i;
+            List<Long> lstClone = new ArrayList<>(lstPosParties);
+            Thread th = new Thread(() -> getJoueurLePlusActifDeLaSemaine(this.calendar.get(Calendar.WEEK_OF_MONTH), lstClone));
             lstThreads.add(th);
             th.start();
-            fin += timeDiff;
-            lstLong.clear();
+            lstPosParties.clear();
         }
         for (Thread th : lstThreads)
         {
-            try
-            {
-                th.join();
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+            try {th.join();} catch (InterruptedException e) {e.printStackTrace();}
         }
-        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'anné : " + this.anne + " est :" + joueur + " avec " + compteur + " parties.\n" + Colors.reset);
     }
 
-    private void calcule(List<Long> lstPos)
+
+    /**
+     * cherche le joueur le plus fort de la semaine désigné en paramètre.
+     *
+     * @param semaine désigne la semaine à traiter
+     * @param lstPos  liste des positions des parties de la semaine
+     */
+    private void getJoueurLePlusActifDeLaSemaine(int semaine, List<Long> lstPos)
     {
-        System.out.println(lstPos);
-        HashMap<String, Integer> map = new HashMap<>();
-        for (Partie partie : this.partiesFile.getAllParties(lstPos))
+        MapsObjet mp = new MapsObjet(mapObjet.getFile());
+        CreeMapIteration cr = new CreeMapIteration(mp, mapObjet.getFile(), lstPos);
+        cr.cree();
+
+        int compteur = 0;
+        String joueur = "";
+        int nbParties;
+
+        for (Map.Entry<Object, List<Long>> element : mp.getNameMap().entrySet())
         {
-            if (map.containsKey(partie.getBlanc()))
+            nbParties = element.getValue().size();
+            if (nbParties > compteur)
             {
-                map.replace(partie.getBlanc(), map.get(partie.getBlanc() + 1));
-            } else map.put(partie.getBlanc(), 1);
-            if (map.containsKey(partie.getNoir()))
-            {
-                map.replace(partie.getNoir(), map.get(partie.getNoir() + 1));
-            } else map.put(partie.getNoir(), 1);
-            System.out.println(partie.getBlanc() + " " + partie.getNoir());
-        }
-        int max = 0;
-        for (Map.Entry<String, Integer> element : map.entrySet())
-        {
-            if (element.getValue() > max)
-            {
-                max = element.getValue();
+                joueur = (String) element.getKey();
+                compteur = element.getValue().size();
             }
         }
-        System.out.println(max);
+        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est :" + joueur + " avec " + compteur + " parties." + Colors.reset);
+        mp = null;
+        cr = null;
+        System.gc();
     }
 
+    /**
+     * recuperation de la date la plus ancienne et la date la plus récente des parties du fichier.
+     */
     private void getDate()
     {
         try
         {
             Date dateDeb = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[0]);
-            Date dateFin = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[1]);
+            Date dateFin = dateDeb;
             for (Object date : mapObjet.getUtcDateMap().keySet())
             {
                 if (dateDeb.compareTo(sdformat.parse((String) date)) > 0)
@@ -143,8 +144,9 @@ public class JoueursLesplusActifs extends Recherche
             }
             this.debut = dateDeb;
             this.fin = dateFin;
-            this.mois = sdformat.format(dateFin).split("/")[1];
-            this.anne = sdformat.format(dateDeb).split("/")[2];
+            calendar.setTime(dateFin);
+            this.mois = calendar.get(Calendar.MONTH);
+            this.anne = calendar.get(Calendar.YEAR);
         } catch (ParseException e)
         {
             log.error("Impossible de convertir le String en date !!");

@@ -17,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class CreeMap
 {
 
-    private final String file;
+    private final File file;
 
     private final MapsObjet mapsObjet;
     private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
@@ -29,9 +29,9 @@ public class CreeMap
     private final long posDeb;
     private final long posFin;
 
-    public CreeMap(MapsObjet mo, String path, long posDeb, long posFin)
+    public CreeMap(MapsObjet mo, File file, long posDeb, long posFin)
     {
-        this.file = path;
+        this.file = file;
         this.mapsObjet = mo;
         this.creeMapOk = false;
 
@@ -91,10 +91,11 @@ public class CreeMap
             e.printStackTrace();
         }
         long partie = 0;
-        for(Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet()){
+        for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
+        {
             partie += element.getValue().size();
         }
-        this.mapsObjet.setNbParties(partie/2);
+        this.mapsObjet.setNbParties(partie / 2);
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
     }
 
@@ -202,13 +203,14 @@ public class CreeMap
                             }
                         }
                     }
-                    if (string.split(" ")[0].equals("1."))
+                    if (string.split(" ")[0].equals("1.") || string.contains("1-0") || string.contains("0-1"))
                     {
                         //map pour les nombre de coups
                         List<String> lst = new ArrayList<>(List.of(string.split("[{}]")));
                         lst.removeIf(strr -> strr.contains("%eval") || strr.contains("%clk"));
                         lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
                         lst.removeIf(strr -> strr.equals("") || strr.contains("."));
+
                         // on enleve -1 car le dernier "coup" est le resultat
                         if (this.mapsObjet.getNbCoupsMap().containsKey(lst.size() - 1))
                         {
@@ -265,7 +267,7 @@ public class CreeMap
 
     private void afficheOctetLu()
     {
-        long tailleFichier = new File(file).length();
+        long tailleFichier = file.length();
         long avant = 0L;
         long apres;
         log.info("Lecture en cours : 0%");

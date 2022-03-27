@@ -61,12 +61,14 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         }
         envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjet.getFile().getName());
         this.date = litMess();
-        envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
-        nbParties = litInt();
-        envoieMessage("Voulez vous réiterez sur les partie (yes) ou afficher les parties (no) :");
-        if (!litMess().equals("yes"))
+        envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
+        if (litMess().equals("yes"))
         {
-            this.afficheParties = true;
+            this.afficheParties = false;
+        } else
+        {
+            envoieMessage("Combien de partie voulez vous rechercher ? (0) pour toutes les parties.");
+            nbParties = litInt();
         }
     }
 
@@ -80,13 +82,16 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         if (mapObjet.getUtcDateMap().containsKey(this.date))
         {
             this.lstLigneParties = mapObjet.getUtcDateMap().get(this.date);
-            if (nbParties == 0)
+            if (this.afficheParties)
             {
-                nbParties = Math.min(mapObjet.getUtcDateMap().get(this.date).size(), this.maxNbParties);
-            }
-            Thread t = new Thread(this::calcule);
-            t.setPriority(Thread.MAX_PRIORITY);
-            t.start();
+                if (nbParties == 0)
+                {
+                    nbParties = Math.min(mapObjet.getUtcDateMap().get(this.date).size(), this.maxNbParties);
+                }
+                Thread t = new Thread(this::calcule);
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } else reiterationSurParties();
         } else envoieMessage(toString());
     }
 
@@ -111,5 +116,4 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         this.lstPartie = null;
         System.gc();
     }
-
 }

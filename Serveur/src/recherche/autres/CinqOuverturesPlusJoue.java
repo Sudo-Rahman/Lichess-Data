@@ -53,5 +53,6 @@ public class CinqOuverturesPlusJoue extends Recherche
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");
             i++;
         }
+        envoieMessage("\n");
     }
 }

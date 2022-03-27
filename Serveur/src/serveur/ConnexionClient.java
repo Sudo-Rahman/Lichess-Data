@@ -125,7 +125,7 @@ class ConnexionClient extends Thread
         {
             String mess;
             int nb;
-            while ((mess = (String) objectInputStream.readObject()) != null) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
+            while ((mess = (String) objectInputStream.readObject()) != null && this.socketClient.isConnected()) // permet d'intercepter tout le message y compris si ya des sauts de ligne.
             {
                 try
                 {
@@ -152,6 +152,7 @@ class ConnexionClient extends Thread
 
         } catch (Exception e)
         {
+            e.printStackTrace();
             connexionFailed();
         }
     }
