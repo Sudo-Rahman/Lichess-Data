@@ -17,9 +17,8 @@ public class CreeMapIteration
     private final File file;
 
     private final MapsObjet mapsObjet;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 4;
+    private final int nbThreads = Runtime.getRuntime().availableProcessors();
     private final Log log;
-    private long nbOctetsLu;
     private boolean creeMapOk;
 
     private final List<Long> lstPosParties;
@@ -44,7 +43,6 @@ public class CreeMapIteration
 
     public void cree()
     {
-        this.nbOctetsLu = 0;
         createMaps();
     }
 
@@ -216,12 +214,13 @@ public class CreeMapIteration
                 if (str.equals("")) comptLigneVide++;
                 else lstStr.add(str);
             }
+            reader.close();;
+            in.close();
         } catch (Exception e)
         {
             e.printStackTrace();
             System.exit(-1);
         }
-
         return lstStr;
     }
 

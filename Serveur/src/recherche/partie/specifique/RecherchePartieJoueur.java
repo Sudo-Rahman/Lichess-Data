@@ -56,6 +56,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         if (mapObjet.getNameMap().containsKey(this.joueur))
         {
             this.lstLigneParties = mapObjet.getNameMap().get(this.joueur);
+            System.out.println(lstLigneParties);
             if (this.afficheParties)
             {
                 if (nbParties == 0)
@@ -77,8 +78,6 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(mapObjet.getNameMap(), this.joueur);
-
         tempsRecherche = System.currentTimeMillis();
 
         this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);

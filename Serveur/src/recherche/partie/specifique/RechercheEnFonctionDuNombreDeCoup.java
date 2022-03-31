@@ -68,16 +68,12 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(mapObjet.getNbCoupsMap(), this.nbCoups);
-
         this.tempsRecherche = System.currentTimeMillis();
 
         this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, this.nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
-        this.partiesFile.closeReader();
-
         //Libere la liste de la memoire
         this.lstPartie = null;
         System.gc();

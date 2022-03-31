@@ -54,27 +54,11 @@ public abstract class RecherchePartieSpecifique extends Recherche
 
     public abstract void initDemande();
 
-    protected void trieMapList(Map<Object, List<Long>> hashMap, Object objet)
-    {
-        Collections.sort(hashMap.get(objet));
-    }
-
-    protected void trieMapList(Map<Object, List<Long>> hashMap, List<Object> lstObjet)
-    {
-        for (Object obj : lstObjet)
-        {
-            Collections.sort(hashMap.get(obj));
-        }
-    }
-
-
     public void reiterationSurParties()
     {
-        envoieMessage(afficheChoix());
         MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
         new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstLigneParties).cree();
-        new InitChoix(litInt(), this.clientReader, this.clientWriter, mp);
-        envoieMessage(afficheChoix());
+        new InitChoix(this.clientReader, this.clientWriter, mp);
         mp = null;
         System.gc();
     }

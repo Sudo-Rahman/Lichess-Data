@@ -18,6 +18,7 @@ public class JoueursLesplusActifs extends Recherche
     private int anne;
     private final SimpleDateFormat sdformat;
     private Calendar calendar;
+    private String message;
 
     private Date debut;
     private Date fin;
@@ -27,14 +28,22 @@ public class JoueursLesplusActifs extends Recherche
         super(clientReader, clientWriter, mapObjet);
         this.sdformat = new SimpleDateFormat("dd/MM/yyyy");
         this.calendar = Calendar.getInstance(Locale.FRANCE);
+        this.message = "";
     }
 
     @Override
     public void cherche()
     {
         if (mapObjet.getUtcDateMap().size() > 0) getDate();
-        new Thread(this::lePlusActifSurLemois).start();
-        new Thread(this::lePlusActifDeChaqueSemaine).start();
+        Thread th1 = new Thread(this::lePlusActifSurLemois);
+        th1.start();
+        Thread th2 = new Thread(this::lePlusActifDeChaqueSemaine);
+        th2.start();
+        try{
+            th1.join();th2.join();
+        } catch (InterruptedException e)
+        {e.printStackTrace();}
+        envoieMessage(this.message);
     }
 
     /**
@@ -54,7 +63,7 @@ public class JoueursLesplusActifs extends Recherche
                 compteur = element.getValue().size();
             }
         }
-        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'année : " + this.anne + " est : " + joueur + " avec " + compteur + " parties." + Colors.reset);
+        this.message += Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
     }
 
     /**
@@ -75,11 +84,9 @@ public class JoueursLesplusActifs extends Recherche
             {
                 lstPosParties.addAll(mapObjet.getUtcDateMap().get(sdformat.format(new Date(debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes))));
             }
-            Date date = new Date(debut + i * 7 * unJourEnMillisecondes);
-            this.calendar.setTime(date);
-            int finalI = i;
+            final int I = i+1;
             List<Long> lstClone = new ArrayList<>(lstPosParties);
-            Thread th = new Thread(() -> getJoueurLePlusActifDeLaSemaine(this.calendar.get(Calendar.WEEK_OF_MONTH), lstClone));
+            Thread th = new Thread(() -> getJoueurLePlusActifDeLaSemaine(I, lstClone));
             lstThreads.add(th);
             th.start();
             lstPosParties.clear();
@@ -116,7 +123,7 @@ public class JoueursLesplusActifs extends Recherche
                 compteur = element.getValue().size();
             }
         }
-        envoieMessage(Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est :" + joueur + " avec " + compteur + " parties." + Colors.reset);
+        this.message += Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
         mp = null;
         cr = null;
         System.gc();
@@ -145,7 +152,7 @@ public class JoueursLesplusActifs extends Recherche
             this.debut = dateDeb;
             this.fin = dateFin;
             calendar.setTime(dateFin);
-            this.mois = calendar.get(Calendar.MONTH);
+            this.mois = calendar.get(Calendar.MONTH)+1;
             this.anne = calendar.get(Calendar.YEAR);
         } catch (ParseException e)
         {

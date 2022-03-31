@@ -103,8 +103,6 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     @Override
     public void calcule()
     {
-        trieMapList(mapObjet.getUtcDateMap(), this.date);
-
         tempsRecherche = System.currentTimeMillis();
 
         this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);

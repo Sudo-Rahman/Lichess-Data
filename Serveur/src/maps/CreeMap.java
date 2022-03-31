@@ -20,7 +20,7 @@ public class CreeMap
     private final File file;
 
     private final MapsObjet mapsObjet;
-    private final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    private final int nbThreads = Runtime.getRuntime().availableProcessors();
     private final Log log;
     private long nbOctetsLu;
     private long nbOctetsParThread;
@@ -203,7 +203,7 @@ public class CreeMap
                             }
                         }
                     }
-                    if (string.split(" ")[0].equals("1.") || string.contains("1-0") || string.contains("0-1"))
+                    if (string.split(" ")[0].equals("1."))
                     {
                         //map pour les nombre de coups
                         List<String> lst = new ArrayList<>(List.of(string.split("[{}]")));

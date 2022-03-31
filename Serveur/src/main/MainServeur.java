@@ -41,7 +41,7 @@ public class MainServeur
             maxClients = Integer.parseInt(sn.next());
         }
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/").listFiles()))
+        for (File file : Objects.requireNonNull(new File("/Users/sr-71/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/").listFiles()))
         {
             if (file.isFile())
             {

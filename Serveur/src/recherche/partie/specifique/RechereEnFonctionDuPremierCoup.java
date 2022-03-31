@@ -78,8 +78,6 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
     public void calcule()
     {
 
-        trieMapList(mapObjet.getOpenningMap(), this.coup);
-
         tempsRecherche = System.currentTimeMillis();
 
         this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);

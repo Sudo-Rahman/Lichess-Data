@@ -23,17 +23,11 @@ import java.util.List;
 public class PartiesFile
 {
     private static final Log log = new Log();
-    private FileInputStream fileInputStream;
+    private File file;
 
     public PartiesFile(File file)
     {
-        try
-        {
-            this.fileInputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e)
-        {
-            log.error("Impossible de trouver le fichier !!");
-        }
+        this.file = file;
     }
 
     /**
@@ -44,9 +38,10 @@ public class PartiesFile
     public Partie getPartieInFile(long pos) throws IOException
     {
         //création d'un nouveau bufferedReader car impossible de vider le buffer autrement
-        BufferedReader reader = new BufferedReader(new InputStreamReader(this.fileInputStream));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 
-        this.fileInputStream.getChannel().position(pos);
+        fileInputStream.getChannel().position(pos);
         int comptLigneVide = 0;
 
         String str;
@@ -57,6 +52,8 @@ public class PartiesFile
             if (str.equals("")) comptLigneVide++;
             else lstStr.add(str);
         }
+        fileInputStream.close();
+        reader.close();
         return new Partie(lstStr);
     }
 
@@ -98,16 +95,5 @@ public class PartiesFile
             } catch (IOException e) {e.printStackTrace();}
         }
         return lstParties;
-    }
-
-    public void closeReader()
-    {
-        try
-        {
-            this.fileInputStream.close();
-        } catch (IOException e)
-        {
-            log.error("Impossible de fermer randomeAccessFile et bufferedReader !!");
-        }
     }
 }

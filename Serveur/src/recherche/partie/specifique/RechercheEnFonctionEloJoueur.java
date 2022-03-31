@@ -99,8 +99,6 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
-        this.partiesFile.closeReader();
-
         //Libere la liste de la memoire
         this.lstPartie = null;
         System.gc();

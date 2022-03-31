@@ -30,20 +30,26 @@ public class InitChoix
     private final MapsObjet mapObjet;
     private final Log log = new Log();
 
-    public InitChoix(int choix, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
+    public InitChoix(ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
     {
         this.objectInputStream = o;
         this.writer = b;
 
         this.mapObjet = mapObjet;
 
-        switch (choix)
+        while (envoieMessage(afficheChoix()) != -1)
         {
-            case 1 -> choix1();
-            case 2 -> choix2();
-            case 3 -> choix3();
-            case 4 -> choix4();
-            case 5 -> choix5();
+            switch (litInt())
+            {
+                case 1 -> choix1();
+                case 2 -> choix2();
+                case 3 -> choix3();
+                case 4 -> choix4();
+                case 5 -> choix5();
+                default -> {
+                    envoieMessage("Le nombre n'est pas bon !!");
+                }
+            }
         }
     }
 
@@ -107,7 +113,7 @@ public class InitChoix
     /**
      * envoie le message en parametre au client.
      */
-    private void envoieMessage(String message)
+    private int envoieMessage(String message)
     {
 
         try
@@ -118,7 +124,26 @@ public class InitChoix
         } catch (Exception e)
         {
             e.printStackTrace();
+            return -1;
         }
+        return 0;
+    }
+
+    /**
+     * affiche les differents choix donner au client.
+     */
+    public String afficheChoix()
+    {
+        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
+                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
+                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
+                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
+                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
+                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
+                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
+        //        Colors.green + "" + Colors.reset;
+        //        Colors.cyan + "" + Colors.reset;
     }
 
     public String litMess()
