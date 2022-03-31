@@ -23,24 +23,32 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import static utils.Colors.reset;
+
 public class InitChoix
 {
     private final BufferedWriter writer;
     private final ObjectInputStream objectInputStream;
     private final MapsObjet mapObjet;
+    private int mode;
+
     private final Log log = new Log();
 
-    public InitChoix(ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
+    public InitChoix(int mode, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
     {
+        this.mode = mode;
         this.objectInputStream = o;
         this.writer = b;
-
         this.mapObjet = mapObjet;
+        boolean quitte = false;
 
         while (envoieMessage(afficheChoix()) != -1)
         {
             switch (litInt())
             {
+                case 0 -> {
+                    if (mode == 1) quitte = true;
+                }
                 case 1 -> choix1();
                 case 2 -> choix2();
                 case 3 -> choix3();
@@ -50,12 +58,19 @@ public class InitChoix
                     envoieMessage("Le nombre n'est pas bon !!");
                 }
             }
+            if (quitte)
+            {
+                envoieMessage(Colors.PURPLE_BOLD + "Vous avez quitter le mode iterative!!" + reset);
+                break;
+            }
         }
     }
 
     private void choix1()
     {
-        envoieMessage("\n" + Colors.green + "1/ Recherche de partie(s) en fonction du premier coup" + Colors.reset + ".\n" + Colors.cyan + "2/ Recherche de partie(s) en fonction de l'elo des joueur" + Colors.reset + ".\n" + Colors.green + "3/ Recherche de partie(s) en fonction de la date" + Colors.reset + ".\n");
+        envoieMessage("\n" + Colors.green + "1/ Recherche de partie(s) en fonction du premier coup" + reset + ".\n" +
+                Colors.cyan + "2/ Recherche de partie(s) en fonction de l'elo des joueur" + reset + ".\n" +
+                Colors.green + "3/ Recherche de partie(s) en fonction de la date" + reset + ".\n");
         int choix;
         do
         {
@@ -134,16 +149,21 @@ public class InitChoix
      */
     public String afficheChoix()
     {
-        return Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + Colors.reset + "\n" +
-                Colors.green + "2 / Trouver toutes les parties d’un joueur." + Colors.reset + "\n" +
-                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées" + Colors.reset + "\n" +
-                Colors.green + "4 / Consulter les parties terminé avec n coups." + Colors.reset + "\n" +
-                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + Colors.reset + "\n" +
-                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank" + Colors.reset + "\n" +
-                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties\n" + Colors.reset +
-                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur" + Colors.reset;
+        String retour = "";
+        if (this.mode == 1) retour += Colors.YELLOW_BRIGHT + "Vous etes sur des données itératives." + reset + "\n" +
+                Colors.BLUE_BOLD_BRIGHT + "0 / Pour quitter le mode itérative." + reset + "\n";
+        retour += Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + reset + "\n" +
+                Colors.green + "2 / Trouver toutes les parties d’un joueur." + reset + "\n" +
+                Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées." + reset + "\n" +
+                Colors.green + "4 / Consulter les parties terminé avec n coups." + reset + "\n" +
+                Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + reset + "\n" +
+                Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank." + reset + "\n" +
+                Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties.\n" + reset +
+                Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur." + reset;
         //        Colors.green + "" + Colors.reset;
         //        Colors.cyan + "" + Colors.reset;
+        return retour;
+
     }
 
     public String litMess()

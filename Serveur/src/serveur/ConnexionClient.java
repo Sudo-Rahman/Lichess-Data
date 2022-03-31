@@ -100,7 +100,7 @@ class ConnexionClient extends Thread
      */
     private void litMess()
     {
-        new InitChoix( objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
+        new InitChoix(0, objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
         try
         {
             String mess;

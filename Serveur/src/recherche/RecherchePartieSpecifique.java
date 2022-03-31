@@ -58,7 +58,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
     {
         MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
         new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstLigneParties).cree();
-        new InitChoix(this.clientReader, this.clientWriter, mp);
+        new InitChoix(1,this.clientReader, this.clientWriter, mp);
         mp = null;
         System.gc();
     }

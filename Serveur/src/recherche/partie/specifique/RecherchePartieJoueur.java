@@ -56,7 +56,6 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
         if (mapObjet.getNameMap().containsKey(this.joueur))
         {
             this.lstLigneParties = mapObjet.getNameMap().get(this.joueur);
-            System.out.println(lstLigneParties);
             if (this.afficheParties)
             {
                 if (nbParties == 0)
