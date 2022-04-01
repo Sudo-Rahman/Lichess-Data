@@ -54,11 +54,11 @@ public abstract class RecherchePartieSpecifique extends Recherche
 
     public abstract void initDemande();
 
-    public void reiterationSurParties()
+    public void reiterationSurParties(String description)
     {
         MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
         new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstLigneParties).cree();
-        new InitChoix(1,this.clientReader, this.clientWriter, mp);
+        new InitChoix(1,description,this.clientReader, this.clientWriter, mp);
         mp = null;
         System.gc();
     }

@@ -91,7 +91,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            } else reiterationSurParties();
+            } else reiterationSurParties("date : " + this.date);
         } else envoieMessage(toString());
     }
 

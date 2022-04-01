@@ -30,6 +30,12 @@ public class Partie
     private String blanc;
     private String noir;
     private String partieLink;
+
+    public String getGagnant()
+    {
+        return gagnant;
+    }
+
     private String gagnant;
     private String resultat;
     private String utcDate;

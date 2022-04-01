@@ -53,7 +53,10 @@ public class MainServeur
                 }
             }
         }
-
+        if(lstFiles.size()==0) {
+            log.fatal("Aucun fichier pgn trouvé dans le dossier others");
+            System.exit(0);
+        }
         StringBuilder mes = new StringBuilder("Choisissez entre tous ces fichiers\n");
         int o = 1;
         for (File file : lstFiles)

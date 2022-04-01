@@ -13,8 +13,11 @@
 package choix;
 
 import maps.MapsObjet;
+import recherche.autres.AfficheToutesLesParties;
 import recherche.autres.CinqOuverturesPlusJoue;
 import recherche.autres.JoueursLesplusActifs;
+import recherche.autres.NbCoupsConsecutifsParties;
+import recherche.autres.pagerank.PageRank;
 import recherche.partie.specifique.*;
 import utils.Colors;
 import utils.Log;
@@ -31,16 +34,18 @@ public class InitChoix
     private final ObjectInputStream objectInputStream;
     private final MapsObjet mapObjet;
     private int mode;
+    private String description;
 
     private final Log log = new Log();
 
-    public InitChoix(int mode, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
+    public InitChoix(int mode, String description, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
     {
         this.mode = mode;
         this.objectInputStream = o;
         this.writer = b;
         this.mapObjet = mapObjet;
         boolean quitte = false;
+        this.description = description;
 
         while (envoieMessage(afficheChoix()) != -1)
         {
@@ -54,6 +59,10 @@ public class InitChoix
                 case 3 -> choix3();
                 case 4 -> choix4();
                 case 5 -> choix5();
+                case 6 -> choix6();
+                case 7 -> choix7();
+                case 8 -> choix8();
+                case 9 -> choix9();
                 default -> {
                     envoieMessage("Le nombre n'est pas bon !!");
                 }
@@ -65,6 +74,7 @@ public class InitChoix
             }
         }
     }
+
 
     private void choix1()
     {
@@ -125,6 +135,26 @@ public class InitChoix
         recherche.cherche();
     }
 
+
+    private void choix6()
+    {
+        PageRank pageRank = new PageRank(mapObjet);
+        pageRank.calcule();
+    }
+
+    private void choix7(){
+        NbCoupsConsecutifsParties recherche = new NbCoupsConsecutifsParties(objectInputStream, writer, mapObjet);
+        recherche.cherche();
+    }
+    private void choix8()
+    {
+        AfficheToutesLesParties recherche = new AfficheToutesLesParties(objectInputStream, writer, mapObjet);
+        recherche.cherche();
+    }
+    private void choix9(){
+        envoieMessage(Colors.BLUE_BRIGHT+"\nIl y à : "+mapObjet.getNbParties()+ " parties.\n"+ reset);
+    }
+
     /**
      * envoie le message en parametre au client.
      */
@@ -150,8 +180,9 @@ public class InitChoix
     public String afficheChoix()
     {
         String retour = "";
-        if (this.mode == 1) retour += Colors.YELLOW_BRIGHT + "Vous etes sur des données itératives." + reset + "\n" +
-                Colors.BLUE_BOLD_BRIGHT + "0 / Pour quitter le mode itérative." + reset + "\n";
+        if (this.mode == 1)
+            retour += Colors.YELLOW_BRIGHT + "Vous etes sur des données itératives " + this.description + "." + reset + "\n" +
+                    Colors.BLUE_BOLD_BRIGHT + "0 / Pour quitter le mode itérative." + reset + "\n";
         retour += Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + reset + "\n" +
                 Colors.green + "2 / Trouver toutes les parties d’un joueur." + reset + "\n" +
                 Colors.cyan + "3 / Consulter les 5 ouvertures les plus jouées." + reset + "\n" +
@@ -159,8 +190,10 @@ public class InitChoix
                 Colors.cyan + "5 / Lister les joueurs les plus actifs, les plus actifs sur une semaine, etc." + reset + "\n" +
                 Colors.green + "6 / Calculer le joueur le plus fort au sens du PageRank." + reset + "\n" +
                 Colors.cyan + "7 / Consulter le plus grand nombre de coups consécutifs cc qui soient communs à p parties.\n" + reset +
+                Colors.green + "8 / Afficher toutes les parties." + Colors.reset + "\n" +
+                Colors.cyan + "9 / Afficher le nombre de parties parties.\n" + reset +
                 Colors.RED_BOLD_BRIGHT + "-1 / Pour quitter le serveur." + reset;
-        //        Colors.green + "" + Colors.reset;
+
         //        Colors.cyan + "" + Colors.reset;
         return retour;
 
