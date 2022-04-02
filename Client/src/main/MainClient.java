@@ -1,17 +1,3 @@
-/*
- * Nom de classe : MainClient
- *
- * Description   : Main qui lance le client
- *
- * Version       : 1.0
- *
- * Date          : 12/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
-
 package main;
 
 import client.Client;
@@ -21,6 +7,13 @@ import utils.Log;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Main qui lance le client.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public class MainClient
 {
     public static void main(String[] args)

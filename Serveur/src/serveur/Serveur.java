@@ -1,16 +1,3 @@
-/*
- * Nom de classe : Serveur
- *
- * Description   : Cette classe est un serveur qui recevera des requetes des Clients et les traitera.
- *
- * Version       : 1.0, 1.1
- *
- * Date          : 22/02/2022, 24/02/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package serveur;
 
 
@@ -26,6 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Classe serveur, qui revoit les demandes de connexion des clients et crée un thread qu'il le gère.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 22/02/2022
+ */
 public class Serveur
 {
 
@@ -42,12 +36,12 @@ public class Serveur
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
         this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
-        this.creeMapsOrRead = new CreeMapsOrRead(file.getAbsolutePath());
+        this.creeMapsOrRead = new CreeMapsOrRead(file);
         new Thread(creeMapsOrRead::charge).start();
     }
 
     /**
-     * methode run qui lance le parametrage du serveur, ensuite traite les clients et leurs requetes.
+     * Lance le serveur.
      */
     public void run()
     {
@@ -78,7 +72,7 @@ public class Serveur
 
 
     /**
-     * méthode qui envoie le message en parametre au client en parametre
+     * méthode qui envoie le message en paramètre au client en paramètre
      */
     private void envoieMessage(String message, Socket socket)
     {
@@ -96,7 +90,7 @@ public class Serveur
     }
 
     /**
-     * ferme le socket du serveur et le socket de tout les clients
+     * ferme le socket du serveur et le socket de tous les clients
      */
     public void closeAllSocket()
     {

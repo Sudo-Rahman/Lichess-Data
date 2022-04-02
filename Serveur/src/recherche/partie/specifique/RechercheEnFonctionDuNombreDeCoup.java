@@ -1,15 +1,3 @@
-/*
- * Nom de classe : PartieLesPlusCourt
- *
- * Description   : classe qui cherche les parties les plus court.
- *
- * Version       : 1.0
- *
- * Date          : 20/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
 package recherche.partie.specifique;
 
 import maps.MapsObjet;
@@ -18,10 +6,22 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 
+/**
+ * Classe qui cherche les parties les plus court.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 20/03/2022
+ */
 public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
 {
     private int nbCoups;
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public RechercheEnFonctionDuNombreDeCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
@@ -50,7 +50,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
         initDemande();
         if (mapObjet.getNbCoupsMap().containsKey(this.nbCoups))
         {
-            this.lstLigneParties = mapObjet.getNbCoupsMap().get(this.nbCoups);
+            this.lstPosParties = mapObjet.getNbCoupsMap().get(this.nbCoups);
             if (this.afficheParties)
             {
                 // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
@@ -70,7 +70,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
     {
         this.tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, this.nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstPosParties, this.nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

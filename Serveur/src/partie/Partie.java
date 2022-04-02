@@ -1,19 +1,4 @@
-/*
- * Nom de classe : partie
- *
- * Description   : Class partie qui regroupe tous les elements d'une partie, il n'y a pas tout comme le "TimeControl" c'est un choix personnel.
- *
- * Version       : 1.0
- *
- * Date          : 12/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
-
 package partie;
-
 
 import utils.Colors;
 import utils.Log;
@@ -24,18 +9,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class partie qui regroupe tous les elements d'une partie, il n'y a pas tout comme le "TimeControl" c'est un choix personnel.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public class Partie
 {
     private static final Log log = new Log();
     private String blanc;
     private String noir;
     private String partieLink;
-
-    public String getGagnant()
-    {
-        return gagnant;
-    }
-
     private String gagnant;
     private String resultat;
     private String utcDate;
@@ -46,8 +32,40 @@ public class Partie
     private List<String> lstCoup;
     private String premierCoup;
     private String termination;
+
     /**
-     * Constructeur qui parse les données de la liste pour recuperer les elements d'une partie a partir de String.
+     * accesseurs.
+     */
+    public String getGagnant()
+    {
+        return gagnant;
+    }
+
+    public String getBlanc()
+    {
+        return blanc;
+    }
+
+    public String getNoir()
+    {
+        return noir;
+    }
+
+    public int getWhiteElo()
+    {
+        return whiteElo;
+    }
+
+    public int getBlackElo()
+    {
+        return blackElo;
+    }
+
+
+    /**
+     * Constructeur qui cherche les données de la partie et les stockes dans les attributs de la classe.
+     *
+     * @param allLines liste de toutes les lignes de la partie.
      */
     public Partie(List<String> allLines)
     {
@@ -101,7 +119,7 @@ public class Partie
                     if (this.premierCoup.equals(this.resultat))
                     {
                         this.premierCoup = "";
-                    }// si le premier coup est egale au resultat alors il n'y a pas de premier coup
+                    }// si le premier coup est égale au resultat alors il n'y a pas de premier coup
                     else
                     {
                         this.lstCoup = new ArrayList<>(List.of(str.split("[{}]")));
@@ -117,29 +135,9 @@ public class Partie
 
     }
 
-    public String getBlanc()
-    {
-        return blanc;
-    }
-
-    public String getNoir()
-    {
-        return noir;
-    }
-
     /**
-     * accesseur
+     * Cette fonction permet de supprimer les accolades et les autres character non désirés de la liste de coup.
      */
-    public int getWhiteElo()
-    {
-        return whiteElo;
-    }
-
-    public int getBlackElo()
-    {
-        return blackElo;
-    }
-
     private void removAcollade()
     {
         this.lstCoup.removeIf(str -> str.contains("%eval") || str.contains("%clk"));
@@ -151,6 +149,13 @@ public class Partie
 
     public String toString()
     {
-        return "Date de la partie : " + Colors.reset + Colors.YELLOW_BOLD + utcDate + " " + utcTime + Colors.reset + ".\n" + "Joueur blanc : " + Colors.cyan + blanc + Colors.reset + " contre joueur noir : " + Colors.green + noir + Colors.reset + ".\n" + "Elo " + Colors.cyan + blanc + Colors.reset + " : " + whiteElo + ", elo " + Colors.green + noir + Colors.reset + " : " + blackElo + ".\n" + "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" + "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" + "Etat de la partie : " + this.termination + ".\n" + "Partie : " + this.lstCoup + "\n" + "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
+        return "Date de la partie : " + Colors.reset + Colors.YELLOW_BOLD + utcDate + " " + utcTime + Colors.reset + ".\n" +
+                "Joueur blanc : " + Colors.cyan + blanc + Colors.reset + " contre joueur noir : " + Colors.green + noir + Colors.reset + ".\n" +
+                "Elo " + Colors.cyan + blanc + Colors.reset + " : " + whiteElo + ", elo " + Colors.green + noir + Colors.reset + " : " + blackElo + ".\n" +
+                "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
+                "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
+                "Etat de la partie : " + this.termination + ".\n" +
+                "Partie : " + this.lstCoup + "\n" +
+                "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

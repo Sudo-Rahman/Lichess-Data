@@ -1,16 +1,3 @@
-/*
- * Nom de classe : RechereEnFonctionDuPremierCoup
- *
- * Description   : classe qui cherche les parties en fonction du premier coup demander.
- *
- * Version       : 1.0 , 1,1
- *
- * Date          : 12/03/2022 , 18/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche.partie.specifique;
 
 
@@ -20,11 +7,23 @@ import recherche.RecherchePartieSpecifique;
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 
+/**
+ * classe qui cherche les parties en fonction du premier coup demander.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 {
 
     private String coup;
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public RechereEnFonctionDuPremierCoup(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
@@ -55,7 +54,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
         initDemande();
         if (mapObjet.getOpenningMap().containsKey(this.coup))
         {
-            this.lstLigneParties = mapObjet.getOpenningMap().get(this.coup);
+            this.lstPosParties = mapObjet.getOpenningMap().get(this.coup);
             if (this.afficheParties)
             {
                 if (nbParties == 0)// 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
@@ -72,7 +71,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
     /*
     lit le fichier tant que le nombre de partie n'a pas été atteint,
-    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstPosParties
      */
     @Override
     public void calcule()
@@ -80,7 +79,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
 
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstPosParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

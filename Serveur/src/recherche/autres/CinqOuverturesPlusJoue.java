@@ -1,16 +1,3 @@
-/*
- * Nom de classe : CinqOuverturesPlusJoue
- *
- * Description   : classe qui cherche les 5 ouvertures les plus joué.
- *
- * Version       : 1.0
- *
- * Date          : 19/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche.autres;
 
 import maps.MapsObjet;
@@ -21,8 +8,21 @@ import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+
+/**
+ * Classe qui cherche les 5 ouvertures les plus joué.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 19/03/2022
+ */
 public class CinqOuverturesPlusJoue extends Recherche
 {
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public CinqOuverturesPlusJoue(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);

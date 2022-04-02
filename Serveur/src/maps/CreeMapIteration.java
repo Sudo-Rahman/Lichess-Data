@@ -12,6 +12,13 @@ import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * Classe qui crée un MapsObject de positions de partie données, cela permet de faire un filtrage des parties.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class CreeMapIteration
 {
     private final File file;
@@ -24,6 +31,11 @@ public class CreeMapIteration
     private final List<Long> lstPosParties;
     private int compteurPourList;
 
+    /**
+     * @param mo MapsObjet qui va contenir les données.
+     * @param file fichier de données.
+     * @param lstPosParties liste des positions des parties.
+     */
     public CreeMapIteration(MapsObjet mo, File file, List<Long> lstPosParties)
     {
         this.file = file;
@@ -46,6 +58,9 @@ public class CreeMapIteration
         createMaps();
     }
 
+    /**
+     * @return La position de la prochaine partie. S'il n'y a plus de partie, retourne -1.
+     */
     private synchronized long getPos()
     {
         if (lstPosParties.size() > compteurPourList)
@@ -63,45 +78,29 @@ public class CreeMapIteration
         List<Thread> lstThreads = new ArrayList<>();
         for (int i = 0; i < this.nbThreads; i++)
         {
-            Thread t = new Thread(() ->
-            {
-                try
-                {
-                    calcule();
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            });
+            Thread t = new Thread(this::calcule);
             lstThreads.add(t);
             t.setPriority(Thread.MAX_PRIORITY);
             t.start();
         }
         Thread th = new Thread(this::afficheOctetLu);
         th.start();
+
         try
         {
-            for (Thread t : lstThreads)
-            {
-                t.join();
-
-            }
+            for (Thread t : lstThreads) t.join();
             this.creeMapOk = true;
             th.join();
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException e) {e.printStackTrace();}
+
         long partie = 0;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
-        {
-            partie += element.getValue().size();
-        }
+        {partie += element.getValue().size();}
         this.mapsObjet.setNbParties(partie / 2);
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
     }
 
-    private void calcule() throws IOException
+    private void calcule()
     {
         long pos;
         // variables pour connaitre l'octet de debut et fin d'une partie
@@ -109,9 +108,8 @@ public class CreeMapIteration
 
         List<String> lstStr;
 
-        while (true)
+        while ((pos = getPos()) != -1)
         {
-            if((pos = getPos())==-1) break;
             octetDeb = pos;
 
             lstStr = getLstStringPartieInFile(pos);
@@ -123,7 +121,6 @@ public class CreeMapIteration
                 switch (buf[0])
                 {
                     case "White", "Black" -> {
-//                        System.out.println(octetDeb + " " + lstStr + "\n\n");
                         if (this.mapsObjet.getNameMap().containsKey(buf[1]))
                         {
                             this.mapsObjet.getNameMap().get(buf[1]).add(octetDeb);
@@ -196,6 +193,10 @@ public class CreeMapIteration
         }
     }
 
+    /**
+     * @param pos position de la partie dans le fichier.
+     * @return Une liste de string contenant les lignes de la partie a la position pos du fichier.
+     */
     private List<String> getLstStringPartieInFile(long pos)
     {
         int comptLigneVide = 0;
@@ -214,7 +215,7 @@ public class CreeMapIteration
                 if (str.equals("")) comptLigneVide++;
                 else lstStr.add(str);
             }
-            reader.close();;
+            reader.close();
             in.close();
         } catch (Exception e)
         {
@@ -225,6 +226,9 @@ public class CreeMapIteration
     }
 
 
+    /**
+     * Méthode qui permet de connaitre l'avancement du traitement.
+     */
     private void afficheOctetLu()
     {
         int taille = lstPosParties.size();

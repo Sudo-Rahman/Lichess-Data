@@ -1,16 +1,3 @@
-/*
- * Nom de classe : MainServeur
- *
- * Description   : Main qui lance le serveur.
- *
- * Version       : 1.0
- *
- * Date          : 12/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package main;
 
 import serveur.Serveur;
@@ -25,6 +12,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Classe Main pour le serveur.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class MainServeur
 {
     public static void main(String[] args)
@@ -34,12 +28,14 @@ public class MainServeur
         Scanner sn = new Scanner(System.in);
 
         int maxClients = 0;
-        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisit d'alouer 4 thread au mini pour le calcule pur et dur, pas les ecoutes,et envoies.
+        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisi d'allouer 4 threads au mini pour le calcule pur et dur, pas les écoutes et envoies.
         while (maxClients < 1 || maxClients > nbThreads)
         {
             System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads " + "au minimum par clients pour les calcules pas les ecoutes, le nombre max de client est : " + nbThreads);
             maxClients = Integer.parseInt(sn.next());
         }
+
+
         List<File> lstFiles = new ArrayList<>();
         for (File file : Objects.requireNonNull(new File("out/production/Projet-INFO-4B/").listFiles()))
         {

@@ -1,16 +1,3 @@
-/*
- * Nom de classe : ConnexionClient
- *
- * Description   : Cette classe traitera la connexion d'un client sur le serveur, il sera lancer par la classe Serveur.
- *
- * Version       : 1.0, 1.1
- *
- * Date          : 23/02/2022, 24/02/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package serveur;
 
 
@@ -25,18 +12,31 @@ import java.net.Socket;
 import java.util.List;
 
 
-class ConnexionClient extends Thread
+/**
+ * Cette classe traitera la connexion d'un client sur le serveur, il sera lancer par la classe Serveur.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 23/02/2022
+ */
+public class ConnexionClient extends Thread
 {
     private static final Log log = new Log();
     private final List<ConnexionClient> lstConnexion;
     private final int nbMaxThread;
     private final CreeMapsOrRead creeMapsOrRead;
-    private ClientInfo username;
+    private ClientInfo clientInfo;
     private Socket socketClient;
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
 
-    protected ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, CreeMapsOrRead creeMapsOrRead)
+    /**
+     * @param clientSocket   socket du client.
+     * @param nbMaxThread    nombre de thread max.
+     * @param lst            liste des connexions clients.
+     * @param creeMapsOrRead Instance de la classe CreeMapsOrRead.
+     */
+    public ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, CreeMapsOrRead creeMapsOrRead)
     {
         this.lstConnexion = lst;
         try
@@ -58,8 +58,8 @@ class ConnexionClient extends Thread
 
         try
         {
-            this.username = (ClientInfo) objectInputStream.readObject();
-            System.out.println("Connexion avec : " + getUsername());
+            this.clientInfo = (ClientInfo) objectInputStream.readObject();
+            System.out.println("Connexion avec : " + getClientInfo());
             while (!creeMapsOrRead.getChargementMap())
             {
                 envoieMessage(Colors.clear + " Chargement des données patienter ");
@@ -71,14 +71,16 @@ class ConnexionClient extends Thread
             this.lstConnexion.remove(this);
             closeAll();
         }
-        envoieMessage("\033[H\033[2J" + Colors.PURPLE_UNDERLINED + "Bonjour " + this.getUsername() + " saisissez votre choix :\n" + Colors.reset);
+        envoieMessage("\033[H\033[2J" + Colors.PURPLE_UNDERLINED + "Bonjour " + this.getClientInfo() + " saisissez votre choix :\n" + Colors.reset);
         litMess();
 
     }
 
 
     /**
-     * envoie le message en parametre au client.
+     * Envoie le message en paramètre au client.
+     *
+     * @param message message à envoyer.
      */
     private void envoieMessage(String message)
     {
@@ -96,11 +98,11 @@ class ConnexionClient extends Thread
     }
 
     /**
-     * intercepte les messages envoyé par le client et les affiche dans la console.
+     * intercepte les messages envoyés par le client et les affiche dans la console.
      */
     private void litMess()
     {
-        new InitChoix(0,"", objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
+        new InitChoix(0, "", objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
         try
         {
             String mess;
@@ -117,18 +119,16 @@ class ConnexionClient extends Thread
                 }
                 if (nb == -1)
                 {
-                    log.info(getUsername() + " à quitté le serveur");
+                    log.info(getClientInfo() + " à quitté le serveur");
                     this.lstConnexion.remove(this);
                     closeAll();
                     break;
                 }
-                //                    System.out.println(this.socketClient.getPort() + "");
                 System.out.println(mess);
             }
-        }
-        catch (EOFException e)
+        } catch (EOFException e)
         {
-            log.error("connexion interompu avec "+username.getUsername());
+            log.error("connexion interompu avec " + clientInfo.getUsername());
             connexionFailed();
         } catch (IOException | ClassNotFoundException e)
         {
@@ -150,14 +150,20 @@ class ConnexionClient extends Thread
         }
     }
 
-    public String getUsername()
+    /**
+     * @return Le username du client.
+     */
+    public String getClientInfo()
     {
-        return this.username.getUsername();
+        return this.clientInfo.getUsername();
     }
 
+    /**
+     * Ferme les flux et le socket, du client et l'enlève de la liste des clients connectée au serveur.
+     */
     private void connexionFailed()
     {
-        log.info(getUsername() + " à quitté le serveur");
+        log.info(getClientInfo() + " à quitté le serveur");
         this.lstConnexion.remove(this);
         closeAll();
     }

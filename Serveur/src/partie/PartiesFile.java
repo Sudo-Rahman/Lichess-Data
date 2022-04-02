@@ -20,20 +20,30 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe qui va chercher dans le fichier de donné la partie indiqué par sa position,et crée des Parties.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 22/03/2022
+ */
 public class PartiesFile
 {
     private static final Log log = new Log();
-    private File file;
+    private final File file;
 
+    /**
+     * @param file fichier de données.
+     */
     public PartiesFile(File file)
     {
         this.file = file;
     }
 
     /**
-     * @param pos position de la partie dans le fichier
-     * @return nouvelle Partie
-     * @throws IOException
+     * @param pos position de la partie dans le fichier.
+     * @return nouvelle Partie.
+     * @throws IOException si le fichier n'existe pas.
      */
     public Partie getPartieInFile(long pos) throws IOException
     {

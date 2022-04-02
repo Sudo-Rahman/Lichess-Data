@@ -10,8 +10,20 @@ import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Affiche toutes les parties existantes, grace a leurs positions stocker dans une des HashMaps de MapsObjet.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class AfficheToutesLesParties extends Recherche
 {
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public AfficheToutesLesParties(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);

@@ -1,29 +1,20 @@
-/*
- * Nom de classe : Recherche
- *
- * Description   : Class abstraite qui sert de socle pour les classes de recherches.
- *
- * Version       : 1.0
- *
- * Date          : 12/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche;
 
-import choix.InitChoix;
-import maps.CreeMap;
 import maps.MapsObjet;
 import partie.PartiesFile;
-import utils.Colors;
 import utils.Log;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+/**
+ * Class abstraite qui sert de socle pour les classes de recherches.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public abstract class Recherche
 {
     protected final MapsObjet mapObjet;
@@ -35,6 +26,11 @@ public abstract class Recherche
     protected PartiesFile partiesFile;
 
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
 
@@ -47,6 +43,11 @@ public abstract class Recherche
     public abstract void cherche();
 
 
+    /**
+     * Envoie le Message au client à travers le flux de sortie.
+     *
+     * @param message Le message à envoyer.
+     */
     public void envoieMessage(String message)
     {
         try
@@ -60,6 +61,9 @@ public abstract class Recherche
         }
     }
 
+    /**
+     * @return Le texte reçu par le client dans le flux d'entré.
+     */
     public String litMess()
     {
         String mess = null;
@@ -73,12 +77,15 @@ public abstract class Recherche
         return mess;
     }
 
+    /**
+     * @return Le nombre reçu par le client dans le flux d'entré.
+     */
     public int litInt()
     {
         int nb = 5;
         try
         {
-            nb = Integer.parseInt((String) this.clientReader.readObject());
+            nb = Integer.parseInt(litMess());
         } catch (Exception e)
         {
             log.error("Impossible de lire l'entier");

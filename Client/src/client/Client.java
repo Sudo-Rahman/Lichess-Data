@@ -1,19 +1,4 @@
 package client;
-
-/*
- * Nom de classe : Client
- *
- * Description   : Cette classe jouera le role de client, il se connectera au serveur, et lui enverra des requetes.
- *
- * Version       : 1.0, 1.1
- *
- * Date          : 22/02/2022, 24/02/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
-
 import client.info.ClientInfo;
 import utils.Log;
 
@@ -25,6 +10,13 @@ import java.net.Socket;
 import java.util.Scanner;
 
 
+/**
+ * Classe qui jouera le role de client, il se connectera au serveur, et lui enverra des requêtes.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 22/02/2022
+ */
 public class Client
 {
     private static final Log log = new Log();
@@ -48,7 +40,7 @@ public class Client
     }
 
     /**
-     * Lance la connexion au serveur, envoie et ecoute les messages du serveur.
+     * Lance la connexion au serveur, envoie et écoute les messages du serveur.
      */
     public void startClient()
     {
@@ -75,7 +67,7 @@ public class Client
 
 
     /**
-     * intercepte les messages envoyé par le serveur et les affiche dans la console.
+     * intercepte les messages envoyés par le serveur et les affiche dans la console.
      */
     private void litMess()
     {
@@ -103,7 +95,7 @@ public class Client
 
 
     /**
-     * envoie le message en parametre au serveur.
+     * Envoie le message en paramètre au serveur.
      */
     private void envoieMessage(String message)
     {
@@ -119,7 +111,7 @@ public class Client
     }
 
     /**
-     * Thread qui ecoute les message venant du serveur, ainsi le client n'est pas bloqué uniquement sur l'écoute.
+     * Thread qui écoute les messages venant du serveur, ainsi le client n'est pas bloqué uniquement sur l'écoute.
      */
     private void listenSocket()
     {

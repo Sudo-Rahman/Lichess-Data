@@ -1,16 +1,3 @@
-/*
- * Nom de classe : RechereEnFonctionDuPremierCoup
- *
- * Description   : classe qui cherche les parties en fonction d'une date precise.
- *
- * Version       : 1.0 , 1,1
- *
- * Date          : 12/03/2022 , 18/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche.partie.specifique;
 
 import maps.MapsObjet;
@@ -22,11 +9,22 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * classe qui cherche les parties en fonction d'une date precise.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
     private String date;
 
-
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public RechercheEnFonctionDate(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
@@ -81,7 +79,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
         initDemande();
         if (mapObjet.getUtcDateMap().containsKey(this.date))
         {
-            this.lstLigneParties = mapObjet.getUtcDateMap().get(this.date);
+            this.lstPosParties = mapObjet.getUtcDateMap().get(this.date);
             if (this.afficheParties)
             {
                 if (nbParties == 0)
@@ -98,14 +96,14 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 
     /**
      * lit le fichier tant que le nombre de partie n'a pas été atteint,
-     * cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+     * cree une Partie si les lignes du fichier correspondent avec les lignes dans lstPosParties
      */
     @Override
     public void calcule()
     {
         tempsRecherche = System.currentTimeMillis();
 
-        this.lstPartie = this.partiesFile.getAllParties(this.lstLigneParties, nbParties);
+        this.lstPartie = this.partiesFile.getAllParties(this.lstPosParties, nbParties);
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());

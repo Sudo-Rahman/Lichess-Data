@@ -1,20 +1,6 @@
-/*
- * Nom de classe : RecherchePartieSpecifique
- *
- * Description   : classe qui herite de Recherche, il engendre des classes pour des recherche specifiques de partie.
- *
- * Version       : 1.0
- *
- * Date          : 12/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche;
 
 import choix.InitChoix;
-import maps.CreeMap;
 import maps.CreeMapIteration;
 import maps.MapsObjet;
 import partie.Partie;
@@ -23,42 +9,55 @@ import utils.Colors;
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Classe qui hérite de Recherche, il engendre des classes pour des recherches spécifiques de partie.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 12/03/2022
+ */
 public abstract class RecherchePartieSpecifique extends Recherche
 {
 
     protected List<Partie> lstPartie;
 
-    // liste qui contiendra toutes les lignes pour crée une parties
+    // liste qui contiendra toutes les lignes pour créer une partie
     protected List<String> lstStrLigne;
 
     protected long tempsRecherche = 0;
     protected int nbParties;
 
-    // tableau d'entier qui contient les lignes des parties ex : [[0, 18], [19, 37]]
-    protected List<Long> lstLigneParties;
+    // List qui va contenir toutes les positions de chaque partie.
+    protected List<Long> lstPosParties;
 
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public RecherchePartieSpecifique(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
         this.lstPartie = new ArrayList<>();
         this.lstStrLigne = new ArrayList<>();
-        this.lstLigneParties = new ArrayList<>();
+        this.lstPosParties = new ArrayList<>();
     }
 
     public abstract void calcule();
 
     public abstract void initDemande();
 
+    /**
+     * @param description La description de l'itération.
+     */
     public void reiterationSurParties(String description)
     {
         MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
-        new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstLigneParties).cree();
-        new InitChoix(1,description,this.clientReader, this.clientWriter, mp);
+        new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstPosParties).cree();
+        new InitChoix(1, description, this.clientReader, this.clientWriter, mp);
         mp = null;
         System.gc();
     }

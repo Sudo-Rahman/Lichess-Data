@@ -1,19 +1,12 @@
-/*
- * Nom de classe : Colors
- *
- * Description   : Cette classe regroupe plusieurs variables de type string qui correspondent à des couleurs que le terminal peut interpreter
- *
- * Version       : 1.0
- *
- * Date          : 22/02/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
-
 package utils;
 
+/**
+ * Classe de constantes de couleurs.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 22/02/2022
+ */
 public class Colors
 {
     public static final String reset = "\u001B[0m";

@@ -13,14 +13,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.lang.Thread.sleep;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Classe qui cherche le plus grand nombre de coups consécutifs cc qui soient communs à p parties.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class NbCoupsConsecutifsParties extends Recherche
 {
-    private ConcurrentHashMap<String, List<Long>> map;
+    private final ConcurrentHashMap<String, List<Long>> map;
     private long nbOctetsParThread;
     private long nbOctetsLu;
     private boolean creeMapOk;
 
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public NbCoupsConsecutifsParties(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
@@ -56,7 +68,8 @@ public class NbCoupsConsecutifsParties extends Recherche
         Object key = new Object();
         for (Map.Entry<String, List<Long>> ele : map.entrySet())
         {
-            if(max<ele.getValue().size() && ele.getKey().split("\\|").length>10){
+            if (max < ele.getValue().size() && ele.getKey().split("\\|").length > 10)
+            {
                 max = ele.getValue().size();
                 key = ele.getKey();
             }
@@ -67,14 +80,13 @@ public class NbCoupsConsecutifsParties extends Recherche
 
     private void calcule(long deb) throws IOException
     {
-        BufferedReader reader = null;
-        FileInputStream in = null;
-        in = new FileInputStream(mapObjet.getFile());
-        reader = new BufferedReader(new InputStreamReader(in));
+
+        FileInputStream in = new FileInputStream(mapObjet.getFile());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         in.getChannel().position(deb);
 
         // variables pour connaitre l'octet de debut et fin d'une partie
-        Long octetDeb = in.getChannel().position();
+        long octetDeb = in.getChannel().position();
         int comptLigne = 0;
 
         int partie = 0;
@@ -119,14 +131,14 @@ public class NbCoupsConsecutifsParties extends Recherche
                         List<String> lstCouts = new ArrayList<>();
                         for (int i = 1; i < lst.size(); i++)
                         {
-                           lstCouts.addAll(lst.subList(0,i));
+                            lstCouts.addAll(lst.subList(0, i));
                             couts = String.join("|", lstCouts).replaceAll("[!?]", "");
                             if (this.map.containsKey(couts)) this.map.get(couts).add(octetDeb);
                             else
                                 this.map.put(couts, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                             lstCouts.clear();
 
-                            lstCouts.addAll(lst.subList(lst.size() - 1-i,lst.size()-1));
+                            lstCouts.addAll(lst.subList(lst.size() - 1 - i, lst.size() - 1));
                             couts = String.join("|", lstCouts).replaceAll("[!?]", "");
                             if (this.map.containsKey(couts)) this.map.get(couts).add(octetDeb);
                             else

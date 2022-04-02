@@ -7,7 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 
-
+/**
+ * Classe qui crée MapsObjet si le fichier .hshmap le stockant n'existe pas ou lit MapsObjet dans le fichier .hashmap.
+ *
+ * @author Yilmaz Rahaman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class CreeMapsOrRead
 {
     private final File file;
@@ -16,13 +22,16 @@ public class CreeMapsOrRead
     private boolean chargementMap;
     private MapsObjet mapsObjet;
 
-    public CreeMapsOrRead(String pathFile)
+    /**
+     * @param file Fichier de données.
+     */
+    public CreeMapsOrRead(File file)
     {
-        this.file = new File(pathFile);
+        this.file = file;
 
         this.chargementMap = false;
 
-        // on crée une objet fichier qui a le meme nom que le fichier classique mais avec l'extension .hasmap
+        // on crée un objet File qui a le meme nom que le fichier classique, mais avec l'extension .hashmap.
         this.fileMaps = new File(file.getAbsoluteFile().toString().replaceAll(file.getName().substring(file.getName().lastIndexOf(".")), ".hashmap"));
 
         this.mapsObjet = new MapsObjet(this.file);
@@ -39,6 +48,11 @@ public class CreeMapsOrRead
         return this.chargementMap;
     }
 
+    /**
+     * Si le fichier .hashmap existe, on charge les données dans l'objet MapsObjet.
+     * Sinon, on crée l'objet MapsObjet et on l'écrit dans le fichier .hashmap.
+     *
+     */
     public void charge()
     {
         try
@@ -72,5 +86,6 @@ public class CreeMapsOrRead
             }
         }
         log.info("Il y a  " + this.mapsObjet.getNbParties() + " parties dans le fichiers " + this.file.getName());
+        System.gc();
     }
 }

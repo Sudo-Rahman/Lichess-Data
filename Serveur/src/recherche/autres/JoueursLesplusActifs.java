@@ -11,18 +11,30 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Affiche les joueurs les plus actifs sur le mois du fichier, ainsi que le joueur le plus actif de chaque semaine du fichier.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 25/03/2022
+ */
 public class JoueursLesplusActifs extends Recherche
 {
 
     private int mois;
     private int anne;
     private final SimpleDateFormat sdformat;
-    private Calendar calendar;
+    private final Calendar calendar;
     private String message;
 
     private Date debut;
     private Date fin;
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet L'instance de la classe MapsObjet.
+     */
     public JoueursLesplusActifs(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);

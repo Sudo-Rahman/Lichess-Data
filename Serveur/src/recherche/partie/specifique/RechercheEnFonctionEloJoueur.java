@@ -1,16 +1,3 @@
-/*
- * Nom de classe : RechereEnFonctionDuPremierCoup
- *
- * Description   : classe qui cherche les parties en fonction de des elos des joueurs.
- *
- * Version       : 1.0 , 1,1 , 1.2
- *
- * Date          : 13/03/2022 , 18/03/2022 , 19/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- *
- */
-
 package recherche.partie.specifique;
 
 import maps.MapsObjet;
@@ -21,12 +8,24 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+/**
+ * Classe qui cherche les parties en fonction de des élos des joueurs.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 13/03/2022
+ */
 public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 {
 
     private int eloSup;
     private int eloInf;
 
+    /**
+     * @param clientReader L'ObjectInputStream du client.
+     * @param clientWriter Le BufferedWriter du client.
+     * @param mapObjet     L'instance de la classe MapsObjet.
+     */
     public RechercheEnFonctionEloJoueur(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
@@ -47,7 +46,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             {
                 if (nbParties == 0)
                 {
-                    nbParties = Math.min(this.lstLigneParties.size(), this.maxNbParties);
+                    nbParties = Math.min(this.lstPosParties.size(), this.maxNbParties);
                 }
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
@@ -76,13 +75,13 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
 
     /*
     lit le fichier tant que le nombre de partie n'a pas été atteint,
-    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstLigneParties
+    cree une Partie si les lignes du fichier correspondent avec les lignes dans lstPosParties
      */
     @Override
     public void calcule()
     {
         this.tempsRecherche = System.currentTimeMillis();
-        for (long pos : this.lstLigneParties)
+        for (long pos : this.lstPosParties)
         {
             if (this.lstPartie.size() < this.nbParties)
             {
@@ -111,7 +110,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         {
             if (mapObjet.getEloMap().containsKey(i))
             {
-                this.lstLigneParties.addAll(mapObjet.getEloMap().get(i));
+                this.lstPosParties.addAll(mapObjet.getEloMap().get(i));
                 compt += mapObjet.getEloMap().get(i).size();
             }
         }

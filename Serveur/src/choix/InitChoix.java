@@ -1,15 +1,3 @@
-/*
- * Nom de classe : InitChoix
- *
- * Description   : Classe qui gere tous les choix du client.
- *
- * Version       : 1.0
- *
- * Date          : 13/03/2022
- *
- * Copyright     : Yilmaz Rahman, Colliat Maxime
- */
-
 package choix;
 
 import maps.MapsObjet;
@@ -23,21 +11,34 @@ import utils.Colors;
 import utils.Log;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import static utils.Colors.reset;
 
+/**
+ * Classe qui gere tous les choix du client.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 13/03/2022
+ */
 public class InitChoix
 {
     private final BufferedWriter writer;
     private final ObjectInputStream objectInputStream;
     private final MapsObjet mapObjet;
-    private int mode;
-    private String description;
+    private final int mode;
+    private final String description;
 
     private final Log log = new Log();
 
+    /**
+     * @param mode        Le mode de recherche : si c'est une iteration ou une recherche classique.
+     * @param description La description de la recherche.
+     * @param o           L'ObjectInputStream du client.
+     * @param b           Le BufferedWriter du client.
+     * @param mapObjet    L'instance de la classe MapsObjet.
+     */
     public InitChoix(int mode, String description, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
     {
         this.mode = mode;
@@ -63,15 +64,15 @@ public class InitChoix
                 case 7 -> choix7();
                 case 8 -> choix8();
                 case 9 -> choix9();
-                default -> {
-                    envoieMessage("Le nombre n'est pas bon !!");
-                }
+                default -> envoieMessage("Le nombre n'est pas bon !!");
+
             }
             if (quitte)
             {
                 envoieMessage(Colors.PURPLE_BOLD + "Vous avez quitter le mode iterative!!" + reset);
                 break;
             }
+            System.gc();
         }
     }
 
@@ -138,21 +139,30 @@ public class InitChoix
 
     private void choix6()
     {
-        PageRank pageRank = new PageRank(mapObjet);
-        pageRank.calcule();
+        new Thread(() ->
+        {
+            PageRank pageRank = new PageRank(mapObjet);
+            pageRank.calcule();
+            envoieMessage(pageRank.toString());
+            pageRank = null;
+        }).start();
     }
 
-    private void choix7(){
+    private void choix7()
+    {
         NbCoupsConsecutifsParties recherche = new NbCoupsConsecutifsParties(objectInputStream, writer, mapObjet);
         recherche.cherche();
     }
+
     private void choix8()
     {
         AfficheToutesLesParties recherche = new AfficheToutesLesParties(objectInputStream, writer, mapObjet);
         recherche.cherche();
     }
-    private void choix9(){
-        envoieMessage(Colors.BLUE_BRIGHT+"\nIl y à : "+mapObjet.getNbParties()+ " parties.\n"+ reset);
+
+    private void choix9()
+    {
+        envoieMessage(Colors.BLUE_BRIGHT + "\nIl y à : " + mapObjet.getNbParties() + " parties.\n" + reset);
     }
 
     /**
@@ -175,7 +185,7 @@ public class InitChoix
     }
 
     /**
-     * affiche les differents choix donner au client.
+     * Affiche les differents choix donner au client.
      */
     public String afficheChoix()
     {
@@ -218,13 +228,10 @@ public class InitChoix
         int nb = 5;
         try
         {
-            nb = Integer.parseInt((String) this.objectInputStream.readObject());
+            nb = Integer.parseInt(litMess());
         } catch (NumberFormatException e)
         {
             log.error("Impossible de lire l'entier");
-        } catch (ClassNotFoundException | IOException e)
-        {
-            return -1;
         }
         return nb;
     }

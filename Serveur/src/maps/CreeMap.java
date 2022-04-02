@@ -14,6 +14,13 @@ import java.util.Map;
 import static java.lang.Thread.sleep;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Classe qui crée un MapsObject à partir d'un fichier de données.
+ *
+ * @author Yilmaz Rahman
+ * @version 1.0
+ * @date 02/04/2022
+ */
 public class CreeMap
 {
 
@@ -29,6 +36,12 @@ public class CreeMap
     private final long posDeb;
     private final long posFin;
 
+    /**
+     * @param mo     MapsObjet qui va contenir les données.
+     * @param file   le fichier de données.
+     * @param posDeb la position de début du fichier.
+     * @param posFin la position de fin du fichier.
+     */
     public CreeMap(MapsObjet mo, File file, long posDeb, long posFin)
     {
         this.file = file;
@@ -40,6 +53,9 @@ public class CreeMap
         log = new Log();
     }
 
+    /**
+     * @return Renvoie true si la création des maps est terminée. Sinon false.
+     */
     public boolean isCreeMapOk()
     {
         return creeMapOk;
@@ -53,6 +69,9 @@ public class CreeMap
     }
 
 
+    /**
+     * Ajoutes les données dans les hashmaps.
+     */
     private void createMaps()
     {
         long tempsRecherche = System.currentTimeMillis();
@@ -101,18 +120,10 @@ public class CreeMap
 
     private void calcule(long deb) throws IOException
     {
-        BufferedReader reader = null;
-        FileInputStream in = null;
-        try
-        {
-            in = new FileInputStream(file);
-            reader = new BufferedReader(new InputStreamReader(in));
-            in.getChannel().position(deb);
-        } catch (Exception e)
-        {
-            log.error("Fichier existe pas");
-            System.exit(-1);
-        }
+
+        FileInputStream in = new FileInputStream(file);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        in.getChannel().position(deb);
 
 
         // variables pour connaitre l'octet de debut et fin d'une partie
@@ -260,11 +271,17 @@ public class CreeMap
         return false;
     }
 
+    /**
+     * @param l Le nombre d'octets lus.
+     */
     private synchronized void addOctetsLu(long l)
     {
         this.nbOctetsLu += l;
     }
 
+    /**
+     * Méthode qui permet de connaitre l'avancement du traitement.
+     */
     private void afficheOctetLu()
     {
         long tailleFichier = file.length();
