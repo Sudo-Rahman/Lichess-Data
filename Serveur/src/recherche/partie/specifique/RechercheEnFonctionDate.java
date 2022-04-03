@@ -18,7 +18,9 @@ import java.util.Date;
  */
 public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
-    private String date;
+    private long date;
+    private         SimpleDateFormat sdformat;
+
 
     /**
      * @param clientReader L'ObjectInputStream du client.
@@ -28,13 +30,13 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     public RechercheEnFonctionDate(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
+        this.sdformat = new SimpleDateFormat("dd/MM/yyyy");
     }
 
 
     @Override
     public void initDemande()
     {
-        SimpleDateFormat sdformat = new SimpleDateFormat("dd/MM/yyyy");
 
         Date dateDeb = null;
         Date dateFin = null;
@@ -58,7 +60,7 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
             log.error("Impossible de convertir le String en date !!");
         }
         envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjet.getFile().getName());
-        this.date = litMess();
+        try {this.date = sdformat.parse(litMess()).getTime();} catch (ParseException e) {e.printStackTrace();}
         envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
         if (litMess().equals("yes"))
         {
@@ -83,13 +85,15 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
             if (this.afficheParties)
             {
                 if (nbParties == 0)
-                {
                     nbParties = Math.min(mapObjet.getUtcDateMap().get(this.date).size(), this.maxNbParties);
-                }
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            }else {this.iterative = true;setDescription(", date : " + this.date);}
+            } else
+            {
+                this.iterative = true;
+                setDescription(", date : " + sdformat.format(new Date(this.date)));
+            }
         } else envoieMessage(toString());
     }
 

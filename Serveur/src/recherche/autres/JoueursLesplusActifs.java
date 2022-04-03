@@ -3,12 +3,11 @@ package recherche.autres;
 import maps.CreeMapIteration;
 import maps.MapsObjet;
 import recherche.Recherche;
+import semaphore.Semaphore;
 import utils.Colors;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -23,39 +22,37 @@ public class JoueursLesplusActifs extends Recherche
 
     private int mois;
     private int anne;
-    private final SimpleDateFormat sdformat;
     private final Calendar calendar;
     private String message;
-
-    private Date debut;
-    private Date fin;
+    private TreeMap<Object, List<Long>> dateMapTree;
+    private Semaphore semaphore;
 
     /**
      * @param clientReader L'ObjectInputStream du client.
      * @param clientWriter Le BufferedWriter du client.
-     * @param mapObjet L'instance de la classe MapsObjet.
+     * @param mapObjet     L'instance de la classe MapsObjet.
      */
     public JoueursLesplusActifs(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
         super(clientReader, clientWriter, mapObjet);
-        this.sdformat = new SimpleDateFormat("dd/MM/yyyy");
         this.calendar = Calendar.getInstance(Locale.FRANCE);
         this.message = "";
+        this.dateMapTree = new TreeMap<>();
+        this.semaphore = new Semaphore(6);
     }
 
     @Override
     public void cherche()
     {
-        new Thread(() ->{
+        new Thread(() ->
+        {
+            dateMapTree.putAll(mapObjet.getUtcDateMap());
             if (mapObjet.getUtcDateMap().size() > 0) getDate();
             Thread th1 = new Thread(this::lePlusActifSurLemois);
             th1.start();
             Thread th2 = new Thread(this::lePlusActifDeChaqueSemaine);
             th2.start();
-            try{
-                th1.join();th2.join();
-            } catch (InterruptedException e)
-            {e.printStackTrace();}
+            semaphore.finished();
             envoieMessage(this.message);
         }).start();
     }
@@ -65,6 +62,7 @@ public class JoueursLesplusActifs extends Recherche
      */
     private void lePlusActifSurLemois()
     {
+        semaphore.acquire();
         int compteur = 0;
         String joueur = "";
         int nbParties;
@@ -77,7 +75,8 @@ public class JoueursLesplusActifs extends Recherche
                 compteur = element.getValue().size();
             }
         }
-        this.message += Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
+        this.message += Colors.cyan + "Le joueur le plus actifs sur le " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset + "\n";
+        semaphore.release();
     }
 
     /**
@@ -86,29 +85,20 @@ public class JoueursLesplusActifs extends Recherche
      */
     private void lePlusActifDeChaqueSemaine()
     {
-        List<Thread> lstThreads = new ArrayList<>();
-        List<Long> lstPosParties = new ArrayList<>();
+        List<Long> lstDates = new ArrayList<>();
 
-        long unJourEnMillisecondes = 60 * 60 * 24 * 1000;
-        long debut = this.debut.getTime();
-
-        for (int i = 0; i < (int) (Math.ceil(mapObjet.getUtcDateMap().size() / 7.0)); i++)
+        for (int i = 0; i < dateMapTree.size() / 7 + 1; i++)
         {
-            for (int y = 0; y < 7 && debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes <= this.fin.getTime(); y++)
+            for (int j = 0; j < 7; j++)
             {
-                String date = sdformat.format(new Date(debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes));
-                if(mapObjet.getUtcDateMap().containsKey(date)) lstPosParties.addAll(mapObjet.getUtcDateMap().get(date));
+                if (i * 7 + j < dateMapTree.size())
+                    lstDates.addAll((Collection<? extends Long>) dateMapTree.values().toArray()[i * 7 + j]);
             }
-            final int I = i+1;
-            List<Long> lstClone = new ArrayList<>(lstPosParties);
-            Thread th = new Thread(() -> getJoueurLePlusActifDeLaSemaine(I, lstClone));
-            lstThreads.add(th);
-            th.start();
-            lstPosParties.clear();
-        }
-        for (Thread th : lstThreads)
-        {
-            try {th.join();} catch (InterruptedException e) {e.printStackTrace();}
+            calendar.setTime(new Date((Long) dateMapTree.keySet().stream().toList().get(i * 7)));
+            List<Long> lsclone = new ArrayList<>(lstDates);
+            int finalI = i + 1;
+            new Thread(() -> getJoueurLePlusActifDeLaSemaine(finalI, lsclone)).start();
+            lstDates.clear();
         }
     }
 
@@ -121,6 +111,8 @@ public class JoueursLesplusActifs extends Recherche
      */
     private void getJoueurLePlusActifDeLaSemaine(int semaine, List<Long> lstPos)
     {
+        semaphore.acquire();
+
         MapsObjet mp = new MapsObjet(mapObjet.getFile());
         CreeMapIteration cr = new CreeMapIteration(mp, mapObjet.getFile(), lstPos);
         cr.cree();
@@ -138,10 +130,11 @@ public class JoueursLesplusActifs extends Recherche
                 compteur = element.getValue().size();
             }
         }
-        this.message += Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
+        this.message += Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset + "\n";
         mp = null;
         cr = null;
         System.gc();
+        semaphore.release();
     }
 
     /**
@@ -149,29 +142,9 @@ public class JoueursLesplusActifs extends Recherche
      */
     private void getDate()
     {
-        try
-        {
-            Date dateDeb = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[0]);
-            Date dateFin = dateDeb;
-            for (Object date : mapObjet.getUtcDateMap().keySet())
-            {
-                if (dateDeb.compareTo(sdformat.parse((String) date)) > 0)
-                {
-                    dateDeb = sdformat.parse((String) date);
-                }
-                if (dateFin.compareTo(sdformat.parse((String) date)) < 0)
-                {
-                    dateFin = sdformat.parse((String) date);
-                }
-            }
-            this.debut = dateDeb;
-            this.fin = dateFin;
-            calendar.setTime(dateFin);
-            this.mois = calendar.get(Calendar.MONTH)+1;
-            this.anne = calendar.get(Calendar.YEAR);
-        } catch (ParseException e)
-        {
-            log.error("Impossible de convertir le String en date !!");
-        }
+        Date dateFin = new Date((Long) dateMapTree.keySet().toArray()[dateMapTree.keySet().size() - 1]);
+        calendar.setTime(dateFin);
+        this.mois = calendar.get(Calendar.MONTH) + 1;
+        this.anne = calendar.get(Calendar.YEAR);
     }
 }

@@ -87,11 +87,11 @@ public class NbCoupsConsecutifsParties extends Recherche
 
         // variables pour connaitre l'octet de debut et fin d'une partie
         long octetDeb = in.getChannel().position();
-        int comptLigne = 0;
+        int compteLigne = 0;
 
         int partie = 0;
 
-        int octetOffset = 0;
+        int octetOffset = 0;// variable qui sert à compter le nombre d'octets de chaque partie
 
         List<String> lstStr = new ArrayList<>();
         String str;
@@ -107,13 +107,13 @@ public class NbCoupsConsecutifsParties extends Recherche
             } else
             {
                 partie++;
-                if (str.equals("")) comptLigne++;
+                if (str.equals("")) compteLigne++;
                 else lstStr.add(str);
             }
 
-            if (comptLigne == 2)
+            if (compteLigne == 2)
             {
-                octetOffset += 1;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
+                octetOffset += 2;// dans chaque partie il y a deux sauts de lignes
                 for (String string : lstStr)
                 {
                     octetOffset += string.getBytes(UTF_8).length + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
@@ -147,9 +147,9 @@ public class NbCoupsConsecutifsParties extends Recherche
                         }
                     }
                 }
-                comptLigne = 0;
+                compteLigne = 0;
                 addOctetsLu(octetOffset + 1);
-                octetDeb += octetOffset + 1;
+                octetDeb += octetOffset;
                 lstStr.clear();
                 octetOffset = 0;
             }
@@ -161,6 +161,9 @@ public class NbCoupsConsecutifsParties extends Recherche
         this.nbOctetsLu += l;
     }
 
+    /**
+     * Affiche
+     */
     private void afficheOctetLu()
     {
         long tailleFichier = mapObjet.getFile().length();

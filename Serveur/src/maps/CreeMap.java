@@ -51,6 +51,9 @@ public class CreeMap
         this.posDeb = posDeb;
         this.posFin = posFin;
         log = new Log();
+        this.nbOctetsLu = 0;
+        this.nbOctetsParThread = (this.posFin - this.posDeb) / this.nbThreads;
+
     }
 
     /**
@@ -61,18 +64,10 @@ public class CreeMap
         return creeMapOk;
     }
 
-    public void cree()
-    {
-        this.nbOctetsLu = 0;
-        this.nbOctetsParThread = (this.posFin - this.posDeb) / this.nbThreads;
-        createMaps();
-    }
-
-
     /**
      * Ajoutes les données dans les hashmaps.
      */
-    private void createMaps()
+    public void createMaps()
     {
         long tempsRecherche = System.currentTimeMillis();
 
@@ -85,10 +80,7 @@ public class CreeMap
                 try
                 {
                     calcule(this.posDeb + (nbOctetsParThread * I));
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+                } catch (IOException e) {e.printStackTrace();}
             });
             lstThreads.add(t);
             t.setPriority(Thread.MAX_PRIORITY);
@@ -98,23 +90,15 @@ public class CreeMap
         th.start();
         try
         {
-            for (Thread t : lstThreads)
-            {
-                t.join();
-
-            }
+            for (Thread t : lstThreads) t.join();
             this.creeMapOk = true;
             th.join();
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException e) {e.printStackTrace();}
         long partie = 0L;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
-        {
             partie += element.getValue().size();
-        }
-        this.mapsObjet.setNbParties(partie/2L);//+1, car partie est peut-être impaire.
+
+        this.mapsObjet.setNbParties(partie / 2L);
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         System.gc();
     }
@@ -133,12 +117,12 @@ public class CreeMap
 
         int partie = 0;
 
-        int octetOffset = 0;
+        int octetOffset = 0;// variable qui sert à compter le nombre d'octets de chaque partie
 
         List<String> lstStr = new ArrayList<>();
         String str;
 
-        while ((str = reader.readLine()) != null && octetDeb <= deb + nbOctetsParThread + 5000)
+        while ((str = reader.readLine()) != null && octetDeb <= deb + nbOctetsParThread + 5000)// ajout de 5000 pour finir de lire la dernière partie.
         {
             if (str.equals("") && partie == 0)
             {
@@ -159,7 +143,7 @@ public class CreeMap
                 {
                     if (inMap(lstStr, octetDeb)) break;
                 }
-                octetOffset += 1;// dans chaque partie il y a deux sauts de ligne, mais ils sont comptabilisés à 1 et non 2
+                octetOffset += 2;// dans chaque partie il y a deux sauts de lignes
                 for (String string : lstStr)
                 {
                     octetOffset += string.getBytes(UTF_8).length + 1;// +1, car a la fin de la ligne il y a le character de retour ligne '\n'
@@ -168,7 +152,6 @@ public class CreeMap
                     switch (buf[0])
                     {
                         case "White", "Black" -> {
-//                                System.out.println(octetDeb + " " + lstStr + "\n\n");
                             if (this.mapsObjet.getNameMap().containsKey(buf[1]))
                             {
                                 this.mapsObjet.getNameMap().get(buf[1]).add(octetDeb);
@@ -179,10 +162,10 @@ public class CreeMap
                         case "Site" -> {}
                         case "Result" -> {}
                         case "UTCDate" -> {
-                            String utcDate = null;
+                            long utcDate = 0L;
                             try
                             {
-                                utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]));
+                                utcDate = new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]).getTime();
                             } catch (ParseException e)
                             {
                                 log.error("Impossible de parser la date !!");
@@ -223,7 +206,7 @@ public class CreeMap
                         lst = new ArrayList<>(List.of(String.join("", lst).split(" ")));
                         lst.removeIf(strr -> strr.equals("") || strr.contains("."));
 
-                        // on enleve -1 car le dernier "coup" est le resultat
+                        // on enlève -1, car le dernier "coup" est le résultat
                         if (this.mapsObjet.getNbCoupsMap().containsKey(lst.size() - 1))
                         {
                             this.mapsObjet.getNbCoupsMap().get(lst.size() - 1).add(octetDeb);
@@ -240,7 +223,7 @@ public class CreeMap
                 }
                 comptLigne = 0;
                 addOctetsLu(octetOffset + 1);
-                octetDeb += octetOffset + 1;
+                octetDeb += octetOffset;
                 lstStr.clear();
                 octetOffset = 0;
             }
@@ -273,6 +256,8 @@ public class CreeMap
     }
 
     /**
+     * Ajoute a l'attribut qui compte le nombre d'octets lus, le nombre d'octets en parametre.
+     *
      * @param l Le nombre d'octets lus.
      */
     private synchronized void addOctetsLu(long l)

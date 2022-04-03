@@ -45,13 +45,13 @@ public class PartiesFile
      * @return nouvelle Partie.
      * @throws IOException si le fichier n'existe pas.
      */
-    public Partie getPartieInFile(long pos) throws IOException
+    public Partie getPartieInFile(Long pos) throws IOException
     {
         //création d'un nouveau bufferedReader car impossible de vider le buffer autrement
         FileInputStream fileInputStream = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 
-        fileInputStream.getChannel().position(pos);
+        fileInputStream.getChannel().position((Long) pos);
         int comptLigneVide = 0;
 
         String str;

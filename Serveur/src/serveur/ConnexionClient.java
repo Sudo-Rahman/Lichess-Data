@@ -44,10 +44,7 @@ public class ConnexionClient extends Thread
             this.socketClient = clientSocket;
             this.writer = new BufferedWriter(new OutputStreamWriter(this.socketClient.getOutputStream()));
             this.objectInputStream = new ObjectInputStream(this.socketClient.getInputStream());
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {e.printStackTrace();}
         this.nbMaxThread = nbMaxThread;
         this.creeMapsOrRead = creeMapsOrRead;
     }
@@ -55,7 +52,6 @@ public class ConnexionClient extends Thread
     @Override
     public void run()
     {
-
         try
         {
             this.clientInfo = (ClientInfo) objectInputStream.readObject();
@@ -64,6 +60,16 @@ public class ConnexionClient extends Thread
             {
                 envoieMessage(Colors.clear + " Chargement des données patienter ");
                 sleep(5000);
+                new Thread(() ->
+                {
+                    while (!creeMapsOrRead.getChargementMap())
+                    {
+                        try
+                        {this.objectInputStream.readObject();
+                        } catch (IOException e) {e.printStackTrace();} catch (ClassNotFoundException e) {e.printStackTrace();}
+                    }
+
+                }).start();
             }
         } catch (Exception e)
         {
@@ -71,9 +77,9 @@ public class ConnexionClient extends Thread
             this.lstConnexion.remove(this);
             closeAll();
         }
-        envoieMessage("\033[H\033[2J" + Colors.PURPLE_UNDERLINED + "Bonjour " + this.getClientInfo() + " saisissez votre choix :\n" + Colors.reset);
+        envoieMessage("\033[H\033[2J" + Colors.PURPLE_UNDERLINED + "Bonjour " +
+                this.getClientInfo() + " saisissez votre choix :\n" + Colors.reset);
         litMess();
-
     }
 
 

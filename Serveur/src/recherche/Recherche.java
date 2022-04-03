@@ -26,8 +26,6 @@ public abstract class Recherche
     protected PartiesFile partiesFile;
 
 
-
-
     /**
      * @param clientReader L'ObjectInputStream du client.
      * @param clientWriter Le BufferedWriter du client.

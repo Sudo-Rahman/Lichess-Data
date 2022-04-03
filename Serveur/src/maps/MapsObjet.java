@@ -104,7 +104,7 @@ public class MapsObjet implements Externalizable
         return eloMap;
     }
 
-    public Map<Object, List<Long>> getUtcDateMap()
+    public Map< Object,  List<Long>> getUtcDateMap()
     {
         return utcDateMap;
     }

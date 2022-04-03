@@ -30,6 +30,11 @@ public class Serveur
     private final ServerSocket serverSocket;
     private final CreeMapsOrRead creeMapsOrRead;
 
+    /**
+     * @param serverSocket Socket du serveur.
+     * @param maxClients   Nombre de clients maximum.
+     * @param file         Fichier contenant les données.
+     */
     public Serveur(ServerSocket serverSocket, int maxClients, File file)
     {
         this.lstConnexion = new ArrayList<>(maxClients);

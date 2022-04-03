@@ -74,7 +74,7 @@ public class CreeMapsOrRead
         if (!this.mapsObjet.isChargementMapOk())
         {
             CreeMap cr = new CreeMap(this.mapsObjet, file, 0L, file.length());
-            cr.cree();
+            cr.createMaps();
             try
             {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileMaps));

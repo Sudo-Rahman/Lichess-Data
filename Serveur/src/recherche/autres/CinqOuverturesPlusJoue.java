@@ -37,13 +37,9 @@ public class CinqOuverturesPlusJoue extends Recherche
             map.put(element.getValue().size(), (String) element.getKey());
         }
 
-        // hashmap trié du plus grand au plus petit
-        TreeMap<Object, Object> lstTrier = new TreeMap<>(Collections.reverseOrder());
-        lstTrier.putAll(map);
-
         int i = 0;
         envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + mapObjet.getNbParties() + " parties : " + Colors.reset);
-        for (Map.Entry<Object, Object> element : lstTrier.entrySet())
+        for (Map.Entry<Integer, String> element : map.entrySet())
         {
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");
             i++;

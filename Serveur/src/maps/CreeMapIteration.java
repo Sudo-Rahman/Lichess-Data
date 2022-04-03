@@ -112,7 +112,7 @@ public class CreeMapIteration
 
         List<String> lstStr;
 
-        while ((pos = getPos()) != -1)
+        while ((pos = getPos()) != -1L)
         {
             octetDeb = pos;
 
@@ -135,10 +135,10 @@ public class CreeMapIteration
                     case "Site" -> {}
                     case "Result" -> {}
                     case "UTCDate" -> {
-                        String utcDate = null;
+                        long utcDate = 0L;
                         try
                         {
-                            utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]));
+                            utcDate = new SimpleDateFormat("yy" + ".MM.dd").parse(buf[1]).getTime();
                         } catch (ParseException e)
                         {
                             log.error("Impossible de parser la date !!");

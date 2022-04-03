@@ -223,6 +223,9 @@ public class InitChoix
 
     }
 
+    /**
+     * @return Retourne le message envoyé par le client.
+     */
     public String litMess()
     {
         String mess = null;
@@ -232,20 +235,23 @@ public class InitChoix
         } catch (Exception e)
         {
             log.error("Impossible de lire le message");
-
         }
         return mess;
     }
 
+    /**
+     * @return Retourne l'entier saisi par le client. Si celle si n'est pas bonne retourne -2.
+     */
     public int litInt()
     {
-        int nb = 5;
+        int nb;
         try
         {
             nb = Integer.parseInt(litMess());
         } catch (NumberFormatException e)
         {
             log.error("Impossible de lire l'entier");
+            return -2;
         }
         return nb;
     }

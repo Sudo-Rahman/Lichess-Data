@@ -81,7 +81,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void calcule()
     {
         this.tempsRecherche = System.currentTimeMillis();
-        for (long pos : this.lstPosParties)
+        for (Long pos : this.lstPosParties)
         {
             if (this.lstPartie.size() < this.nbParties)
             {
