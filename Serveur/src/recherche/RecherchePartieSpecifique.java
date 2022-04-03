@@ -32,6 +32,25 @@ public abstract class RecherchePartieSpecifique extends Recherche
     // List qui va contenir toutes les positions de chaque partie.
     protected List<Long> lstPosParties;
 
+    protected boolean iterative = false;
+
+    public boolean isIterative()
+    {
+        return iterative;
+    }
+
+    protected String description;
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    protected void setDescription(String description)
+    {
+        this.description = description;
+    }
+
 
     /**
      * @param clientReader L'ObjectInputStream du client.
@@ -50,16 +69,15 @@ public abstract class RecherchePartieSpecifique extends Recherche
 
     public abstract void initDemande();
 
+
     /**
-     * @param description La description de l'itération.
+     * @return MapsObjet avec les hashmaps des parties recherchées.
      */
-    public void reiterationSurParties(String description)
+    public MapsObjet getMapsObjetReiteration()
     {
         MapsObjet mp = new MapsObjet(this.mapObjet.getFile());
         new CreeMapIteration(mp, this.mapObjet.getFile(), this.lstPosParties).cree();
-        new InitChoix(1, description, this.clientReader, this.clientWriter, mp);
-        mp = null;
-        System.gc();
+        return mp;
     }
 
     @Override

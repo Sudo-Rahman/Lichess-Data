@@ -102,6 +102,7 @@ public class ConnexionClient extends Thread
      */
     private void litMess()
     {
+        System.out.println(Colors.PURPLE_UNDERLINED + "ijbnkhj : " + Colors.reset);
         new InitChoix(0, "", objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
         try
         {

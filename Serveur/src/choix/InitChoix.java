@@ -1,6 +1,7 @@
 package choix;
 
 import maps.MapsObjet;
+import recherche.RecherchePartieSpecifique;
 import recherche.autres.AfficheToutesLesParties;
 import recherche.autres.CinqOuverturesPlusJoue;
 import recherche.autres.JoueursLesplusActifs;
@@ -47,6 +48,8 @@ public class InitChoix
         this.mapObjet = mapObjet;
         boolean quitte = false;
         this.description = description;
+        System.out.println(Colors.PURPLE_UNDERLINED + "jdytydfjdeçu : " + Colors.reset);
+
 
         while (envoieMessage(afficheChoix()) != -1)
         {
@@ -65,7 +68,6 @@ public class InitChoix
                 case 8 -> choix8();
                 case 9 -> choix9();
                 default -> envoieMessage("Le nombre n'est pas bon !!");
-
             }
             if (quitte)
             {
@@ -94,27 +96,31 @@ public class InitChoix
                 break;
             }
         } while (choix > 3 || choix < 1);
+        RecherchePartieSpecifique recherche = null;
         switch (choix)
         {
             case 1 -> {
-                RechereEnFonctionDuPremierCoup recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjet);
+                recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
             case 2 -> {
-                RechercheEnFonctionEloJoueur recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
+               recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
             case 3 -> {
-                RechercheEnFonctionDate recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjet);
+                recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
         }
+        assert recherche != null;
+        iteration(recherche);
     }
 
     private void choix2()
     {
         RecherchePartieJoueur recherche = new RecherchePartieJoueur(objectInputStream, writer, mapObjet);
         recherche.cherche();
+        iteration(recherche);
     }
 
     private void choix3()
@@ -127,6 +133,7 @@ public class InitChoix
     {
         RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream, writer, mapObjet);
         recherche.cherche();
+        iteration(recherche);
     }
 
 
@@ -141,8 +148,8 @@ public class InitChoix
     {
         new Thread(() ->
         {
-            PageRank pageRank = new PageRank(mapObjet);
-            pageRank.calcule();
+            PageRank pageRank = new PageRank(mapObjet, description);
+            pageRank.cherche();
             envoieMessage(pageRank.toString());
             pageRank = null;
         }).start();
@@ -163,6 +170,15 @@ public class InitChoix
     private void choix9()
     {
         envoieMessage(Colors.BLUE_BRIGHT + "\nIl y à : " + mapObjet.getNbParties() + " parties.\n" + reset);
+    }
+
+    private void iteration(RecherchePartieSpecifique recherche){
+        if (recherche.isIterative()){
+            MapsObjet mp = recherche.getMapsObjetReiteration();
+            new InitChoix(1,this.description +recherche.getDescription(),objectInputStream, writer, mp);
+            mp = null;
+            System.gc();
+        }
     }
 
     /**
@@ -191,7 +207,7 @@ public class InitChoix
     {
         String retour = "";
         if (this.mode == 1)
-            retour += Colors.YELLOW_BRIGHT + "Vous etes sur des données itératives " + this.description + "." + reset + "\n" +
+            retour += Colors.YELLOW_BRIGHT + "Vous etes sur des données itératives" + this.description + "." + reset + "\n" +
                     Colors.BLUE_BOLD_BRIGHT + "0 / Pour quitter le mode itérative." + reset + "\n";
         retour += Colors.cyan + "1 / Consulter une partie spécifique et la visualiser pas à pas." + reset + "\n" +
                 Colors.green + "2 / Trouver toutes les parties d’un joueur." + reset + "\n" +
@@ -215,6 +231,7 @@ public class InitChoix
         try
         {
             mess = (String) this.objectInputStream.readObject();
+            System.out.println(Colors.PURPLE_UNDERLINED + "Message reçu : " + Colors.reset + mess);
         } catch (Exception e)
         {
             log.error("Impossible de lire le message");

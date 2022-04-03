@@ -2,7 +2,10 @@ package maps;
 
 import utils.Log;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,8 +35,8 @@ public class CreeMapIteration
     private int compteurPourList;
 
     /**
-     * @param mo MapsObjet qui va contenir les données.
-     * @param file fichier de données.
+     * @param mo            MapsObjet qui va contenir les données.
+     * @param file          fichier de données.
      * @param lstPosParties liste des positions des parties.
      */
     public CreeMapIteration(MapsObjet mo, File file, List<Long> lstPosParties)
@@ -43,6 +46,7 @@ public class CreeMapIteration
         this.creeMapOk = false;
 
         this.lstPosParties = lstPosParties;
+        this.lstPosParties.removeIf(l -> Collections.frequency(lstPosParties, l) > 1);
         this.compteurPourList = 0;
 
         log = new Log();
@@ -93,11 +97,12 @@ public class CreeMapIteration
             th.join();
         } catch (InterruptedException e) {e.printStackTrace();}
 
-        long partie = 0;
+        long partie = 0L;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
         {partie += element.getValue().size();}
-        this.mapsObjet.setNbParties(partie / 2);
+        this.mapsObjet.setNbParties(partie / 2L);
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+        System.gc();
     }
 
     private void calcule()
@@ -235,7 +240,7 @@ public class CreeMapIteration
         log.info("Lecture en cours : 0%");
         while (!this.creeMapOk)
         {
-            log.info("Lecture en cours... : " +(compteurPourList *100)/taille + "%");
+            log.info("Lecture en cours... : " + (compteurPourList * 100) / taille + "%");
             try
             {
                 sleep(1000);

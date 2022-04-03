@@ -7,6 +7,7 @@ import semaphore.Semaphore;
 import utils.Colors;
 import utils.Log;
 
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,21 +31,44 @@ public class PageRank
     private final Log log = new Log();
     private final Semaphore semaphore;
     private final int nbIterations = 10;
-    private final TreeMap<Double, String> mapPagerank;
+    private TreeMap<Double, String> mapPagerank;
+    private String description;
 
     /**
      * @param mapObjet mapObjet qui contient toutes les hashmaps.
      */
-    public PageRank(MapsObjet mapObjet)
+    public PageRank(MapsObjet mapObjet,String description)
     {
         this.mapNoeuds = new ConcurrentHashMap<>();
         this.mapObjet = mapObjet;
         this.partiesFile = new PartiesFile(mapObjet.getFile());
         this.semaphore = new Semaphore(Runtime.getRuntime().availableProcessors() / 2);
         this.mapPagerank = new TreeMap<>(Collections.reverseOrder());
+        this.description = description;
     }
 
-    public void calcule()
+    public void cherche()
+    {
+        String nomFichier = String.join("_",description.replaceAll("[,:]","").split(" {2}"))  ;
+        File pageRankFile = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+nomFichier + ".pageRankMap");
+        if (pageRankFile.exists())
+        {
+            log.info("PageRank trouvé dans le fichier pageRank.");
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(pageRankFile)))
+            {
+                mapPagerank = (TreeMap<Double, String>) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
+        } else
+        {
+            log.info("Calcul du PageRank");
+            calcule();
+            try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pageRankFile))){
+                oos.writeObject(mapPagerank);
+            } catch (IOException e) {e.printStackTrace();}
+        }
+    }
+
+    private void calcule()
     {
         long temp = System.currentTimeMillis();
 
@@ -150,7 +174,7 @@ public class PageRank
      */
     public String toString()
     {
-        StringBuilder message = new StringBuilder(Colors.BLUE_BRIGHT + "PageRank : \n" + Colors.reset);
+        StringBuilder message = new StringBuilder(Colors.BLUE_BRIGHT + "PageRank : ").append(description).append("\n").append(Colors.reset);
         int limite = 0;
         for (Map.Entry<Double, String> entry : this.mapPagerank.entrySet())
         {

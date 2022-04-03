@@ -51,7 +51,7 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            } else reiterationSurParties("elo compris entre : " + this.eloInf + " et " + this.eloSup);
+            }else {this.iterative = true;setDescription(", elo compris entre : " + this.eloInf + " et " + this.eloSup);}
         } else envoieMessage(toString());
     }
 

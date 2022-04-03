@@ -61,7 +61,7 @@ public class RechercheEnFonctionDuNombreDeCoup extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            } else reiterationSurParties("nombre coups : " + this.nbCoups);
+            }else {this.iterative = true;setDescription(", nombre coups : " + this.nbCoups);}
         } else envoieMessage(toString());
     }
 

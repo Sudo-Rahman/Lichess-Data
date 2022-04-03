@@ -26,6 +26,8 @@ public abstract class Recherche
     protected PartiesFile partiesFile;
 
 
+
+
     /**
      * @param clientReader L'ObjectInputStream du client.
      * @param clientWriter Le BufferedWriter du client.
@@ -33,11 +35,11 @@ public abstract class Recherche
      */
     public Recherche(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet)
     {
-
         this.clientReader = clientReader;
         this.clientWriter = clientWriter;
         this.mapObjet = mapObjet;
         this.partiesFile = new PartiesFile(mapObjet.getFile());
+
     }
 
     public abstract void cherche();

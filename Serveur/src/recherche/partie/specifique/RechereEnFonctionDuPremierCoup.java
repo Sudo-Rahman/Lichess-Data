@@ -64,7 +64,7 @@ public class RechereEnFonctionDuPremierCoup extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            } else reiterationSurParties("premier coup : " + this.coup);
+            } else {this.iterative = true;setDescription(", premier coup : " + this.coup);}
         } else envoieMessage(toString());
     }
 

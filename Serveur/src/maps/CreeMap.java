@@ -109,13 +109,14 @@ public class CreeMap
         {
             e.printStackTrace();
         }
-        long partie = 0;
+        long partie = 0L;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
         {
             partie += element.getValue().size();
         }
-        this.mapsObjet.setNbParties(partie / 2);
+        this.mapsObjet.setNbParties(partie/2L);//+1, car partie est peut-être impaire.
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
+        System.gc();
     }
 
     private void calcule(long deb) throws IOException

@@ -31,27 +31,23 @@ public class CinqOuverturesPlusJoue extends Recherche
     @Override
     public void cherche()
     {
-        Map<Integer, String> lst = new HashMap<>();
+        Map<Integer, String> map = new TreeMap<>(Collections.reverseOrder());
         for (Map.Entry<Object, List<Long>> element : mapObjet.getOpenningMap().entrySet())
         {
-            lst.put(element.getValue().size(), (String) element.getKey());
-        }
-        // enleve toutes les plus petites valeurs et laisse les 5 plus grandes
-        for (int i = 0; i < mapObjet.getOpenningMap().size() - 5; i++)
-        {
-            lst.remove(Collections.min(lst.keySet()));
+            map.put(element.getValue().size(), (String) element.getKey());
         }
 
-        // hasmap trié du plus grand au plus petit
+        // hashmap trié du plus grand au plus petit
         TreeMap<Object, Object> lstTrier = new TreeMap<>(Collections.reverseOrder());
-        lstTrier.putAll(lst);
+        lstTrier.putAll(map);
 
-        int i = 1;
+        int i = 0;
         envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + mapObjet.getNbParties() + " parties : " + Colors.reset);
         for (Map.Entry<Object, Object> element : lstTrier.entrySet())
         {
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");
             i++;
+            if (i == 5) break;
         }
         envoieMessage("\n");
     }

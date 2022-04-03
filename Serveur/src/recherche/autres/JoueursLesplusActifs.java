@@ -94,7 +94,8 @@ public class JoueursLesplusActifs extends Recherche
         {
             for (int y = 0; y < 7 && debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes <= this.fin.getTime(); y++)
             {
-                lstPosParties.addAll(mapObjet.getUtcDateMap().get(sdformat.format(new Date(debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes))));
+                String date = sdformat.format(new Date(debut + i * 7 * unJourEnMillisecondes + y * unJourEnMillisecondes));
+                if(mapObjet.getUtcDateMap().containsKey(date)) lstPosParties.addAll(mapObjet.getUtcDateMap().get(date));
             }
             final int I = i+1;
             List<Long> lstClone = new ArrayList<>(lstPosParties);
@@ -136,6 +137,7 @@ public class JoueursLesplusActifs extends Recherche
             }
         }
         this.message += Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
+        System.out.println(this.message);
         mp = null;
         cr = null;
         System.gc();

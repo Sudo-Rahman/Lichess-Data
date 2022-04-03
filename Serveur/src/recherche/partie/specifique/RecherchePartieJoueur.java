@@ -64,7 +64,7 @@ public class RecherchePartieJoueur extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            } else reiterationSurParties("Joueur : " + this.joueur);
+            }else {this.iterative = true;setDescription(", Joueur : " + this.joueur);}
         } else envoieMessage(toString());
     }
 
