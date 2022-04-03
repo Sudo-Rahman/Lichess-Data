@@ -1,15 +1,11 @@
-<page style="font-size:25px;">
+# Projet-INFO-4B
 
-<h1 style="color:tan">Projet-INFO-4B </h1>
-
-<h1 style="color:tan">Présentation :</h1>
+# Présentation :
 
 
-### Un serveur, gère les connexions d'un ou plusieurs clients, les clients effectuent des requêtes en rapport avec les echecs, le serveur cherchera dans un fichier texte au format pgn les données voulu du client et lui enverra les informations.
+#### Un serveur, gère les connexions d'un ou plusieurs clients, les clients effectuent des requêtes en rapport avec les echecs, le serveur cherchera dans un fichier texte au format pgn les données voulu du client et lui enverra les informations.
 
-### Le projet est réalisé en java, les fichiers utilisés comme base de données ont été prises sur le site https://database.lichess.org/.
-
-<lightseagreen style="color:lightseagreen">
+#### Le projet est réalisé en java, les fichiers utilisés comme base de données ont été prises sur le site https://database.lichess.org/.
 
 ## Pré-requis :
 
@@ -30,10 +26,7 @@ Pour lancer le client :
 java -jar Client.jar
 `
 
-</lightseagreen>
-
-
-<h2 style="color:chocolate">Le client a 10 choix au total :</h2>
+## Le client a 10 choix au total :
 
 - 0 Pour quitter le mode itératif si et seulement s'il est sur des données iterative.
 - 1 Consulter une partie spécifique et la visualiser pas à pas.
@@ -46,5 +39,3 @@ java -jar Client.jar
 - 8 Afficher toutes les parties.
 - 9 Afficher le nombre de parties.
 - -1 Pour quitter le serveur.
-
-</page>
