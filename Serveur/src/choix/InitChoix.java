@@ -48,8 +48,6 @@ public class InitChoix
         this.mapObjet = mapObjet;
         boolean quitte = false;
         this.description = description;
-        System.out.println(Colors.PURPLE_UNDERLINED + "jdytydfjdeçu : " + Colors.reset);
-
 
         while (envoieMessage(afficheChoix()) != -1)
         {
@@ -231,7 +229,6 @@ public class InitChoix
         try
         {
             mess = (String) this.objectInputStream.readObject();
-            System.out.println(Colors.PURPLE_UNDERLINED + "Message reçu : " + Colors.reset + mess);
         } catch (Exception e)
         {
             log.error("Impossible de lire le message");

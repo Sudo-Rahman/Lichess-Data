@@ -46,16 +46,18 @@ public class JoueursLesplusActifs extends Recherche
     @Override
     public void cherche()
     {
-        if (mapObjet.getUtcDateMap().size() > 0) getDate();
-        Thread th1 = new Thread(this::lePlusActifSurLemois);
-        th1.start();
-        Thread th2 = new Thread(this::lePlusActifDeChaqueSemaine);
-        th2.start();
-        try{
-            th1.join();th2.join();
-        } catch (InterruptedException e)
-        {e.printStackTrace();}
-        envoieMessage(this.message);
+        new Thread(() ->{
+            if (mapObjet.getUtcDateMap().size() > 0) getDate();
+            Thread th1 = new Thread(this::lePlusActifSurLemois);
+            th1.start();
+            Thread th2 = new Thread(this::lePlusActifDeChaqueSemaine);
+            th2.start();
+            try{
+                th1.join();th2.join();
+            } catch (InterruptedException e)
+            {e.printStackTrace();}
+            envoieMessage(this.message);
+        }).start();
     }
 
     /**
@@ -137,7 +139,6 @@ public class JoueursLesplusActifs extends Recherche
             }
         }
         this.message += Colors.cyan + "Le joueur le plus actifs sur la " + semaine + "eme semaine du " + this.mois + "eme mois de l'année : " + this.anne + " est " + joueur + " avec " + compteur + " parties." + Colors.reset+"\n";
-        System.out.println(this.message);
         mp = null;
         cr = null;
         System.gc();

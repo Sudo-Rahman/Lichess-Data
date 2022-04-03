@@ -46,7 +46,6 @@ public class CreeMapIteration
         this.creeMapOk = false;
 
         this.lstPosParties = lstPosParties;
-        this.lstPosParties.removeIf(l -> Collections.frequency(lstPosParties, l) > 1);
         this.compteurPourList = 0;
 
         log = new Log();
