@@ -60,16 +60,6 @@ public class ConnexionClient extends Thread
             {
                 envoieMessage(Colors.clear + " Chargement des données patienter ");
                 sleep(5000);
-                new Thread(() ->
-                {
-                    while (!creeMapsOrRead.getChargementMap())
-                    {
-                        try
-                        {this.objectInputStream.readObject();
-                        } catch (IOException e) {e.printStackTrace();} catch (ClassNotFoundException e) {e.printStackTrace();}
-                    }
-
-                }).start();
             }
         } catch (Exception e)
         {

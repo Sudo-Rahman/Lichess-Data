@@ -37,7 +37,7 @@ public class MainServeur
 
 
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("out/production/Projet-INFO-4B/").listFiles()))
+        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/").listFiles()))
         {
             if (file.isFile())
             {

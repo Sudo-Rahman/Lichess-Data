@@ -235,11 +235,16 @@ public class CreeMapIteration
      */
     private void afficheOctetLu()
     {
+        long avant = 0L;
+        long apres;
         int taille = lstPosParties.size();
         log.info("Lecture en cours : 0%");
         while (!this.creeMapOk)
         {
-            log.info("Lecture en cours... : " + (compteurPourList * 100) / taille + "%");
+            if((apres = (compteurPourList * 100) / taille) > avant){
+                log.info("Lecture en cours... : " + apres + "%");
+                avant = apres;
+            }
             try
             {
                 sleep(1000);

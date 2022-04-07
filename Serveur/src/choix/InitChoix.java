@@ -11,8 +11,7 @@ import recherche.partie.specifique.*;
 import utils.Colors;
 import utils.Log;
 
-import java.io.BufferedWriter;
-import java.io.ObjectInputStream;
+import java.io.*;
 
 import static utils.Colors.reset;
 
@@ -170,14 +169,43 @@ public class InitChoix
         envoieMessage(Colors.BLUE_BRIGHT + "\nIl y à : " + mapObjet.getNbParties() + " parties.\n" + reset);
     }
 
+
+    /**
+     * methode qui prend en parametre un objet de type RecherchePartieSpecifique,
+     * Il regargr si la recherche est en mode iterative ou non,
+     * Si elle l'est, il regarde si il y a un fichier qui contient deja un MapObjet pour les donnees,
+     * Si le fichier exist on charge l'objet, sinon on lance la creation de l'objet on l'ecrit dans un fichier pour ne pas à le recree a chaque fois,
+     * ensuite on initialise un nouveau InitChoix avec le MapObjet et la description de l'iteration.
+     * Si la recherche n'est pas en mode iterative on ne fait rien.
+     * 
+     * @param recherche Instance d'une recherche 
+     */
     private void iteration(RecherchePartieSpecifique recherche){
         if (recherche.isIterative()){
-            MapsObjet mp = recherche.getMapsObjetReiteration();
+            String nomFichier = String.join("_",(this.description +recherche.getDescription()).replaceAll("[,:]","").replaceAll(" {2}", " ").split(" "))  ;
+            File iterateFile = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+nomFichier + ".hashmap");
+            System.out.println(nomFichier);
+            System.out.println(iterateFile.getAbsolutePath());
+            MapsObjet mp = null;
+            if (iterateFile.exists())
+            {
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(iterateFile)))
+                {
+                    mp = (MapsObjet) ois.readObject();
+                } catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
+            } else
+            {
+                mp = recherche.getMapsObjetReiteration();
+                try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(iterateFile))){
+                    oos.writeObject(mp);
+                } catch (IOException e) {e.printStackTrace();}
+            }
             new InitChoix(1,this.description +recherche.getDescription(),objectInputStream, writer, mp);
             mp = null;
             System.gc();
         }
     }
+    
 
     /**
      * envoie le message en parametre au client.

@@ -17,7 +17,7 @@ import java.io.ObjectInputStream;
  */
 public abstract class Recherche
 {
-    protected final MapsObjet mapObjet;
+    protected MapsObjet mapObjet;
     protected final Log log = new Log();
     protected final ObjectInputStream clientReader;
     protected final BufferedWriter clientWriter;

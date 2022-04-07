@@ -6,10 +6,10 @@ import maps.MapsObjet;
 import partie.Partie;
 import utils.Colors;
 
-import java.io.BufferedWriter;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Classe qui hérite de Recherche, il engendre des classes pour des recherches spécifiques de partie.
@@ -68,6 +68,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
     public abstract void calcule();
 
     public abstract void initDemande();
+
 
 
     /**
