@@ -24,7 +24,6 @@ public class JoueursLesplusActifs extends Recherche
     private int anne;
     private final Calendar calendar;
     private String message;
-    private TreeMap<Object, List<Long>> dateMapTree;
     private Semaphore semaphore;
 
     /**
@@ -37,7 +36,6 @@ public class JoueursLesplusActifs extends Recherche
         super(clientReader, clientWriter, mapObjet);
         this.calendar = Calendar.getInstance(Locale.FRANCE);
         this.message = "";
-        this.dateMapTree = new TreeMap<>();
         this.semaphore = new Semaphore(6);
     }
 
@@ -46,7 +44,6 @@ public class JoueursLesplusActifs extends Recherche
     {
         new Thread(() ->
         {
-            dateMapTree.putAll(mapObjet.getUtcDateMap());
             if (mapObjet.getUtcDateMap().size() > 0) getDate();
             Thread th1 = new Thread(this::lePlusActifSurLemois);
             th1.start();
@@ -87,14 +84,14 @@ public class JoueursLesplusActifs extends Recherche
     {
         List<Long> lstDates = new ArrayList<>();
 
-        for (int i = 0; i < dateMapTree.size() / 7 + 1; i++)
+        for (int i = 0; i < mapObjet.getUtcDateMap().size() / 7 + 1; i++)
         {
             for (int j = 0; j < 7; j++)
             {
-                if (i * 7 + j < dateMapTree.size())
-                    lstDates.addAll((Collection<? extends Long>) dateMapTree.values().toArray()[i * 7 + j]);
+                if (i * 7 + j < mapObjet.getUtcDateMap().size())
+                    lstDates.addAll((Collection<? extends Long>) mapObjet.getUtcDateMap().values().toArray()[i * 7 + j]);
             }
-            calendar.setTime(new Date((Long) dateMapTree.keySet().stream().toList().get(i * 7)));
+            calendar.setTime(new Date((Long) mapObjet.getUtcDateMap().keySet().stream().toList().get(i * 7)));
             List<Long> lsclone = new ArrayList<>(lstDates);
             int finalI = i + 1;
             new Thread(() -> getJoueurLePlusActifDeLaSemaine(finalI, lsclone)).start();
@@ -142,7 +139,7 @@ public class JoueursLesplusActifs extends Recherche
      */
     private void getDate()
     {
-        Date dateFin = new Date((Long) dateMapTree.keySet().toArray()[dateMapTree.keySet().size() - 1]);
+        Date dateFin = new Date((Long) mapObjet.getUtcDateMap().keySet().toArray()[mapObjet.getUtcDateMap().keySet().size() - 1]);
         calendar.setTime(dateFin);
         this.mois = calendar.get(Calendar.MONTH) + 1;
         this.anne = calendar.get(Calendar.YEAR);

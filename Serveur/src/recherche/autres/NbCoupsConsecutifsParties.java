@@ -162,7 +162,7 @@ public class NbCoupsConsecutifsParties extends Recherche
     }
 
     /**
-     * Affiche
+     * Affiche le poucentage de progression.
      */
     private void afficheOctetLu()
     {

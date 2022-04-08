@@ -25,8 +25,13 @@ public class MapsObjet implements Externalizable
     private File file;
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
+
+    public void setUtcDateMap(Map<Object, List<Long>> utcDateMap)
+    {
+        this.utcDateMap = utcDateMap;
+    }
+
     private Map<Object, List<Long>> utcDateMap;
-    private Map<Object, List<Long>> utcTimeMap;
     private Map<Object, List<Long>> openningMap;
     private Map<Object, List<Long>> nbCoupsMap;
     private int ecriturePoucentage;
@@ -44,14 +49,16 @@ public class MapsObjet implements Externalizable
         initMapObjet();
     }
 
-    public MapsObjet() {
+    public MapsObjet()
+    {
         initMapObjet();
     }
 
     /**
      * Initialise tous les attributs.
      */
-    private void initMapObjet(){
+    private void initMapObjet()
+    {
 
         this.ecriturePoucentage = 0;
         this.lecturePoucentage = 0;
@@ -59,7 +66,6 @@ public class MapsObjet implements Externalizable
         this.nameMap = new ConcurrentHashMap<>();
         this.eloMap = new ConcurrentHashMap<>();
         this.utcDateMap = new ConcurrentHashMap<>();
-        this.utcTimeMap = new ConcurrentHashMap<>();
         this.openningMap = new ConcurrentHashMap<>();
         this.nbCoupsMap = new ConcurrentHashMap<>();
 
@@ -70,7 +76,8 @@ public class MapsObjet implements Externalizable
         {
             try
             {
-                if (field.get(this) instanceof Map) {
+                if (field.get(this) instanceof Map)
+                {
                     lstMaps.add((ConcurrentHashMap) field.get(this));
                 }
             } catch (IllegalAccessException e)
@@ -84,6 +91,7 @@ public class MapsObjet implements Externalizable
     {
         return nbParties;
     }
+
     public void setNbParties(long nbParties)
     {
         this.nbParties = nbParties;
@@ -104,15 +112,11 @@ public class MapsObjet implements Externalizable
         return eloMap;
     }
 
-    public Map< Object,  List<Long>> getUtcDateMap()
+    public Map<Object, List<Long>> getUtcDateMap()
     {
         return utcDateMap;
     }
 
-    public Map<Object, List<Long>> getUtcTimeMap()
-    {
-        return utcTimeMap;
-    }
 
     public Map<Object, List<Long>> getOpenningMap()
     {
@@ -169,7 +173,7 @@ public class MapsObjet implements Externalizable
      * Lit toutes les hashmaps et le nombre de parties du fichier .hashmap.
      *
      * @param in InputStream
-     * @throws IOException Exception d'entrée/sortie.
+     * @throws IOException            Exception d'entrée/sortie.
      * @throws ClassNotFoundException Exception de classe.
      */
     @Override

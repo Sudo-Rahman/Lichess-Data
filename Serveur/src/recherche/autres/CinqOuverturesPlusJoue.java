@@ -31,15 +31,15 @@ public class CinqOuverturesPlusJoue extends Recherche
     @Override
     public void cherche()
     {
-        Map<Integer, String> map = new TreeMap<>(Collections.reverseOrder());
+        Map<Long, String> map = new TreeMap<>(Collections.reverseOrder());
         for (Map.Entry<Object, List<Long>> element : mapObjet.getOpenningMap().entrySet())
         {
-            map.put(element.getValue().size(), (String) element.getKey());
+            map.put((long) element.getValue().size(), (String) element.getKey());
         }
 
         int i = 0;
         envoieMessage("\n" + Colors.BLUE_BOLD + "Classements des ouvertures les plus joué sur " + mapObjet.getNbParties() + " parties : " + Colors.reset);
-        for (Map.Entry<Integer, String> element : map.entrySet())
+        for (Map.Entry<Long, String> element : map.entrySet())
         {
             envoieMessage(i + ". L'ouverture : " + element.getValue() + " avec " + element.getKey() + " fois.");
             i++;

@@ -172,7 +172,7 @@ public class InitChoix
 
     /**
      * methode qui prend en parametre un objet de type RecherchePartieSpecifique,
-     * Il regargr si la recherche est en mode iterative ou non,
+     * Il regarge si la recherche est en mode iterative ou non,
      * Si elle l'est, il regarde si il y a un fichier qui contient deja un MapObjet pour les donnees,
      * Si le fichier exist on charge l'objet, sinon on lance la creation de l'objet on l'ecrit dans un fichier pour ne pas à le recree a chaque fois,
      * ensuite on initialise un nouveau InitChoix avec le MapObjet et la description de l'iteration.
@@ -182,10 +182,8 @@ public class InitChoix
      */
     private void iteration(RecherchePartieSpecifique recherche){
         if (recherche.isIterative()){
-            String nomFichier = String.join("_",(this.description +recherche.getDescription()).replaceAll("[,:]","").replaceAll(" {2}", " ").split(" "))  ;
+            String nomFichier = String.join("_",(this.description +recherche.getDescription()).replaceAll("[,:]","").replaceAll(" {2}", " ").split("[/ ]"))  ;
             File iterateFile = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+nomFichier + ".hashmap");
-            System.out.println(nomFichier);
-            System.out.println(iterateFile.getAbsolutePath());
             MapsObjet mp = null;
             if (iterateFile.exists())
             {
@@ -196,9 +194,17 @@ public class InitChoix
             } else
             {
                 mp = recherche.getMapsObjetReiteration();
-                try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(iterateFile))){
-                    oos.writeObject(mp);
-                } catch (IOException e) {e.printStackTrace();}
+                MapsObjet finalMp = mp;
+                new Thread(() ->{
+                    try
+                    {
+                        if(iterateFile.createNewFile()){
+                            try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(iterateFile))){
+                                oos.writeObject(finalMp);
+                            } catch (IOException e) {e.printStackTrace();}
+                        }
+                    } catch (IOException e) {e.printStackTrace();}
+                }).start();
             }
             new InitChoix(1,this.description +recherche.getDescription(),objectInputStream, writer, mp);
             mp = null;

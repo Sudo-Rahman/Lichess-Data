@@ -19,7 +19,7 @@ import java.util.Date;
 public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
     private long date;
-    private         SimpleDateFormat sdformat;
+    private final SimpleDateFormat sdformat;
 
 
     /**
@@ -38,28 +38,11 @@ public class RechercheEnFonctionDate extends RecherchePartieSpecifique
     public void initDemande()
     {
 
-        Date dateDeb = null;
-        Date dateFin = null;
-        try
-        {
-            dateDeb = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[0]);
-            dateFin = sdformat.parse((String) mapObjet.getUtcDateMap().keySet().toArray()[1]);
-            for (Object date : mapObjet.getUtcDateMap().keySet())
-            {
-                if (dateDeb.compareTo(sdformat.parse((String) date)) > 0)
-                {
-                    dateDeb = sdformat.parse((String) date);
-                }
-                if (dateFin.compareTo(sdformat.parse((String) date)) < 0)
-                {
-                    dateFin = sdformat.parse((String) date);
-                }
-            }
-        } catch (ParseException e)
-        {
-            log.error("Impossible de convertir le String en date !!");
-        }
-        envoieMessage("Donner la date, (compris entre " + sdformat.format(dateDeb) + " et " + sdformat.format(dateFin) + " sur le fichier" + mapObjet.getFile().getName());
+        String dateDeb;
+        String dateFin;
+        dateDeb = sdformat.format(new Date((Long) mapObjet.getUtcDateMap().keySet().toArray()[0]).getTime());
+        dateFin = sdformat.format(new Date((Long) mapObjet.getUtcDateMap().keySet().toArray()[mapObjet.getUtcDateMap().size() - 1]).getTime());
+        envoieMessage("Donner la date, (compris entre " + dateDeb + " et " + dateFin + " sur le fichier " + mapObjet.getFile().getName());
         try {this.date = sdformat.parse(litMess()).getTime();} catch (ParseException e) {e.printStackTrace();}
         envoieMessage("Voulez vous réiterez sur les parties (yes) ou afficher les parties (no) :");
         if (litMess().equals("yes"))
