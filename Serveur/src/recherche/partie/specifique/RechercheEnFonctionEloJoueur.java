@@ -5,7 +5,6 @@ import partie.Partie;
 import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
@@ -51,7 +50,11 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
-            }else {this.iterative = true;setDescription(", elo compris entre : " + this.eloInf + " et " + this.eloSup);}
+            } else
+            {
+                this.iterative = true;
+                setDescription(", elo compris entre : " + this.eloInf + " et " + this.eloSup);
+            }
         } else envoieMessage(toString());
     }
 
@@ -85,14 +88,9 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         {
             if (this.lstPartie.size() < this.nbParties)
             {
-                try
-                {
-                    Partie p = this.partiesFile.getPartieInFile(pos);
-                    if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
-                    {
-                        this.lstPartie.add(p);
-                    }
-                } catch (IOException e) {e.printStackTrace();}
+                Partie p = this.partiesFile.getPartieInFile(pos);
+                if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
+                    this.lstPartie.add(p);
             } else break;
         }
 

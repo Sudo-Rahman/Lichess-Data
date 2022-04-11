@@ -5,7 +5,6 @@ import recherche.Recherche;
 import utils.Colors;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +43,7 @@ public class AfficheToutesLesParties extends Recherche
                 {
                     if (compteParties < nbParties)
                     {
-                        try
-                        {
-                            envoieMessage(partiesFile.getPartieInFile(l).toString() + Colors.BLUE_BOLD_BRIGHT + "\n---------------------------------------------------------------" + Colors.reset);
-                        } catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        envoieMessage(partiesFile.getPartieInFile(l).toString() + Colors.BLUE_BOLD_BRIGHT + "\n---------------------------------------------------------------" + Colors.reset);
                         compteParties++;
                     } else break;
                 }

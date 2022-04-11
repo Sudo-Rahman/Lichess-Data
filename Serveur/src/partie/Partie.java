@@ -61,6 +61,11 @@ public class Partie
         return blackElo;
     }
 
+    public List<String> getLstCoup()
+    {
+        return lstCoup;
+    }
+
 
     /**
      * Constructeur qui cherche les données de la partie et les stockes dans les attributs de la classe.
@@ -143,7 +148,6 @@ public class Partie
         this.lstCoup.removeIf(str -> str.contains("%eval") || str.contains("%clk"));
         this.lstCoup = new ArrayList<>(List.of(String.join("", this.lstCoup).split(" ")));
         this.lstCoup.removeIf(str -> str.contains("..."));
-        this.lstCoup = Collections.singletonList(String.join(" ", this.lstCoup));
     }
 
 
@@ -155,7 +159,7 @@ public class Partie
                 "Lien de la partie : " + Colors.reset + Colors.purple + partieLink + Colors.reset + ".\n" +
                 "Ouverture : " + Colors.reset + ouverture + ". Premier coup : " + premierCoup + ".\n" +
                 "Etat de la partie : " + this.termination + ".\n" +
-                "Partie : " + this.lstCoup + "\n" +
+                "Partie : " + String.join(" ", this.lstCoup) + "\n" +
                 "Resultat : " + Colors.yellow + resultat + Colors.reset + ". Le gagnant est : " + Colors.redBold + this.gagnant + Colors.reset + ".";
     }
 }

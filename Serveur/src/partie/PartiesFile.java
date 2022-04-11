@@ -45,13 +45,13 @@ public class PartiesFile
      * @return nouvelle Partie.
      * @throws IOException si le fichier n'existe pas.
      */
-    public Partie getPartieInFile(Long pos) throws IOException
+    private Partie getPartie(Long pos) throws IOException
     {
         //création d'un nouveau bufferedReader car impossible de vider le buffer autrement
         FileInputStream fileInputStream = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 
-        fileInputStream.getChannel().position((Long) pos);
+        fileInputStream.getChannel().position(pos);
         int comptLigneVide = 0;
 
         String str;
@@ -68,6 +68,22 @@ public class PartiesFile
     }
 
     /**
+     * @param pos position de la partie dans le fichier
+     * @return retourne la partie
+     */
+    public Partie getPartieInFile(Long pos)
+    {
+        try
+        {
+            return getPartie(pos);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * @param lstPos       list des positions des parties dans le fichier
      * @param maxNbParties definie le maximum de partie à retourner
      * @return retourne la liste des parties
@@ -80,11 +96,8 @@ public class PartiesFile
         {
             if (compteur < maxNbParties)
             {
-                try
-                {
-                    lstParties.add(getPartieInFile(pos));
-                    compteur++;
-                } catch (IOException e) {e.printStackTrace();}
+                lstParties.add(getPartieInFile(pos));
+                compteur++;
             } else break;
         }
         return lstParties;
@@ -98,12 +111,8 @@ public class PartiesFile
     {
         List<Partie> lstParties = new ArrayList<>();
         for (Long pos : lstPos)
-        {
-            try
-            {
-                lstParties.add(getPartieInFile(pos));
-            } catch (IOException e) {e.printStackTrace();}
-        }
+        lstParties.add(getPartieInFile(pos));
         return lstParties;
     }
+
 }

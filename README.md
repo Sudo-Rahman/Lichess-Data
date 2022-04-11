@@ -17,8 +17,9 @@
 Pour lancer le serveur :
 
 `
-java -jar Serveur.jar
+java -Xmx32g -jar Serveur.jar
 `
+-Xmx32g signifie que vous allouez 32 go à la jvm, à la place de 32, mettez la quantité de ram que vous avez en go.
 
 Pour lancer le client :
 

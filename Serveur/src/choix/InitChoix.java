@@ -29,6 +29,7 @@ public class InitChoix
     private final MapsObjet mapObjet;
     private final int mode;
     private final String description;
+    private boolean quitte;
 
     private final Log log = new Log();
 
@@ -45,7 +46,7 @@ public class InitChoix
         this.objectInputStream = o;
         this.writer = b;
         this.mapObjet = mapObjet;
-        boolean quitte = false;
+        this.quitte = false;
         this.description = description;
 
         while (envoieMessage(afficheChoix()) != -1)
@@ -101,7 +102,7 @@ public class InitChoix
                 recherche.cherche();
             }
             case 2 -> {
-               recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
+                recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
             case 3 -> {
@@ -154,8 +155,8 @@ public class InitChoix
 
     private void choix7()
     {
-        NbCoupsConsecutifsParties recherche = new NbCoupsConsecutifsParties(objectInputStream, writer, mapObjet);
-        recherche.cherche();
+        NbCoupsConsecutifsParties recherche = new NbCoupsConsecutifsParties(objectInputStream, writer, mapObjet, description);
+        new Thread(recherche::cherche).start();
     }
 
     private void choix8()
@@ -172,18 +173,24 @@ public class InitChoix
 
     /**
      * methode qui prend en parametre un objet de type RecherchePartieSpecifique,
-     * Il regarge si la recherche est en mode iterative ou non,
+     * Il regarde si la recherche est en mode iterative ou non,
      * Si elle l'est, il regarde si il y a un fichier qui contient deja un MapObjet pour les donnees,
-     * Si le fichier exist on charge l'objet, sinon on lance la creation de l'objet on l'ecrit dans un fichier pour ne pas à le recree a chaque fois,
+     * Si le fichier exist on charge l'objet, sinon on lance la creation de l'objet on l'écrit dans un fichier pour ne pas à le recree a chaque fois,
      * ensuite on initialise un nouveau InitChoix avec le MapObjet et la description de l'iteration.
      * Si la recherche n'est pas en mode iterative on ne fait rien.
-     * 
-     * @param recherche Instance d'une recherche 
+     *
+     * @param recherche Instance d'une recherche
      */
-    private void iteration(RecherchePartieSpecifique recherche){
-        if (recherche.isIterative()){
-            String nomFichier = String.join("_",(this.description +recherche.getDescription()).replaceAll("[,:]","").replaceAll(" {2}", " ").split("[/ ]"))  ;
-            File iterateFile = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+nomFichier + ".hashmap");
+    private void iteration(RecherchePartieSpecifique recherche)
+    {
+        if (recherche == null) return;
+        if (recherche.isIterative())
+        {
+            File folder = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+ "_data/");
+            if(!folder.exists()) folder.mkdir();
+            String nomFichier = String.join("_", (this.description + recherche.getDescription()).replaceAll("[,:]", "").replaceAll(" {2}", " ").split("[/ ]"));
+            File iterateFile = new File(folder.getAbsolutePath() +"/"+ nomFichier + ".hashmap");
+
             MapsObjet mp = null;
             if (iterateFile.exists())
             {
@@ -195,36 +202,38 @@ public class InitChoix
             {
                 mp = recherche.getMapsObjetReiteration();
                 MapsObjet finalMp = mp;
-                new Thread(() ->{
+                new Thread(() ->
+                {
                     try
                     {
-                        if(iterateFile.createNewFile()){
-                            try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(iterateFile))){
+                        if (iterateFile.createNewFile())
+                        {
+                            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(iterateFile)))
+                            {
                                 oos.writeObject(finalMp);
                             } catch (IOException e) {e.printStackTrace();}
                         }
                     } catch (IOException e) {e.printStackTrace();}
                 }).start();
             }
-            new InitChoix(1,this.description +recherche.getDescription(),objectInputStream, writer, mp);
+            new InitChoix(1, this.description + recherche.getDescription(), objectInputStream, writer, mp);
             mp = null;
             System.gc();
         }
     }
-    
+
 
     /**
      * envoie le message en parametre au client.
      */
     private int envoieMessage(String message)
     {
-
         try
         {
             this.writer.write(message);
             this.writer.newLine();
             this.writer.flush();
-        } catch (Exception e)
+        } catch (IOException e)
         {
             e.printStackTrace();
             return -1;
@@ -266,7 +275,11 @@ public class InitChoix
         try
         {
             mess = (String) this.objectInputStream.readObject();
-        } catch (Exception e)
+        } catch (IOException e)
+        {
+            this.quitte = true;
+            return "-1";
+        } catch (ClassNotFoundException e)
         {
             log.error("Impossible de lire le message");
         }
