@@ -34,12 +34,13 @@ public class NbCoupsConsecutifsParties extends Recherche
     private String coups;
     private int nbCoups;
     private final String description;
+    private int compteur = 0;
 
     /**
      * @param clientReader L'ObjectInputStream du client.
      * @param clientWriter Le BufferedWriter du client.
      * @param mapObjet     L'instance de la classe MapsObjet.
-     * @param description La description de la recherche.
+     * @param description  La description de la recherche.
      */
     public NbCoupsConsecutifsParties(ObjectInputStream clientReader, BufferedWriter clientWriter, MapsObjet mapObjet, String description)
     {
@@ -92,6 +93,7 @@ public class NbCoupsConsecutifsParties extends Recherche
     {
         longueur = 0;
         new Thread(this::afficheAvancement).start();
+        new Thread(this::check).start();
         for (Map.Entry<Object, List<Long>> entry : this.mapObjet.getOpenningMap().entrySet())
         {
             posList = 0;
@@ -131,6 +133,11 @@ public class NbCoupsConsecutifsParties extends Recherche
         if (posList < lstPosParties.size())
         {
             posList++;
+            compteur++;
+            if (compteur == 1E5){
+                compteur = 0;
+                System.gc();
+            }
             nbPartieTraiter++;
             return lstPosParties.get(posList - 1);
         }
@@ -151,22 +158,25 @@ public class NbCoupsConsecutifsParties extends Recherche
         while ((pos = getpos()) != -1L)
         {
             p = partiesFile.getPartieInFile(pos);
-            for (int i = 1; i < p.getLstCoup().size(); i = i + 2)// on avance de 2 par 2 pour ne pas prendre trop de temps pour le calcul.
+            for (int i = 1; i < Math.min(p.getLstCoup().size(),40); i=i+10)// on avance de 2 par 2 pour ne pas prendre trop de temps pour le calcul.
             {
-                if (i + longueur < p.getLstCoup().size() && longueur < 30)// on limite la longueur des coups consécutifs à 30, pour ne pas prendre trop de temps.
+                if (i + longueur < p.getLstCoup().size() && longueur < 40)// on limite la longueur des coups consécutifs à 30, pour ne pas prendre trop de temps.
                 {
                     List<String> lstCoups = new ArrayList<>(p.getLstCoup().subList(0, i + longueur));
                     lstCoups.removeIf(c -> c.contains(".") || c.equals(""));
+                    if(lstCoups.size() >= longueur)
                     addCoups(String.join("|", lstCoups));
+                    lstCoups = null;
                 }
                 count++;
-                if (count == (int) ((Runtime.getRuntime().maxMemory() / 1E5) / 4))
+                if (count == 10E5)
                 {
                     System.gc();
                     count = 0;
                 }
             }
             p = null;
+
         }
         System.gc();
         sem.release();
@@ -215,6 +225,40 @@ public class NbCoupsConsecutifsParties extends Recherche
         } catch (InterruptedException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * regarde si le nb de partie ayant de meme coups consecutifs.
+     */
+    private void check()
+    {
+        while (true)
+        {
+            for (Map.Entry<String, Integer> entry : mapCoups.entrySet())
+            {
+                if (entry.getValue() >= entry.getKey().split("\\|").length)
+                {
+                    sup(entry.getKey().split("\\|").length);
+                    System.gc();
+                }
+            }
+        }
+    }
+
+    /**
+     * enleve tous les coups qui ont une longueur inferieur à la longueur en parametre.
+     *
+     * @param longueur Longueur des coups consécutifs.
+     */
+    private void sup(int longueur)
+    {
+        for (Map.Entry<String, Integer> entry : mapCoups.entrySet())
+        {
+            if (entry.getKey().split("\\|").length < longueur)
+            {
+                mapCoups.remove(entry.getKey());
+            }
         }
     }
 

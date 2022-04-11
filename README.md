@@ -10,7 +10,7 @@
 ## Pré-requis :
 
 - Minimum 4 coeurs 8 threads.
-- Pour un traitement de 0-10 go de données 8 go de ram, 10-100 go de données 32 go de ram, plus de 100 go 64 go de ram.
+- Pour un traitement de 0-10 go de données 16 go de ram, 10-100 go de données 32 go de ram, plus de 100 go 64 go de ram.
 - Un dossier "data" contenant les fichiers de données situé dans le repertoire courant de l'éxcutable "Serveur.jar", ou le repertoire courant du projet.
 
 ## Fonctionnement :
