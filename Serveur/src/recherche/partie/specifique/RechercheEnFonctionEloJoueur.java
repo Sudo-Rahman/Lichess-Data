@@ -6,6 +6,8 @@ import recherche.RecherchePartieSpecifique;
 
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe qui cherche les parties en fonction de des élos des joueurs.
@@ -40,18 +42,20 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         initDemande();
         if (getAllElos() > 0)
         {
+            if (nbParties == 0)
+            {
+                nbParties = Math.min(this.lstPosParties.size(), this.maxNbParties);
+            }
+
             // 0 correspond au maximum de partie, qui est limité par la variable maxNbParties
             if (this.afficheParties)
             {
-                if (nbParties == 0)
-                {
-                    nbParties = Math.min(this.lstPosParties.size(), this.maxNbParties);
-                }
                 Thread t = new Thread(this::calcule);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.start();
             } else
             {
+                eloCorrect();
                 this.iterative = true;
                 setDescription(", elo compris entre : " + this.eloInf + " et " + this.eloSup);
             }
@@ -84,15 +88,8 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
     public void calcule()
     {
         this.tempsRecherche = System.currentTimeMillis();
-        for (Long pos : this.lstPosParties)
-        {
-            if (this.lstPartie.size() < this.nbParties)
-            {
-                Partie p = this.partiesFile.getPartieInFile(pos);
-                if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
-                    this.lstPartie.add(p);
-            } else break;
-        }
+
+        eloCorrect();
 
         this.tempsRecherche = System.currentTimeMillis() - this.tempsRecherche;
         if (this.afficheParties) envoieMessage(toString());
@@ -101,6 +98,9 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
         System.gc();
     }
 
+    /**
+     * @return Le nombre de partie qui a un elos pas les deux entre la plage demander.
+     */
     private int getAllElos()
     {
         int compt = 0;
@@ -113,5 +113,31 @@ public class RechercheEnFonctionEloJoueur extends RecherchePartieSpecifique
             }
         }
         return compt;
+    }
+
+    /**
+     * Verifie que les 2 elos sont dans la bonne plage.
+     */
+    private void eloCorrect()
+    {
+        List<Long> lstTmp = new ArrayList<>();
+        for (Long pos : this.lstPosParties)
+        {
+            if (this.lstPartie.size() < this.nbParties)
+            {
+                Partie p = this.partiesFile.getPartieInFile(pos);
+                if (!lstPartie.contains(p))
+                {
+                    if (p.getBlackElo() <= this.eloSup && p.getBlackElo() >= this.eloInf && p.getWhiteElo() <= this.eloSup && p.getWhiteElo() >= this.eloInf)
+                    {
+                        this.lstPartie.add(p);
+                        lstTmp.add(pos);
+                    }
+                }
+
+            } else break;
+        }
+        this.lstPosParties.clear();
+        this.lstPosParties.addAll(lstTmp);
     }
 }

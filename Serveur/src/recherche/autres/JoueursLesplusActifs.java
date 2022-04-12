@@ -9,6 +9,7 @@ import utils.Colors;
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Affiche les joueurs les plus actifs sur le mois du fichier, ainsi que le joueur le plus actif de chaque semaine du fichier.
@@ -63,6 +64,8 @@ public class JoueursLesplusActifs extends Recherche
         int compteur = 0;
         String joueur = "";
         int nbParties;
+
+
         for (Map.Entry<Object, List<Long>> element : mapObjet.getNameMap().entrySet())
         {
             nbParties = element.getValue().size();

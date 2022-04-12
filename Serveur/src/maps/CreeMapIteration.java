@@ -96,7 +96,7 @@ public class CreeMapIteration
         long partie = 0L;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
         {partie += element.getValue().size();}
-        this.mapsObjet.setNbParties(Math.floorDiv(partie, 2L));
+        this.mapsObjet.setNbParties((long) Math.ceil(partie/2.0));
         this.mapsObjet.setUtcDateMap(new TreeMap<>(this.mapsObjet.getUtcDateMap()));
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         System.gc();

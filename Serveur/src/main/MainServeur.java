@@ -28,7 +28,7 @@ public class MainServeur
         Scanner sn = new Scanner(System.in);
 
         int maxClients = 0;
-        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisi d'allouer 4 threads au mini pour le calcule pur et dur, pas les écoutes et envoies.
+        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisi d'allouer de diviser par 4 le nombre de threads disponibles pour avoir le nombre de client max.
         while (maxClients < 1 || maxClients > nbThreads)
         {
             System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads " + "au minimum par clients pour les calcules pas les ecoutes, le nombre max de client est : " + nbThreads);
@@ -37,7 +37,7 @@ public class MainServeur
 
 
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("/home/rahman/Documents/GitHub/Projet-INFO-4B/out/production/Projet-INFO-4B/").listFiles()))
+        for (File file : Objects.requireNonNull(new File("data/").listFiles()))
         {
             if (file.isFile())
             {
@@ -49,7 +49,8 @@ public class MainServeur
                 }
             }
         }
-        if(lstFiles.size()==0) {
+        if (lstFiles.size() == 0)
+        {
             log.fatal("Aucun fichier pgn trouvé dans le dossier others");
             System.exit(0);
         }
@@ -72,14 +73,14 @@ public class MainServeur
             } catch (NumberFormatException e) {System.out.println("Vous devez entrer un nombre");}
         }
 
-        //initialisation du port
-        //        int port = 0;
-        //        while (65535 < port || port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les
-        //        // 1024 premiers sont réservés pour des services standard
-        //        {
-        //            System.out.print("Donner le port de connexion (1025 à 65535) : ");
-        //            port = Integer.parseInt(sn.next());
-        //        }
+//        initialisation du port
+        int port = 0;
+        while (65535 < port || port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les
+        // 1024 premiers sont réservés pour des services standard
+        {
+            System.out.print("Donner le port de connexion (1025 à 65535) : ");
+            port = Integer.parseInt(sn.next());
+        }
 
 
         ServerSocket s;

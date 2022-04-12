@@ -4,6 +4,7 @@ import client.Client;
 import client.info.ClientInfo;
 import utils.Log;
 
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -23,23 +24,22 @@ public class MainClient
         System.out.println("Donner votre username : ");
         String username = sn.next();
 
-        //initialisation du port
-        //        int port = 0;
-        //        while (65535 < port || port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les
-        //        // 1024 premiers sont réservés pour des services standard
-        //        {
-        //            System.out.print("Donner le port de connexion (1025 à 65535) : ");
-        //            port = Integer.parseInt(sn.next());
-        //        }
+//        initialisation du port
+        int port = 0;
+        while (65535 < port || port < 1024) // Un port est identifié par un entier de 1 à 65535. Par convention les
+        // 1024 premiers sont réservés pour des services standard
+        {
+            System.out.print("Donner le port de connexion (1025 à 65535) : ");
+            port = Integer.parseInt(sn.next());
+        }
 
-        //        System.out.print("Donner l'adresse ip de connexion : ");
-        //        InetAddress ipserveur;
+        System.out.print("Donner l'adresse ip de connexion : ");
+        InetAddress ipserveur;
 
         try
         {
-            //            ipserveur = InetAddress.getByName(sn.next());
-            //            Client client = new Client(new Socket(ipserveur,port),username);
-            Client client = new Client(new Socket("localhost", 1025), new ClientInfo(username));
+            ipserveur = InetAddress.getByName(sn.next());
+            Client client = new Client(new Socket(ipserveur, port), new ClientInfo(username));
             client.startClient();
         } catch (Exception e)
         {

@@ -6,7 +6,6 @@ import utils.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,6 +63,21 @@ public class Partie
     public List<String> getLstCoup()
     {
         return lstCoup;
+    }
+
+    public String getResultat()
+    {
+        return resultat;
+    }
+
+    public String getUtcDate()
+    {
+        return utcDate;
+    }
+
+    public String getUtcTime()
+    {
+        return utcTime;
     }
 
 
@@ -148,6 +162,17 @@ public class Partie
         this.lstCoup.removeIf(str -> str.contains("%eval") || str.contains("%clk"));
         this.lstCoup = new ArrayList<>(List.of(String.join("", this.lstCoup).split(" ")));
         this.lstCoup.removeIf(str -> str.contains("..."));
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof Partie p)
+        {
+            return p.getNoir().equals(this.noir) && p.getBlanc().equals(this.blanc) && p.getResultat().equals(this.resultat) && p.getUtcDate().equals(this.utcDate)
+                    && p.getLstCoup().equals(this.lstCoup) && p.getUtcTime().equals(this.utcTime) && p.getWhiteElo() == this.whiteElo && p.getBlackElo() == this.blackElo;
+        }
+        return false;
     }
 
 

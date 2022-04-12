@@ -34,7 +34,7 @@ public class AfficheToutesLesParties extends Recherche
         long nbParties = Math.min(maxNbParties, mapObjet.getNbParties());
         long compteParties = 0;
 
-        for (Map.Entry<Object, List<Long>> entry : mapObjet.getNameMap().entrySet())
+        for (Map.Entry<Object, List<Long>> entry : mapObjet.getOpenningMap().entrySet())
         {
             if (compteParties >= nbParties) break;
             else
