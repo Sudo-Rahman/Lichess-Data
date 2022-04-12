@@ -64,10 +64,8 @@ public class NbCoupsConsecutifsParties extends Recherche
      */
     private void dejaCalculer()
     {
-        File folder = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0] + "_data/");
-        if (!folder.exists()) folder.mkdir();
         String nomFichier = String.join("_", ("coupsConsecutifs" + this.description).replaceAll("[,:]", "").replaceAll(" {2}", " ").split("[/ ]"));
-        File fichier = new File(folder + "/" + nomFichier + ".cccpp");
+        File fichier = new File(mapObjet.getFolderData() + "/" + nomFichier + ".cccpp");
         if (fichier.exists())
         {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichier)))
@@ -134,7 +132,8 @@ public class NbCoupsConsecutifsParties extends Recherche
         {
             posList++;
             compteur++;
-            if (compteur == 1E5){
+            if (compteur == 1E5)
+            {
                 compteur = 0;
                 System.gc();
             }
@@ -158,14 +157,14 @@ public class NbCoupsConsecutifsParties extends Recherche
         while ((pos = getpos()) != -1L)
         {
             p = partiesFile.getPartieInFile(pos);
-            for (int i = 1; i < Math.min(p.getLstCoup().size(),40); i=i+10)// on avance de 2 par 2 pour ne pas prendre trop de temps pour le calcul.
+            for (int i = 1; i < Math.min(p.getLstCoup().size(), 40); i = i + 10)// on avance de 2 par 2 pour ne pas prendre trop de temps pour le calcul.
             {
                 if (i + longueur < p.getLstCoup().size() && longueur < 40)// on limite la longueur des coups consécutifs à 30, pour ne pas prendre trop de temps.
                 {
                     List<String> lstCoups = new ArrayList<>(p.getLstCoup().subList(0, i + longueur));
                     lstCoups.removeIf(c -> c.contains(".") || c.equals(""));
-                    if(lstCoups.size() >= longueur)
-                    addCoups(String.join("|", lstCoups));
+                    if (lstCoups.size() >= longueur)
+                        addCoups(String.join("|", lstCoups));
                     lstCoups = null;
                 }
                 count++;

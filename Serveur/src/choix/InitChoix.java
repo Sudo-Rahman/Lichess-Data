@@ -13,6 +13,7 @@ import utils.Log;
 
 import java.io.*;
 
+import static java.lang.Thread.sleep;
 import static utils.Colors.reset;
 
 /**
@@ -51,6 +52,18 @@ public class InitChoix
 
         while (envoieMessage(afficheChoix()) != -1)
         {
+            while (demandeRestant() == 0)
+            {
+                envoieMessage("Trop de demande patienter");
+                try
+                {
+                    sleep(10000);
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            envoieMessage("Saissisez votre choix : ");
             switch (litInt())
             {
                 case 0 -> {
@@ -94,6 +107,7 @@ public class InitChoix
                 break;
             }
         } while (choix > 3 || choix < 1);
+        incrementeDemande(-1);
         RecherchePartieSpecifique recherche = null;
         switch (choix)
         {
@@ -111,13 +125,16 @@ public class InitChoix
             }
         }
         assert recherche != null;
+        incrementeDemande(1);
         iteration(recherche);
     }
 
     private void choix2()
     {
+        incrementeDemande(-1);
         RecherchePartieJoueur recherche = new RecherchePartieJoueur(objectInputStream, writer, mapObjet);
         recherche.cherche();
+        incrementeDemande(1);
         iteration(recherche);
     }
 
@@ -129,34 +146,45 @@ public class InitChoix
 
     private void choix4()
     {
+        incrementeDemande(-1);
         RechercheEnFonctionDuNombreDeCoup recherche = new RechercheEnFonctionDuNombreDeCoup(objectInputStream, writer, mapObjet);
         recherche.cherche();
+        incrementeDemande(1);
         iteration(recherche);
     }
 
 
     private void choix5()
     {
+        incrementeDemande(-1);
         JoueursLesplusActifs recherche = new JoueursLesplusActifs(objectInputStream, writer, mapObjet);
         recherche.cherche();
+        incrementeDemande(1);
     }
 
 
     private void choix6()
     {
+        incrementeDemande(-1);
         new Thread(() ->
         {
             PageRank pageRank = new PageRank(mapObjet, description);
             pageRank.cherche();
             envoieMessage(pageRank.toString());
             pageRank = null;
+            incrementeDemande(1);
         }).start();
     }
 
     private void choix7()
     {
+        incrementeDemande(-1);
         NbCoupsConsecutifsParties recherche = new NbCoupsConsecutifsParties(objectInputStream, writer, mapObjet, description);
-        new Thread(recherche::cherche).start();
+        new Thread(() ->
+        {
+            recherche.cherche();
+            incrementeDemande(-1);
+        }).start();
     }
 
     private void choix8()
@@ -186,10 +214,8 @@ public class InitChoix
         if (recherche == null) return;
         if (recherche.isIterative())
         {
-            File folder = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+ "_data/");
-            if(!folder.exists()) folder.mkdir();
             String nomFichier = String.join("_", (this.description + recherche.getDescription()).replaceAll("[,:]", "").replaceAll(" {2}", " ").split("[/ ]"));
-            File iterateFile = new File(folder.getAbsolutePath() +"/"+ nomFichier + ".hashmap");
+            File iterateFile = new File(mapObjet.getFolderData() + "/" + nomFichier + ".hashmap");
 
             MapsObjet mp = null;
             if (iterateFile.exists())
@@ -301,5 +327,35 @@ public class InitChoix
             return -2;
         }
         return nb;
+    }
+
+    /**
+     * @return retourne le nombre de demande simultané restant du client.
+     */
+    private int demandeRestant()
+    {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Threads.count")))
+        {
+            return (int) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
+        return 0;
+    }
+
+    /**
+     * increment le nombre de demande.
+     */
+    private void incrementeDemande(int nb)
+    {
+        int result = demandeRestant()+nb;
+        new File("Threads.count").delete();
+
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("Threads.count")))
+        {
+            System.out.println("demande : " + result);
+            objectOutputStream.reset();
+            objectOutputStream.writeObject(result);
+            System.out.println("demande : " + demandeRestant());
+
+        } catch (IOException e) {e.printStackTrace();}
     }
 }

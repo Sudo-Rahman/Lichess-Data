@@ -23,6 +23,7 @@ public class MapsObjet implements Externalizable
     private List<Map<Object, List<Long>>> lstMaps;
     private final Log log = new Log();
     private File file;
+    private File folderData;
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
 
@@ -46,6 +47,8 @@ public class MapsObjet implements Externalizable
     public MapsObjet(File file)
     {
         this.file = file;
+        this.folderData = new File(file.getAbsolutePath().split("\\.")[0] + "_data/");
+        if (!this.folderData.exists()) this.folderData.mkdir();
         initMapObjet();
     }
 
@@ -100,6 +103,11 @@ public class MapsObjet implements Externalizable
     public File getFile()
     {
         return file;
+    }
+
+    public File getFolderData()
+    {
+        return folderData;
     }
 
     public Map<Object, List<Long>> getNameMap()

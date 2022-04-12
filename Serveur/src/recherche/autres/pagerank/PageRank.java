@@ -50,7 +50,7 @@ public class PageRank
     public void cherche()
     {
         String nomFichier = String.join("_",description.replaceAll("[,:]","").split(" {2}"))  ;
-        File pageRankFile = new File(mapObjet.getFile().getAbsolutePath().split("\\.")[0]+nomFichier + ".pageRankMap");
+        File pageRankFile = new File(mapObjet.getFolderData() +"/"+nomFichier + ".pageRankMap");
         if (pageRankFile.exists())
         {
             log.info("PageRank trouvé dans le fichier pageRank.");
