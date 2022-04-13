@@ -32,12 +32,12 @@ public class PageRank
     private final Semaphore semaphore;
     private final int nbIterations = 10;
     private TreeMap<Double, String> mapPagerank;
-    private String description;
+    private final String description;
 
     /**
      * @param mapObjet mapObjet qui contient toutes les hashmaps.
      */
-    public PageRank(MapsObjet mapObjet,String description)
+    public PageRank(MapsObjet mapObjet, String description)
     {
         this.mapNoeuds = new ConcurrentHashMap<>();
         this.mapObjet = mapObjet;
@@ -49,8 +49,8 @@ public class PageRank
 
     public void cherche()
     {
-        String nomFichier = String.join("_",description.replaceAll("[,:]","").split(" {2}"))  ;
-        File pageRankFile = new File(mapObjet.getFolderData() +"/"+nomFichier + ".pageRankMap");
+        String nomFichier = String.join("_", description.replaceAll("[,:]", "").split(" {2}"));
+        File pageRankFile = new File(mapObjet.getFolderData() + "/" + nomFichier + ".pageRankMap");
         if (pageRankFile.exists())
         {
             log.info("PageRank trouvé dans le fichier pageRank.");
@@ -62,7 +62,8 @@ public class PageRank
         {
             log.info("Calcul du PageRank");
             calcule();
-            try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pageRankFile))){
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pageRankFile)))
+            {
                 oos.writeObject(mapPagerank);
             } catch (IOException e) {e.printStackTrace();}
         }

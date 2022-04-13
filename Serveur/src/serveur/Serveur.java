@@ -25,7 +25,7 @@ public class Serveur
 
     private static final Log log = new Log();
     private final int maxClients;
-    private final int nbThreadsPerClient;
+    private final int nbDemandePerClient;
     private final List<ConnexionClient> lstConnexion;
     private final ServerSocket serverSocket;
     private final CreeMapsOrRead creeMapsOrRead;
@@ -40,7 +40,7 @@ public class Serveur
         this.lstConnexion = new ArrayList<>(maxClients);
         this.serverSocket = serverSocket;
         this.maxClients = maxClients;
-        this.nbThreadsPerClient = Runtime.getRuntime().availableProcessors() / maxClients;
+        this.nbDemandePerClient = Runtime.getRuntime().availableProcessors() / maxClients;
         this.creeMapsOrRead = new CreeMapsOrRead(file);
         new Thread(creeMapsOrRead::charge).start();
     }
@@ -63,7 +63,7 @@ public class Serveur
                 } else
                 {
                     log.debug(client.toString());
-                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbThreadsPerClient, this.lstConnexion, this.creeMapsOrRead);
+                    ConnexionClient connexionClient = new ConnexionClient(client, this.nbDemandePerClient, this.lstConnexion, this.creeMapsOrRead);
                     this.lstConnexion.add(connexionClient);
                     connexionClient.start();
                 }

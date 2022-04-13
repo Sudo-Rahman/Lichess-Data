@@ -33,55 +33,6 @@ public class Partie
     private String termination;
 
     /**
-     * accesseurs.
-     */
-    public String getGagnant()
-    {
-        return gagnant;
-    }
-
-    public String getBlanc()
-    {
-        return blanc;
-    }
-
-    public String getNoir()
-    {
-        return noir;
-    }
-
-    public int getWhiteElo()
-    {
-        return whiteElo;
-    }
-
-    public int getBlackElo()
-    {
-        return blackElo;
-    }
-
-    public List<String> getLstCoup()
-    {
-        return lstCoup;
-    }
-
-    public String getResultat()
-    {
-        return resultat;
-    }
-
-    public String getUtcDate()
-    {
-        return utcDate;
-    }
-
-    public String getUtcTime()
-    {
-        return utcTime;
-    }
-
-
-    /**
      * Constructeur qui cherche les données de la partie et les stockes dans les attributs de la classe.
      *
      * @param allLines liste de toutes les lignes de la partie.
@@ -152,6 +103,54 @@ public class Partie
             }
         }
 
+    }
+
+    /**
+     * accesseurs.
+     */
+    public String getGagnant()
+    {
+        return gagnant;
+    }
+
+    public String getBlanc()
+    {
+        return blanc;
+    }
+
+    public String getNoir()
+    {
+        return noir;
+    }
+
+    public int getWhiteElo()
+    {
+        return whiteElo;
+    }
+
+    public int getBlackElo()
+    {
+        return blackElo;
+    }
+
+    public List<String> getLstCoup()
+    {
+        return lstCoup;
+    }
+
+    public String getResultat()
+    {
+        return resultat;
+    }
+
+    public String getUtcDate()
+    {
+        return utcDate;
+    }
+
+    public String getUtcTime()
+    {
+        return utcTime;
     }
 
     /**

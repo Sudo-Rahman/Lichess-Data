@@ -8,6 +8,7 @@ import recherche.autres.JoueursLesplusActifs;
 import recherche.autres.NbCoupsConsecutifsParties;
 import recherche.autres.pagerank.PageRank;
 import recherche.partie.specifique.*;
+import serveur.ConnexionClient;
 import utils.Colors;
 import utils.Log;
 
@@ -30,9 +31,9 @@ public class InitChoix
     private final MapsObjet mapObjet;
     private final int mode;
     private final String description;
-    private boolean quitte;
-
     private final Log log = new Log();
+    private boolean quitte;
+    private ConnexionClient connexionClient;
 
     /**
      * @param mode        Le mode de recherche : si c'est une iteration ou une recherche classique.
@@ -41,7 +42,7 @@ public class InitChoix
      * @param b           Le BufferedWriter du client.
      * @param mapObjet    L'instance de la classe MapsObjet.
      */
-    public InitChoix(int mode, String description, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet)
+    public InitChoix(int mode, String description, ObjectInputStream o, BufferedWriter b, MapsObjet mapObjet, ConnexionClient connexionClient)
     {
         this.mode = mode;
         this.objectInputStream = o;
@@ -49,16 +50,18 @@ public class InitChoix
         this.mapObjet = mapObjet;
         this.quitte = false;
         this.description = description;
+        this.connexionClient = connexionClient;
 
         while (envoieMessage(afficheChoix()) != -1)
         {
+            if (demandeRestant() == 0) envoieMessage("Trop de demande patienter");
             while (demandeRestant() == 0)
             {
-                envoieMessage("Trop de demande patienter");
                 try
                 {
-                    sleep(10000);
-                } catch (InterruptedException e)
+                    this.objectInputStream.readObject();// on lit le flux du client meme si il envoie n'importe quoi pour ne pas envoyer toutes les demandes d'un coups, quand l'attente sera fini.
+                    sleep(100);
+                } catch (InterruptedException | ClassNotFoundException | IOException e)
                 {
                     e.printStackTrace();
                 }
@@ -80,6 +83,7 @@ public class InitChoix
                 case 9 -> choix9();
                 default -> envoieMessage("Le nombre n'est pas bon !!");
             }
+            System.out.println(demandeRestant());
             if (quitte)
             {
                 envoieMessage(Colors.PURPLE_BOLD + "Vous avez quitter le mode iterative!!" + reset);
@@ -242,7 +246,7 @@ public class InitChoix
                     } catch (IOException e) {e.printStackTrace();}
                 }).start();
             }
-            new InitChoix(1, this.description + recherche.getDescription(), objectInputStream, writer, mp);
+            new InitChoix(1, description + recherche.getDescription(), objectInputStream, writer, mp, connexionClient);
             mp = null;
             System.gc();
         }
@@ -334,11 +338,7 @@ public class InitChoix
      */
     private int demandeRestant()
     {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Threads.count")))
-        {
-            return (int) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
-        return 0;
+        return this.connexionClient.getNbDemande();
     }
 
     /**
@@ -346,16 +346,6 @@ public class InitChoix
      */
     private void incrementeDemande(int nb)
     {
-        int result = demandeRestant()+nb;
-        new File("Threads.count").delete();
-
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("Threads.count")))
-        {
-            System.out.println("demande : " + result);
-            objectOutputStream.reset();
-            objectOutputStream.writeObject(result);
-            System.out.println("demande : " + demandeRestant());
-
-        } catch (IOException e) {e.printStackTrace();}
+        this.connexionClient.setNbDemande(this.connexionClient.getNbDemande() + nb);
     }
 }

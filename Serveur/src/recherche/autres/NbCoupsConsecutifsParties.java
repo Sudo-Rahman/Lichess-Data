@@ -25,6 +25,7 @@ import static java.lang.Thread.sleep;
 public class NbCoupsConsecutifsParties extends Recherche
 {
 
+    private final String description;
     private List<Long> lstPosParties;
     private Map<String, Integer> mapCoups;
     private Semaphore sem;
@@ -33,7 +34,6 @@ public class NbCoupsConsecutifsParties extends Recherche
     private long nbPartieTraiter;
     private String coups;
     private int nbCoups;
-    private final String description;
     private int compteur = 0;
 
     /**

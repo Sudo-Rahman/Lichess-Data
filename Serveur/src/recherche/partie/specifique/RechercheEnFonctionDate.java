@@ -18,8 +18,8 @@ import java.util.Date;
  */
 public class RechercheEnFonctionDate extends RecherchePartieSpecifique
 {
-    private long date;
     private final SimpleDateFormat sdformat;
+    private long date;
 
 
     /**

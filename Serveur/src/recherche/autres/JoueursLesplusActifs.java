@@ -9,7 +9,6 @@ import utils.Colors;
 import java.io.BufferedWriter;
 import java.io.ObjectInputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Affiche les joueurs les plus actifs sur le mois du fichier, ainsi que le joueur le plus actif de chaque semaine du fichier.
@@ -21,9 +20,9 @@ import java.util.stream.Collectors;
 public class JoueursLesplusActifs extends Recherche
 {
 
+    private final Calendar calendar;
     private int mois;
     private int anne;
-    private final Calendar calendar;
     private String message;
     private Semaphore semaphore;
 

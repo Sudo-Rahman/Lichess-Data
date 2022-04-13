@@ -20,26 +20,19 @@ public class MapsObjet implements Externalizable
 {
     @Serial
     private static final long serialVersionUID = -8576293727662889893L;
-    private List<Map<Object, List<Long>>> lstMaps;
     private final Log log = new Log();
+    private List<Map<Object, List<Long>>> lstMaps;
     private File file;
     private File folderData;
     private Map<Object, List<Long>> nameMap;
     private Map<Object, List<Long>> eloMap;
-
-    public void setUtcDateMap(Map<Object, List<Long>> utcDateMap)
-    {
-        this.utcDateMap = utcDateMap;
-    }
-
     private Map<Object, List<Long>> utcDateMap;
     private Map<Object, List<Long>> openningMap;
     private Map<Object, List<Long>> nbCoupsMap;
     private int ecriturePoucentage;
     private int lecturePoucentage;
-
-
     private long nbParties;
+
 
     /**
      * @param file Fichier de données.
@@ -125,6 +118,10 @@ public class MapsObjet implements Externalizable
         return utcDateMap;
     }
 
+    public void setUtcDateMap(Map<Object, List<Long>> utcDateMap)
+    {
+        this.utcDateMap = utcDateMap;
+    }
 
     public Map<Object, List<Long>> getOpenningMap()
     {

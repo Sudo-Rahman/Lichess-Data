@@ -26,12 +26,10 @@ public class CreeMap
     private final MapsObjet mapsObjet;
     private final int nbThreads = Runtime.getRuntime().availableProcessors();
     private final Log log;
-    private long nbOctetsLu;
-    private long nbOctetsParThread;
-    private boolean creeMapOk;
-
     private final long posDeb;
-    private final long posFin;
+    private long nbOctetsLu;
+    private final long nbOctetsParThread;
+    private boolean creeMapOk;
 
     /**
      * @param mo     MapsObjet qui va contenir les données.
@@ -46,10 +44,9 @@ public class CreeMap
         this.creeMapOk = false;
 
         this.posDeb = posDeb;
-        this.posFin = posFin;
         log = new Log();
         this.nbOctetsLu = 0;
-        this.nbOctetsParThread = (this.posFin - this.posDeb) / this.nbThreads;
+        this.nbOctetsParThread = (posFin - this.posDeb) / this.nbThreads;
 
     }
 
@@ -95,7 +92,7 @@ public class CreeMap
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
             partie += element.getValue().size();
 
-        this.mapsObjet.setNbParties((long) Math.ceil(partie/2.0));
+        this.mapsObjet.setNbParties((long) Math.ceil(partie / 2.0));
         this.mapsObjet.setUtcDateMap(new TreeMap<>(this.mapsObjet.getUtcDateMap()));
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         System.gc();

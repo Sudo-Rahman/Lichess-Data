@@ -17,6 +17,21 @@ public class Noeud
 
 
     private Map<String, Integer> liensEtrants;
+    private Map<String, Integer> liensSortants;
+    private double AncienScore;
+    private double score;
+
+    /**
+     * @param joueur Le username du joueur.
+     * @param score  Le score pageRank du joueur.
+     */
+    public Noeud(String joueur, double score)
+    {
+        this.joueur = joueur;
+        this.liensEtrants = new ConcurrentHashMap<>();
+        this.liensSortants = new ConcurrentHashMap<>();
+        this.AncienScore = score;
+    }
 
     public Map<String, Integer> getLiensEtrants()
     {
@@ -27,8 +42,6 @@ public class Noeud
     {
         return liensSortants;
     }
-
-    private Map<String, Integer> liensSortants;
 
     public double getScore()
     {
@@ -48,22 +61,6 @@ public class Noeud
     public void setAncienScore(double acienScore)
     {
         AncienScore = acienScore;
-    }
-
-    private double AncienScore;
-    private double score;
-
-
-    /**
-     * @param joueur Le username du joueur.
-     * @param score  Le score pageRank du joueur.
-     */
-    public Noeud(String joueur, double score)
-    {
-        this.joueur = joueur;
-        this.liensEtrants = new ConcurrentHashMap<>();
-        this.liensSortants = new ConcurrentHashMap<>();
-        this.AncienScore = score;
     }
 
     /**

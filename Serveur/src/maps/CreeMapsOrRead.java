@@ -51,7 +51,6 @@ public class CreeMapsOrRead
     /**
      * Si le fichier .hashmap existe, on charge les données dans l'objet MapsObjet.
      * Sinon, on crée l'objet MapsObjet et on l'écrit dans le fichier .hashmap.
-     *
      */
     public void charge()
     {

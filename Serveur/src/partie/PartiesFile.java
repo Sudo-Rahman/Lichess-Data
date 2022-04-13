@@ -111,7 +111,7 @@ public class PartiesFile
     {
         List<Partie> lstParties = new ArrayList<>();
         for (Long pos : lstPos)
-        lstParties.add(getPartieInFile(pos));
+            lstParties.add(getPartieInFile(pos));
         return lstParties;
     }
 

@@ -23,20 +23,20 @@ public class ConnexionClient extends Thread
 {
     private static final Log log = new Log();
     private final List<ConnexionClient> lstConnexion;
-    private final int nbMaxThread;
     private final CreeMapsOrRead creeMapsOrRead;
+    private int nbDemande;
     private ClientInfo clientInfo;
     private Socket socketClient;
     private BufferedWriter writer;
     private ObjectInputStream objectInputStream;
 
     /**
-     * @param clientSocket   socket du client.
-     * @param nbMaxThread    nombre de thread max.
-     * @param lst            liste des connexions clients.
-     * @param creeMapsOrRead Instance de la classe CreeMapsOrRead.
+     * @param clientSocket      socket du client.
+     * @param nbDemandePossible nombre de thread max.
+     * @param lst               liste des connexions clients.
+     * @param creeMapsOrRead    Instance de la classe CreeMapsOrRead.
      */
-    public ConnexionClient(Socket clientSocket, int nbMaxThread, List<ConnexionClient> lst, CreeMapsOrRead creeMapsOrRead)
+    public ConnexionClient(Socket clientSocket, int nbDemandePossible, List<ConnexionClient> lst, CreeMapsOrRead creeMapsOrRead)
     {
         this.lstConnexion = lst;
         try
@@ -45,8 +45,18 @@ public class ConnexionClient extends Thread
             this.writer = new BufferedWriter(new OutputStreamWriter(this.socketClient.getOutputStream()));
             this.objectInputStream = new ObjectInputStream(this.socketClient.getInputStream());
         } catch (IOException e) {e.printStackTrace();}
-        this.nbMaxThread = nbMaxThread;
+        this.nbDemande = nbDemandePossible;
         this.creeMapsOrRead = creeMapsOrRead;
+    }
+
+    public int getNbDemande()
+    {
+        return nbDemande;
+    }
+
+    public void setNbDemande(int nbDemande)
+    {
+        this.nbDemande = nbDemande;
     }
 
     @Override
@@ -98,7 +108,7 @@ public class ConnexionClient extends Thread
      */
     private void litMess()
     {
-        new InitChoix(0, "", objectInputStream, writer, creeMapsOrRead.getMapsObjet());// gere toute la partie choix du client
+        new InitChoix(0, "", objectInputStream, writer, creeMapsOrRead.getMapsObjet(), this);// gere toute la partie choix du client
         try
         {
             String mess;

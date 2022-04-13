@@ -17,10 +17,10 @@ import java.io.ObjectInputStream;
  */
 public abstract class Recherche
 {
-    protected MapsObjet mapObjet;
     protected final Log log = new Log();
     protected final ObjectInputStream clientReader;
     protected final BufferedWriter clientWriter;
+    protected MapsObjet mapObjet;
     protected int maxNbParties = 100000;
     protected boolean afficheParties = true;
     protected PartiesFile partiesFile;

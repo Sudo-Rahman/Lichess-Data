@@ -1,15 +1,14 @@
 package recherche;
 
-import choix.InitChoix;
 import maps.CreeMapIteration;
 import maps.MapsObjet;
 import partie.Partie;
 import utils.Colors;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * Classe qui hérite de Recherche, il engendre des classes pour des recherches spécifiques de partie.
@@ -33,24 +32,7 @@ public abstract class RecherchePartieSpecifique extends Recherche
     protected List<Long> lstPosParties;
 
     protected boolean iterative = false;
-
-    public boolean isIterative()
-    {
-        return iterative;
-    }
-
     protected String description;
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    protected void setDescription(String description)
-    {
-        this.description = description;
-    }
-
 
     /**
      * @param clientReader L'ObjectInputStream du client.
@@ -65,10 +47,24 @@ public abstract class RecherchePartieSpecifique extends Recherche
         this.lstPosParties = new ArrayList<>();
     }
 
+    public boolean isIterative()
+    {
+        return iterative;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    protected void setDescription(String description)
+    {
+        this.description = description;
+    }
+
     public abstract void calcule();
 
     public abstract void initDemande();
-
 
 
     /**

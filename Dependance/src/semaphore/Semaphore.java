@@ -10,6 +10,17 @@ package semaphore;
 public class Semaphore
 {
 
+    private final int nbThreads;
+    private int count;
+    /**
+     * @param count : nombre de threads.
+     */
+    public Semaphore(int count)
+    {
+        this.count = count;
+        this.nbThreads = count;
+    }
+
     /**
      * @description : Met en attente le thread courant jusqu'à ce que le nombre de threads fini soit égal au nombre de threads fourni en paramètre.
      */
@@ -19,18 +30,6 @@ public class Semaphore
         {
             try {wait();} catch (InterruptedException e) {e.printStackTrace();}
         }
-    }
-
-    private int count;
-    private final int nbThreads;
-
-    /**
-     * @param count : nombre de threads.
-     */
-    public Semaphore(int count)
-    {
-        this.count = count;
-        this.nbThreads = count;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 # Présentation :
 
-
 #### Un serveur, gère les connexions d'un ou plusieurs clients, les clients effectuent des requêtes en rapport avec les echecs, le serveur cherchera dans un fichier texte au format pgn les données voulu du client et lui enverra les informations.
 
 #### Le projet est réalisé en java, les fichiers utilisés comme base de données ont été prises sur le site https://database.lichess.org/.
@@ -11,9 +10,11 @@
 
 - Minimum 4 coeurs 8 threads.
 - Pour un traitement de 0-10 go de données 16 go de ram, 10-100 go de données 32 go de ram, plus de 100 go 64 go de ram.
-- Un dossier "data" contenant les fichiers de données situé dans le repertoire courant de l'éxcutable "Serveur.jar", ou le repertoire courant du projet.
+- Un dossier "data" contenant les fichiers de données situé dans le repertoire courant de l'éxcutable "Serveur.jar", ou
+  le repertoire courant du projet.
 
 ## Fonctionnement :
+
 Pour lancer le serveur :
 
 `

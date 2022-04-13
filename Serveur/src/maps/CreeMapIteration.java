@@ -26,9 +26,8 @@ public class CreeMapIteration
     private final MapsObjet mapsObjet;
     private final int nbThreads = Runtime.getRuntime().availableProcessors();
     private final Log log;
-    private boolean creeMapOk;
-
     private final List<Long> lstPosParties;
+    private boolean creeMapOk;
     private int compteurPourList;
 
     /**
@@ -96,7 +95,7 @@ public class CreeMapIteration
         long partie = 0L;
         for (Map.Entry<Object, List<Long>> element : this.mapsObjet.getNameMap().entrySet())
         {partie += element.getValue().size();}
-        this.mapsObjet.setNbParties((long) Math.ceil(partie/2.0));
+        this.mapsObjet.setNbParties((long) Math.ceil(partie / 2.0));
         this.mapsObjet.setUtcDateMap(new TreeMap<>(this.mapsObjet.getUtcDateMap()));
         log.info("Creation des maps effectué en  : " + (System.currentTimeMillis() - tempsRecherche) / 1000 + " secondes");
         System.gc();
@@ -233,7 +232,7 @@ public class CreeMapIteration
         log.info("Lecture en cours : 0%");
         while (!this.creeMapOk)
         {
-            if ((apres = (compteurPourList * 100) / taille) > avant)
+            if ((apres = (compteurPourList * 100L) / taille) > avant)
             {
                 log.info("Lecture en cours... : " + apres + "%");
                 avant = apres;
