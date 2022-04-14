@@ -121,7 +121,8 @@ public class CreeMapIteration
                 buf[0] = buf[0].replaceAll(" ", "");
                 switch (buf[0])
                 {
-                    case "White", "Black" -> {
+                    case "White", "Black" ->
+                    {
                         if (this.mapsObjet.getNameMap().containsKey(buf[1]))
                         {
                             this.mapsObjet.getNameMap().get(buf[1]).add(octetDeb);
@@ -131,7 +132,8 @@ public class CreeMapIteration
                     }
                     case "Site" -> {}
                     case "Result" -> {}
-                    case "UTCDate" -> {
+                    case "UTCDate" ->
+                    {
                         long utcDate = 0L;
                         try
                         {
@@ -147,7 +149,8 @@ public class CreeMapIteration
                             this.mapsObjet.getUtcDateMap().put(utcDate, Collections.synchronizedList(new ArrayList<>(Collections.singletonList(octetDeb))));
                     }
                     case "UTCTime" -> {}
-                    case "WhiteElo", "BlackElo" -> {
+                    case "WhiteElo", "BlackElo" ->
+                    {
                         try
                         {
                             int elo = Integer.parseInt(buf[1]);

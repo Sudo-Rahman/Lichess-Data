@@ -69,7 +69,8 @@ public class InitChoix
             envoieMessage("Saissisez votre choix : ");
             switch (litInt())
             {
-                case 0 -> {
+                case 0 ->
+                {
                     if (mode == 1) quitte = true;
                 }
                 case 1 -> choix1();
@@ -114,15 +115,18 @@ public class InitChoix
         RecherchePartieSpecifique recherche = null;
         switch (choix)
         {
-            case 1 -> {
+            case 1 ->
+            {
                 recherche = new RechereEnFonctionDuPremierCoup(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
-            case 2 -> {
+            case 2 ->
+            {
                 recherche = new RechercheEnFonctionEloJoueur(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }
-            case 3 -> {
+            case 3 ->
+            {
                 recherche = new RechercheEnFonctionDate(objectInputStream, writer, mapObjet);
                 recherche.cherche();
             }

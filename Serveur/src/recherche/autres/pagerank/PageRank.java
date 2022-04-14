@@ -31,8 +31,8 @@ public class PageRank
     private final Log log = new Log();
     private final Semaphore semaphore;
     private final int nbIterations = 10;
-    private TreeMap<Double, String> mapPagerank;
     private final String description;
+    private TreeMap<Double, String> mapPagerank;
 
     /**
      * @param mapObjet mapObjet qui contient toutes les hashmaps.

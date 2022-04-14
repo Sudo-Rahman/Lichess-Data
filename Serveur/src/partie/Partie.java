@@ -48,11 +48,13 @@ public class Partie
                 case "White" -> this.blanc = buff[1];
                 case "Black" -> this.noir = buff[1];
                 case "Site" -> this.partieLink = buff[1];
-                case "Result" -> {
+                case "Result" ->
+                {
                     this.resultat = buff[1];
                     if (buff[1].charAt(0) == '1') {this.gagnant = this.blanc;} else this.gagnant = this.noir;
                 }
-                case "UTCDate" -> {
+                case "UTCDate" ->
+                {
                     try
                     {
                         this.utcDate = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yy.MM.dd").parse(buff[1]));
@@ -61,22 +63,26 @@ public class Partie
                         log.warning("Error parsing");
                     }
                 }
-                case "UTCTime" -> {
+                case "UTCTime" ->
+                {
                     try {this.utcTime = buff[1];} catch (ArrayIndexOutOfBoundsException e) {System.out.println(str);}
                 }
-                case "WhiteElo" -> {
+                case "WhiteElo" ->
+                {
                     try {this.whiteElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e)
                     {
                         log.warning("Impossible de recuperer l'elo");
                     }
                 }
-                case "BlackElo" -> {
+                case "BlackElo" ->
+                {
                     try {this.blackElo = Integer.parseInt(buff[1]);} catch (NumberFormatException e)
                     {
                         log.warning("Impossible de recuperer l'elo");
                     }
                 }
-                case "Opening" -> {
+                case "Opening" ->
+                {
                     if (buff[1].equals("?")) {this.ouverture = "";} else this.ouverture = buff[1];
                 }
                 case "Termination" -> this.termination = buff[1];

@@ -12,6 +12,7 @@ public class Semaphore
 
     private final int nbThreads;
     private int count;
+
     /**
      * @param count : nombre de threads.
      */
