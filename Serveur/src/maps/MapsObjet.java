@@ -196,6 +196,8 @@ public class MapsObjet implements Externalizable
         }
         this.nbParties = (long) in.readObject();
         this.file = (File) in.readObject();
+        this.folderData = new File(file.getAbsolutePath().split("\\.")[0] + "_data/");
+        if (!this.folderData.exists()) this.folderData.mkdir();
         this.lecturePoucentage = (int) (p * i);
         log.info("Lecture des Maps : " + this.lecturePoucentage + "%");
         log.info("Lecture des Maps términé en : " + (System.currentTimeMillis() - temps) / 1000 + " secondes");

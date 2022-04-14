@@ -83,7 +83,6 @@ public class InitChoix
                 case 9 -> choix9();
                 default -> envoieMessage("Le nombre n'est pas bon !!");
             }
-            System.out.println(demandeRestant());
             if (quitte)
             {
                 envoieMessage(Colors.PURPLE_BOLD + "Vous avez quitter le mode iterative!!" + reset);

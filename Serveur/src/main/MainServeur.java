@@ -7,6 +7,7 @@ import utils.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,19 +26,11 @@ public class MainServeur
     {
         Log log = new Log();
 
-        Scanner sn = new Scanner(System.in);
-
-        int maxClients = 0;
-        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisi d'allouer de diviser par 4 le nombre de threads disponibles pour avoir le nombre de client max.
-        while (maxClients < 1 || maxClients > nbThreads)
-        {
-            System.out.println("Donner le nombre max de clients en simultané sachant que le serveur alloue 4 threads " + "au minimum par clients pour les calcules pas les ecoutes, le nombre max de client est : " + nbThreads);
-            maxClients = Integer.parseInt(sn.next());
-        }
-
-
+        //        on fait la liste des fichiers pgn dans le dossier data courant au programme.
         List<File> lstFiles = new ArrayList<>();
-        for (File file : Objects.requireNonNull(new File("data/").listFiles()))
+        if (!new File("data").exists()) new File("data").mkdir();
+
+        for (File file : new File("data/").listFiles())
         {
             if (file.isFile())
             {
@@ -49,16 +42,29 @@ public class MainServeur
                 }
             }
         }
+        // si il n'y a pas de fichier pgn dans le dossier data on quitte le programme.
         if (lstFiles.size() == 0)
         {
-            log.fatal("Aucun fichier pgn trouvé dans le dossier others");
+            log.fatal("Aucun fichier pgn trouvé dans le dossier data, veuillez ajouter un fichier pgn dans le dossier data pour pouvoir lancer le serveur.");
             System.exit(0);
         }
+
+        Scanner sn = new Scanner(System.in);
+
+        int maxClients = 0;
+        int nbThreads = Runtime.getRuntime().availableProcessors() / 4; // ici on a choisi d'allouer de diviser par 4 le nombre de threads disponibles pour avoir le nombre de client max.
+        while (maxClients < 1 || maxClients > nbThreads)
+        {
+            System.out.println("Donner le nombre max de clients en simultané, le nombre max de client est : " + nbThreads);
+            maxClients = Integer.parseInt(sn.next());
+        }
+
+
         StringBuilder mes = new StringBuilder("Choisissez entre tous ces fichiers\n");
         int o = 1;
         for (File file : lstFiles)
         {
-            mes.append(Colors.cyan).append(o).append(" / ").append(file.getName()).append("\n");
+            mes.append(Colors.cyan).append(o).append(" / ").append(file.getName()).append(" : ").append(new DecimalFormat("0.000").format(file.length() / 1073741824.0)).append(" go.").append("\n");// 1 073 741 824 octets = 1 Go
             o++;
         }
         mes.append(Colors.reset);
