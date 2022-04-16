@@ -91,8 +91,7 @@ public class MainServeur
         ServerSocket s;
         try
         {
-            s = new ServerSocket(1025);
-            //            s = new ServerSocket(port);
+            s = new ServerSocket(port);
             Serveur serveur = new Serveur(s, maxClients, lstFiles.get(entrer - 1));
             serveur.run();
         } catch (IOException e)
